@@ -302,12 +302,12 @@ class Network {
     }
   }
 
-  Future<Res<List<User>>> searchUsers(String keyword, [String? nextUrl]) async{
+  Future<Res<List<UserPreview>>> searchUsers(String keyword, [String? nextUrl]) async{
     var path = nextUrl ?? "/v1/search/user?filter=for_android&word=${Uri.encodeComponent(keyword)}";
     var res = await apiGet(path);
     if (res.success) {
       return Res(
-          (res.data["user_previews"] as List).map((e) => User.fromJson(e)).toList(),
+          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e["user"])).toList(),
           subData: res.data["next_url"]);
     } else {
       return Res.error(res.errorMessage);

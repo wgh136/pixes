@@ -3,6 +3,7 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/appdata.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/page_route.dart';
+import 'package:pixes/components/user_preview.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/network.dart';
 import 'package:pixes/pages/user_info_page.dart';
@@ -10,6 +11,7 @@ import 'package:pixes/utils/translation.dart';
 
 import '../components/animated_image.dart';
 import '../components/color_scheme.dart';
+import '../components/grid.dart';
 import '../components/illust_widget.dart';
 import '../foundation/image_provider.dart';
 
@@ -41,7 +43,7 @@ class _SearchPageState extends State<SearchPage> {
       case 1:
         // TODO: novel search
       case 2:
-        // TODO: user search
+        context.to(() => SearchUserResultPage(text));
       case 3:
         // TODO: artwork id
         throw UnimplementedError();
@@ -87,6 +89,7 @@ class _SearchPageState extends State<SearchPage> {
                     child: TextBox(
                       placeholder: searchTypes[searchType].tl,
                       onChanged: (s) => text = s,
+                      onSubmitted: (s) => search(),
                       foregroundDecoration: BoxDecoration(
                           border: Border.all(
                               color: ColorScheme.of(context)
@@ -361,20 +364,29 @@ class SearchResultPage extends StatefulWidget {
 class _SearchResultPageState extends MultiPageLoadingState<SearchResultPage, Illust> {
   @override
   Widget buildContent(BuildContext context, final List<Illust> data) {
-    return LayoutBuilder(builder: (context, constrains){
-      return MasonryGridView.builder(
-        gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 240,
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Text("${"Search".tl}: ${widget.keyword}",
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)
+              .paddingVertical(12).paddingHorizontal(16),
         ),
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          if(index == data.length - 1){
-            nextPage();
-          }
-          return IllustWidget(data[index]);
-        },
-      );
-    });
+        SliverMasonryGrid(
+          gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
+            maxCrossAxisExtent: 240,
+          ),
+          delegate: SliverChildBuilderDelegate(
+            (context, index) {
+              if(index == data.length - 1){
+                nextPage();
+              }
+              return IllustWidget(data[index]);
+            },
+            childCount: data.length,
+          ),
+        ).sliverPaddingHorizontal(8)
+      ],
+    );
   }
 
   String? nextUrl;
@@ -387,6 +399,58 @@ class _SearchResultPageState extends MultiPageLoadingState<SearchResultPage, Ill
     var res = nextUrl == null
         ? await Network().search(widget.keyword, appdata.searchOptions)
         : await Network().getIllustsWithNextUrl(nextUrl!);
+    if(!res.error) {
+      nextUrl = res.subData;
+      nextUrl ??= "end";
+    }
+    return res;
+  }
+}
+
+class SearchUserResultPage extends StatefulWidget {
+  const SearchUserResultPage(this.keyword, {super.key});
+
+  final String keyword;
+
+  @override
+  State<SearchUserResultPage> createState() => _SearchUserResultPageState();
+}
+
+class _SearchUserResultPageState extends MultiPageLoadingState<SearchUserResultPage, UserPreview> {
+  @override
+  Widget buildContent(BuildContext context, final List<UserPreview> data) {
+    return CustomScrollView(
+      slivers: [
+        SliverToBoxAdapter(
+          child: Text("${"Search".tl}: ${widget.keyword}",
+            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)
+              .paddingVertical(12).paddingHorizontal(16),
+        ),
+        SliverGridViewWithFixedItemHeight(
+          delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                if(index == data.length - 1){
+                  nextPage();
+                }
+                return UserPreviewWidget(data[index]);
+              },
+              childCount: data.length
+          ),
+          maxCrossAxisExtent: 520,
+          itemHeight: 114,
+        ).sliverPaddingHorizontal(8)
+      ],
+    );
+  }
+
+  String? nextUrl;
+
+  @override
+  Future<Res<List<UserPreview>>> loadData(page) async{
+    if(nextUrl == "end") {
+      return Res.error("No more data");
+    }
+    var res = await Network().searchUsers(widget.keyword, nextUrl);
     if(!res.error) {
       nextUrl = res.subData;
       nextUrl ??= "end";

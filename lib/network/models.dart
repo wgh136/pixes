@@ -309,3 +309,36 @@ class SearchOptions {
   DateTime? endTime;
   AgeLimit ageLimit = AgeLimit.unlimited;
 }
+
+/*
+json:
+{
+        "id": 20542044,
+        "name": "vocaloidhm01",
+        "account": "vocaloidhm01",
+        "profile_image_urls": {
+          "medium": "https://i.pximg.net/user-profile/img/2023/04/28/00/21/54/24348957_c74a61e78ddccb467417be7c37b5d463_170.jpg"
+        },
+        "is_followed": false,
+        "is_access_blocking_user": false
+}
+ */
+class UserPreview {
+  final int id;
+  final String name;
+  final String account;
+  final String avatar;
+  bool isFollowed;
+  final bool isBlocking;
+
+  UserPreview(this.id, this.name, this.account, this.avatar, this.isFollowed,
+      this.isBlocking);
+
+  UserPreview.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        name = json['name'],
+        account = json['account'],
+        avatar = json['profile_image_urls']['medium'],
+        isFollowed = json['is_followed'],
+        isBlocking = json['is_access_blocking_user'];
+}
