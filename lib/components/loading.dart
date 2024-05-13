@@ -77,7 +77,14 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
           _data!.addAll(value.data);
         });
       } else {
-        context.showToast(message: "Network Error");
+        var message = value.errorMessage ?? "Network Error";
+        if(message == "No more data") {
+          return;
+        }
+        if(message.length > 20) {
+          message = "${message.substring(0, 20)}...";
+        }
+        context.showToast(message: message);
       }
     });
   }

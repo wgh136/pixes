@@ -1,6 +1,7 @@
 import "dart:async";
 
 import "package:fluent_ui/fluent_ui.dart";
+import "package:flutter/foundation.dart";
 import "package:pixes/appdata.dart";
 import "package:pixes/components/color_scheme.dart";
 import "package:pixes/components/md.dart";
@@ -433,7 +434,7 @@ class UserPane extends PaneItem {
                                     fontSize: 16, fontWeight: FontWeight.w500),
                               ),
                               Text(
-                                appdata.account!.user.email,
+                                kDebugMode ? "<hide due to debug>" : appdata.account!.user.email,
                                 style: const TextStyle(fontSize: 12),
                               )
                             ],

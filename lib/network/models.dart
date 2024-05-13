@@ -227,6 +227,12 @@ enum KeywordMatchType {
 
   @override
   toString() => text;
+
+  String toParam() => switch(this) {
+    KeywordMatchType.tagsPartialMatches => "partial_match_for_tags",
+    KeywordMatchType.tagsExactMatch => "exact_match_for_tags",
+    KeywordMatchType.titleOrDescriptionSearch => "title_and_caption"
+  };
 }
 
 enum FavoriteNumber {
@@ -246,6 +252,8 @@ enum FavoriteNumber {
 
   @override
   toString() => this == FavoriteNumber.unlimited ? "Unlimited" : "$number Bookmarks";
+
+  String toParam() => this == FavoriteNumber.unlimited ? "" : " ${number}users入り";
 }
 
 enum SearchSort {
@@ -253,16 +261,25 @@ enum SearchSort {
   oldToNew,
   popular;
 
+  bool get isPremium => appdata.account?.user.isPremium == true;
+
   @override
   toString() {
     if(this == SearchSort.popular) {
-      return appdata.account?.user.isPremium == true ? "Popular" : "Popular(limited)";
+      return isPremium ? "Popular" : "Popular(limited)";
     } else if(this == SearchSort.newToOld) {
       return "New to old";
     } else {
       return "Old to new";
     }
   }
+
+  String toParam() => switch(this) {
+    SearchSort.newToOld => "date_desc",
+    SearchSort.oldToNew => "date_asc",
+    // TODO: 等我开个会员
+    SearchSort.popular => "",
+  };
 }
 
 enum AgeLimit {
@@ -276,6 +293,12 @@ enum AgeLimit {
 
   @override
   toString() => text;
+
+  String toParam() => switch(this) {
+    AgeLimit.unlimited => "",
+    AgeLimit.allAges => " -R-18",
+    AgeLimit.r18 => "R-18",
+  };
 }
 
 class SearchOptions {

@@ -10,6 +10,7 @@ import 'package:pixes/utils/translation.dart';
 
 import '../components/animated_image.dart';
 import '../components/color_scheme.dart';
+import '../components/illust_widget.dart';
 import '../foundation/image_provider.dart';
 
 class SearchPage extends StatefulWidget {
@@ -24,17 +25,30 @@ class _SearchPageState extends State<SearchPage> {
 
   int searchType = 0;
 
+  static const searchTypes = [
+    "Search artwork",
+    "Search novel",
+    "Search user",
+    "Artwork ID",
+    "Artist ID",
+    "Novel ID"
+  ];
+
   void search() {
     switch(searchType) {
       case 0:
         context.to(() => SearchResultPage(text));
       case 1:
-        // TODO: artwork by id
-        throw UnimplementedError();
+        // TODO: novel search
       case 2:
-        context.to(() => UserInfoPage(text));
+        // TODO: user search
       case 3:
-        // TODO: novel page
+        // TODO: artwork id
+        throw UnimplementedError();
+      case 4:
+        context.to(() => UserInfoPage(text));
+      case 5:
+        // TODO: novel id
         throw UnimplementedError();
     }
   }
@@ -131,13 +145,6 @@ class _SearchPageState extends State<SearchPage> {
       ).paddingHorizontal(16),
     );
   }
-
-  static const searchTypes = [
-    "Keyword search",
-    "Artwork ID",
-    "Artist ID",
-    "Novel ID"
-  ];
 
   Widget buildSearchOption(BuildContext context) {
     return MenuFlyout(
@@ -351,10 +358,40 @@ class SearchResultPage extends StatefulWidget {
   State<SearchResultPage> createState() => _SearchResultPageState();
 }
 
-class _SearchResultPageState extends State<SearchResultPage> {
+class _SearchResultPageState extends MultiPageLoadingState<SearchResultPage, Illust> {
   @override
-  Widget build(BuildContext context) {
-    return const ScaffoldPage();
+  Widget buildContent(BuildContext context, final List<Illust> data) {
+    return LayoutBuilder(builder: (context, constrains){
+      return MasonryGridView.builder(
+        gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 240,
+        ),
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          if(index == data.length - 1){
+            nextPage();
+          }
+          return IllustWidget(data[index]);
+        },
+      );
+    });
+  }
+
+  String? nextUrl;
+
+  @override
+  Future<Res<List<Illust>>> loadData(page) async{
+    if(nextUrl == "end") {
+      return Res.error("No more data");
+    }
+    var res = nextUrl == null
+        ? await Network().search(widget.keyword, appdata.searchOptions)
+        : await Network().getIllustsWithNextUrl(nextUrl!);
+    if(!res.error) {
+      nextUrl = res.subData;
+      nextUrl ??= "end";
+    }
+    return res;
   }
 }
 

@@ -86,7 +86,7 @@ class _OneBookmarkedPageState extends MultiPageLoadingState<_OneBookmarkedPage, 
     var res = await Network().getBookmarkedIllusts(widget.restrict, nextUrl);
     if(!res.error) {
       nextUrl = res.subData;
-      nextUrl ?? "end";
+      nextUrl ??= "end";
     }
     return res;
   }

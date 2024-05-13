@@ -111,64 +111,28 @@ class Network {
       appdata.account = account;
       appdata.writeData();
       return const Res(true);
-    }
-    catch(e, s){
-      Log.error("Network", "$e\n$s");
-      return Res.error(e);
-    }
-  }
-  
-  Future<Res<Map<String, dynamic>>> apiGet(String path, {Map<String, dynamic>? query}) async {
-    try {
-      if(!path.startsWith("http")) {
-        path = "$baseUrl$path";
-      }
-      final res = await dio.get<Map<String, dynamic>>(path,
-          queryParameters: query, options: Options(headers: _headers, validateStatus: (status) => true));
-      if (res.statusCode == 200) {
-        return Res(res.data!);
-      } else if(res.statusCode == 400) {
-        if(res.data.toString().contains("Access Token")) {
-          var refresh = await refreshToken();
-          if(refresh.success) {
-            return apiGet(path, query: query);
-          } else {
-            return Res.error(refresh.errorMessage);
-          }
-        } else {
-          return Res.error("Invalid Status Code: ${res.statusCode}");
-        }
-      } else if((res.statusCode??500) < 500){
-        return Res.error(res.data?["error"]?["message"] ?? "Invalid Status code ${res.statusCode}");
-      } else {
-        return Res.error("Invalid Status Code: ${res.statusCode}");
-      }
-
     } catch (e, s) {
       Log.error("Network", "$e\n$s");
       return Res.error(e);
     }
   }
-  
-  Future<Res<Map<String, dynamic>>> apiPost(String path, {Map<String, dynamic>? query, Map<String, dynamic>? data}) async {
+
+  Future<Res<Map<String, dynamic>>> apiGet(String path,
+      {Map<String, dynamic>? query}) async {
     try {
-      if(!path.startsWith("http")) {
+      if (!path.startsWith("http")) {
         path = "$baseUrl$path";
       }
-      final res = await dio.post<Map<String, dynamic>>(path,
-          queryParameters: query, 
-          data: data,
-          options: Options(
-              headers: _headers, 
-              validateStatus: (status) => true,
-              contentType: Headers.formUrlEncodedContentType
-          ));
+      final res = await dio.get<Map<String, dynamic>>(path,
+          queryParameters: query,
+          options:
+              Options(headers: _headers, validateStatus: (status) => true));
       if (res.statusCode == 200) {
         return Res(res.data!);
-      } else if(res.statusCode == 400) {
-        if(res.data.toString().contains("Access Token")) {
+      } else if (res.statusCode == 400) {
+        if (res.data.toString().contains("Access Token")) {
           var refresh = await refreshToken();
-          if(refresh.success) {
+          if (refresh.success) {
             return apiGet(path, query: query);
           } else {
             return Res.error(refresh.errorMessage);
@@ -176,12 +140,50 @@ class Network {
         } else {
           return Res.error("Invalid Status Code: ${res.statusCode}");
         }
-      } else if((res.statusCode??500) < 500){
-        return Res.error(res.data?["error"]?["message"] ?? "Invalid Status code ${res.statusCode}");
+      } else if ((res.statusCode ?? 500) < 500) {
+        return Res.error(res.data?["error"]?["message"] ??
+            "Invalid Status code ${res.statusCode}");
       } else {
         return Res.error("Invalid Status Code: ${res.statusCode}");
       }
+    } catch (e, s) {
+      Log.error("Network", "$e\n$s");
+      return Res.error(e);
+    }
+  }
 
+  Future<Res<Map<String, dynamic>>> apiPost(String path,
+      {Map<String, dynamic>? query, Map<String, dynamic>? data}) async {
+    try {
+      if (!path.startsWith("http")) {
+        path = "$baseUrl$path";
+      }
+      final res = await dio.post<Map<String, dynamic>>(path,
+          queryParameters: query,
+          data: data,
+          options: Options(
+              headers: _headers,
+              validateStatus: (status) => true,
+              contentType: Headers.formUrlEncodedContentType));
+      if (res.statusCode == 200) {
+        return Res(res.data!);
+      } else if (res.statusCode == 400) {
+        if (res.data.toString().contains("Access Token")) {
+          var refresh = await refreshToken();
+          if (refresh.success) {
+            return apiGet(path, query: query);
+          } else {
+            return Res.error(refresh.errorMessage);
+          }
+        } else {
+          return Res.error("Invalid Status Code: ${res.statusCode}");
+        }
+      } else if ((res.statusCode ?? 500) < 500) {
+        return Res.error(res.data?["error"]?["message"] ??
+            "Invalid Status code ${res.statusCode}");
+      } else {
+        return Res.error("Invalid Status Code: ${res.statusCode}");
+      }
     } catch (e, s) {
       Log.error("Network", "$e\n$s");
       return Res.error(e);
@@ -189,8 +191,9 @@ class Network {
   }
 
   /// get user details
-  Future<Res<UserDetails>> getUserDetails(Object userId) async{
-    var res = await apiGet("/v1/user/detail", query: {"user_id": userId, "filter": "for_android"});
+  Future<Res<UserDetails>> getUserDetails(Object userId) async {
+    var res = await apiGet("/v1/user/detail",
+        query: {"user_id": userId, "filter": "for_android"});
     if (res.success) {
       return Res(UserDetails.fromJson(res.data));
     } else {
@@ -199,60 +202,115 @@ class Network {
   }
 
   Future<Res<List<Illust>>> getRecommendedIllusts() async {
-    var res = await apiGet("/v1/illust/recommended?include_privacy_policy=true&filter=for_android&include_ranking_illusts=true");
+    var res = await apiGet(
+        "/v1/illust/recommended?include_privacy_policy=true&filter=for_android&include_ranking_illusts=true");
     if (res.success) {
-      return Res((res.data["illusts"] as List).map((e) => Illust.fromJson(e)).toList());
+      return Res((res.data["illusts"] as List)
+          .map((e) => Illust.fromJson(e))
+          .toList());
     } else {
       return Res.error(res.errorMessage);
     }
   }
 
-  Future<Res<List<Illust>>> getBookmarkedIllusts(String restrict, [String? nextUrl]) async {
-    var res = await apiGet(nextUrl ?? "/v1/user/bookmarks/illust?user_id=49258688&restrict=$restrict");
+  Future<Res<List<Illust>>> getBookmarkedIllusts(String restrict,
+      [String? nextUrl]) async {
+    var res = await apiGet(nextUrl ??
+        "/v1/user/bookmarks/illust?user_id=49258688&restrict=$restrict");
     if (res.success) {
-      return Res((res.data["illusts"] as List).map((e) => Illust.fromJson(e)).toList(), subData: res.data["next_url"]);
+      return Res(
+          (res.data["illusts"] as List).map((e) => Illust.fromJson(e)).toList(),
+          subData: res.data["next_url"]);
     } else {
       return Res.error(res.errorMessage);
     }
   }
 
-  Future<Res<bool>> addBookmark(String id, String method, [String type = "public"]) async {
-    var res = method == "add" ? await apiPost("/v2/illust/bookmark/$method", data: {
-      "illust_id": id,
-      "restrict": type
-    }) : await apiPost("/v1/illust/bookmark/$method", data: {
-      "illust_id": id,
-    });
-    if(!res.error) {
+  Future<Res<bool>> addBookmark(String id, String method,
+      [String type = "public"]) async {
+    var res = method == "add"
+        ? await apiPost("/v2/illust/bookmark/$method",
+            data: {"illust_id": id, "restrict": type})
+        : await apiPost("/v1/illust/bookmark/$method", data: {
+            "illust_id": id,
+          });
+    if (!res.error) {
       return const Res(true);
     } else {
       return Res.fromErrorRes(res);
     }
   }
 
-  Future<Res<bool>> follow(String uid, String method, [String type = "public"]) async {
-    var res = method == "add" ? await apiPost("/v1/user/follow/add", data: {
-      "user_id": uid,
-      "restrict": type
-    }) : await apiPost("/v1/user/follow/delete", data: {
-      "user_id": uid,
-    });
-    if(!res.error) {
+  Future<Res<bool>> follow(String uid, String method,
+      [String type = "public"]) async {
+    var res = method == "add"
+        ? await apiPost("/v1/user/follow/add",
+            data: {"user_id": uid, "restrict": type})
+        : await apiPost("/v1/user/follow/delete", data: {
+            "user_id": uid,
+          });
+    if (!res.error) {
       return const Res(true);
     } else {
       return Res.fromErrorRes(res);
     }
   }
-  
+
   Future<Res<List<TrendingTag>>> getHotTags() async {
-    var res = await apiGet("/v1/trending-tags/illust?filter=for_android&include_translated_tag_results=true");
-    if(res.error) {
+    var res = await apiGet(
+        "/v1/trending-tags/illust?filter=for_android&include_translated_tag_results=true");
+    if (res.error) {
       return Res.fromErrorRes(res);
     } else {
       return Res(List.from(res.data["trend_tags"].map((e) => TrendingTag(
-          Tag(e["tag"], e["translated_name"]),
-          Illust.fromJson(e["illust"])
-      ))));
+          Tag(e["tag"], e["translated_name"]), Illust.fromJson(e["illust"])))));
+    }
+  }
+
+  Future<Res<List<Illust>>> search(
+      String keyword, SearchOptions options) async {
+    String path = "";
+    final encodedKeyword = Uri.encodeComponent(keyword +
+        options.favoriteNumber.toParam() +
+        options.ageLimit.toParam());
+    if (options.sort == SearchSort.popular && !options.sort.isPremium) {
+      path =
+          "/v1/search/popular-preview/illust?filter=for_android&include_translated_tag_results=true&merge_plain_keyword_results=true&word=$encodedKeyword&search_target=${options.matchType.toParam()}";
+    } else {
+      path =
+          "/v1/search/illust?filter=for_android&include_translated_tag_results=true&merge_plain_keyword_results=true&word=$encodedKeyword&sort=${options.sort.toParam()}&search_target=${options.matchType.toParam()}";
+    }
+
+    var res = await apiGet(path);
+    if (res.success) {
+      return Res(
+          (res.data["illusts"] as List).map((e) => Illust.fromJson(e)).toList(),
+          subData: res.data["next_url"]);
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
+
+  Future<Res<List<Illust>>> getIllustsWithNextUrl(String nextUrl) async{
+    var res = await apiGet(nextUrl);
+    if (res.success) {
+      return Res(
+          (res.data["illusts"] as List).map((e) => Illust.fromJson(e)).toList(),
+          subData: res.data["next_url"]);
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
+
+  Future<Res<List<User>>> searchUsers(String keyword, [String? nextUrl]) async{
+    var path = nextUrl ?? "/v1/search/user?filter=for_android&word=${Uri.encodeComponent(keyword)}";
+    var res = await apiGet(path);
+    if (res.success) {
+      return Res(
+          (res.data["user_previews"] as List).map((e) => User.fromJson(e)).toList(),
+          subData: res.data["next_url"]);
+    } else {
+      return Res.error(res.errorMessage);
     }
   }
 }
