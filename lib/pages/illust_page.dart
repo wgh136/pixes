@@ -94,11 +94,31 @@ class _IllustPageState extends State<IllustPage> {
       height: imageHeight,
       child: GestureDetector(
         onTap: () => ImagePage.show(widget.illust.images[index].original),
-        child: AnimatedImage(
-          image: CachedImageProvider(widget.illust.images[index].medium),
+        child: Image(
+          image: CachedImageProvider(widget.illust.images[index].large),
           width: imageWidth,
           fit: BoxFit.cover,
           height: imageHeight,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            double? value;
+            if(loadingProgress.expectedTotalBytes != null) {
+              value = (loadingProgress.cumulativeBytesLoaded /
+                  loadingProgress.expectedTotalBytes!)*100;
+            }
+            if(value != null && (value > 100 || value < 0)) {
+              value = null;
+            }
+            return Center(
+              child: SizedBox(
+                width: 24,
+                height: 24,
+                child: ProgressRing(
+                  value: value,
+                ),
+              ),
+            );
+          }
         ),
       ),
     );
