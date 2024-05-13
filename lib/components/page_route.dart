@@ -344,7 +344,7 @@ class SideBarRoute<T> extends PopupRoute<T> {
   @override
   Duration get transitionDuration => const Duration(milliseconds: 200);
 
-    static bool _isPopGestureEnabled<T>(PopupRoute<T> route) {
+  static bool _isPopGestureEnabled<T>(PopupRoute<T> route) {
     if (route.isFirst ||
         route.willHandlePopInternally ||
         route.popDisposition == RoutePopDisposition.doNotPop ||

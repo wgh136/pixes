@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:pixes/appdata.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/page_route.dart';
 import 'package:pixes/foundation/app.dart';
@@ -246,9 +247,83 @@ class _SearchSettingsState extends State<SearchSettings> {
       child: Column(
         children: [
           Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
             child: Text("Search Settings".tl, style: const TextStyle(fontSize: 18),),
           ).toAlign(Alignment.centerLeft),
+          buildItem(title: "Match".tl, child: DropDownButton(
+            title: Text(appdata.searchOptions.matchType.toString()),
+            items: KeywordMatchType.values.map((e) =>
+              MenuFlyoutItem(
+                text: Text(e.toString()),
+                onPressed: () => setState(() => appdata.searchOptions.matchType = e)
+              )
+            ).toList(),
+          )),
+          buildItem(title: "Favorite number".tl, child: DropDownButton(
+            title: Text(appdata.searchOptions.favoriteNumber.toString()),
+            items: FavoriteNumber.values.map((e) =>
+                MenuFlyoutItem(
+                    text: Text(e.toString()),
+                    onPressed: () => setState(() => appdata.searchOptions.favoriteNumber = e)
+                )
+            ).toList(),
+          )),
+          buildItem(title: "Sort".tl, child: DropDownButton(
+            title: Text(appdata.searchOptions.sort.toString()),
+            items: SearchSort.values.map((e) =>
+                MenuFlyoutItem(
+                    text: Text(e.toString()),
+                    onPressed: () => setState(() => appdata.searchOptions.sort = e)
+                )
+            ).toList(),
+          )),
+          Card(
+            padding: EdgeInsets.zero,
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            child: SizedBox(
+              width: double.infinity,
+              child: Column(
+                children: [
+                  const Text("Start Time", style: TextStyle(fontSize: 16),)
+                      .paddingVertical(8)
+                      .toAlign(Alignment.centerLeft)
+                      .paddingLeft(16),
+                  DatePicker(
+                    selected: appdata.searchOptions.startTime,
+                    onChanged: (t) => setState(() => appdata.searchOptions.startTime = t),
+                  ),
+                  const SizedBox(height: 8,)
+                ],
+              ),
+          )),
+          Card(
+              padding: EdgeInsets.zero,
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              child: SizedBox(
+                width: double.infinity,
+                child: Column(
+                  children: [
+                    const Text("End Time", style: TextStyle(fontSize: 16),)
+                        .paddingVertical(8)
+                        .toAlign(Alignment.centerLeft)
+                        .paddingLeft(16),
+                    DatePicker(
+                      selected: appdata.searchOptions.endTime,
+                      onChanged: (t) => setState(() => appdata.searchOptions.endTime = t),
+                    ),
+                    const SizedBox(height: 8,)
+                  ],
+                ),
+              )),
+          buildItem(title: "Age limit".tl, child: DropDownButton(
+            title: Text(appdata.searchOptions.ageLimit.toString()),
+            items: AgeLimit.values.map((e) =>
+                MenuFlyoutItem(
+                    text: Text(e.toString()),
+                    onPressed: () => setState(() => appdata.searchOptions.ageLimit = e)
+                )
+            ).toList(),
+          )),
         ],
       ),
     );

@@ -1,3 +1,5 @@
+import 'package:pixes/appdata.dart';
+
 class Account {
   String accessToken;
   String refreshToken;
@@ -212,4 +214,75 @@ class TrendingTag {
   final Illust illust;
 
   TrendingTag(this.tag, this.illust);
+}
+
+enum KeywordMatchType {
+  tagsPartialMatches("Tags partial matches"),
+  tagsExactMatch("Tags exact match"),
+  titleOrDescriptionSearch("Title or description search");
+
+  final String text;
+
+  const KeywordMatchType(this.text);
+
+  @override
+  toString() => text;
+}
+
+enum FavoriteNumber {
+  unlimited(-1),
+  f500(500),
+  f1000(1000),
+  f2000(2000),
+  f5000(5000),
+  f7500(7500),
+  f10000(10000),
+  f20000(20000),
+  f50000(50000),
+  f100000(100000);
+
+  final int number;
+  const FavoriteNumber(this.number);
+
+  @override
+  toString() => this == FavoriteNumber.unlimited ? "Unlimited" : "$number Bookmarks";
+}
+
+enum SearchSort {
+  newToOld,
+  oldToNew,
+  popular;
+
+  @override
+  toString() {
+    if(this == SearchSort.popular) {
+      return appdata.account?.user.isPremium == true ? "Popular" : "Popular(limited)";
+    } else if(this == SearchSort.newToOld) {
+      return "New to old";
+    } else {
+      return "Old to new";
+    }
+  }
+}
+
+enum AgeLimit {
+  unlimited("Unlimited"),
+  allAges("All ages"),
+  r18("R18");
+
+  final String text;
+
+  const AgeLimit(this.text);
+
+  @override
+  toString() => text;
+}
+
+class SearchOptions {
+  KeywordMatchType matchType = KeywordMatchType.tagsPartialMatches;
+  FavoriteNumber favoriteNumber = FavoriteNumber.unlimited;
+  SearchSort sort = SearchSort.newToOld;
+  DateTime? startTime;
+  DateTime? endTime;
+  AgeLimit ageLimit = AgeLimit.unlimited;
 }

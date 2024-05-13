@@ -3,7 +3,7 @@ import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/res.dart';
 
 abstract class LoadingState<T extends StatefulWidget, S extends Object> extends State<T>{
-  bool isLoading = true;
+  bool isLoading = false;
 
   S? data;
 
@@ -14,21 +14,28 @@ abstract class LoadingState<T extends StatefulWidget, S extends Object> extends 
   Widget buildContent(BuildContext context, S data);
 
   @override
+  @mustCallSuper
+  void initState() {
+    isLoading = true;
+    loadData().then((value) {
+      if(value.success) {
+        setState(() {
+          isLoading = false;
+          data = value.data;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          error = value.errorMessage!;
+        });
+      }
+    });
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     if(isLoading){
-      loadData().then((value) {
-        if(value.success) {
-          setState(() {
-            isLoading = false;
-            data = value.data;
-          });
-        } else {
-          setState(() {
-            isLoading = false;
-            error = value.errorMessage!;
-          });
-        }
-      });
       return const Center(
         child: ProgressRing(),
       );

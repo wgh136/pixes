@@ -31,7 +31,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with WindowListener {
   final navigatorKey = GlobalKey<NavigatorState>();
 
-  int index = 1;
+  int index = 2;
 
   int windowButtonKey = 0;
 

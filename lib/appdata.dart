@@ -7,6 +7,8 @@ import 'network/models.dart';
 class _Appdata {
   Account? account;
 
+  var searchOptions = SearchOptions();
+
   void writeData() async {
     await File("${App.dataPath}/account.json")
         .writeAsString(jsonEncode(account));
