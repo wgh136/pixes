@@ -1,10 +1,12 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/md.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/network/network.dart';
+import 'package:pixes/pages/following_users_page.dart';
 import 'package:pixes/utils/translation.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -53,13 +55,18 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
               ),
             ),),
           const SizedBox(height: 8),
-          Text(data!.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+          Text(data!.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
           Text.rich(
             TextSpan(
               children: [
                 TextSpan(text: 'Follows: '.tl),
-                TextSpan(text: '${data!.totalFollowUsers}', style: const TextStyle(fontWeight: FontWeight.w500)),
+                TextSpan(
+                  text: '${data!.totalFollowUsers}',
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = (() => context.to(() => FollowingUsersPage(widget.id))),
+                  style: TextStyle(fontWeight: FontWeight.bold, color: FluentTheme.of(context).accentColor)
+                ),
               ],
             ),
             style: const TextStyle(fontSize: 14),

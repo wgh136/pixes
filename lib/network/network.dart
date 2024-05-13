@@ -324,4 +324,16 @@ class Network {
       return Res.error(res.errorMessage);
     }
   }
+
+  Future<Res<List<UserPreview>>> getFollowing(String uid, String type, [String? nextUrl]) async {
+    var path = nextUrl ?? "/v1/user/following?filter=for_android&user_id=$uid&restrict=$type";
+    var res = await apiGet(path);
+    if (res.success) {
+      return Res(
+          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e["user"])).toList(),
+          subData: res.data["next_url"]);
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
 }

@@ -89,8 +89,18 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
     });
   }
 
-  @override
-  void initState() {
+  void reset() {
+    setState(() {
+      _isFirstLoading = true;
+      _isLoading = false;
+      _data = null;
+      _error = null;
+      _page = 1;
+    });
+    firstLoad();
+  }
+
+  void firstLoad() {
     loadData(_page).then((value) {
       if(value.success) {
         _page++;
@@ -105,6 +115,11 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
         });
       }
     });
+  }
+
+  @override
+  void initState() {
+    firstLoad();
     super.initState();
   }
 

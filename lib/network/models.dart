@@ -340,5 +340,5 @@ class UserPreview {
         account = json['account'],
         avatar = json['profile_image_urls']['medium'],
         isFollowed = json['is_followed'],
-        isBlocking = json['is_access_blocking_user'];
+        isBlocking = json['is_access_blocking_user'] ?? false;
 }
