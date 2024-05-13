@@ -53,6 +53,7 @@ class MyApp extends StatelessWidget {
               title: 'pixes',
               theme: FluentThemeData(
                   brightness: Brightness.light,
+                  fontFamily: App.isWindows ? 'font' : null,
                   accentColor: AccentColor.swatch({
                     'darkest': SystemTheme.accentColor.darkest,
                     'darker': SystemTheme.accentColor.darker,
@@ -64,6 +65,7 @@ class MyApp extends StatelessWidget {
                   })),
               darkTheme: FluentThemeData(
                   brightness: Brightness.dark,
+                  fontFamily: App.isWindows ? 'font' : null,
                   accentColor: AccentColor.swatch({
                     'darkest': SystemTheme.accentColor.darkest,
                     'darker': SystemTheme.accentColor.darker,

@@ -102,3 +102,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+
+  # font used for building windows application
+  fonts:
+    - family: font
+      fonts:
+        - asset: assets/SourceHanSansSC-Regular.otf

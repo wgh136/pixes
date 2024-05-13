@@ -23,7 +23,9 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    if (!waitingForAuth) {
+    if(isLogging) {
+      return buildLoading(context);
+    } else if (!waitingForAuth) {
       return buildLogin(context);
     } else {
       return buildWaiting(context);
