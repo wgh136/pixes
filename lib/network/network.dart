@@ -370,4 +370,25 @@ class Network {
       return Res.error(res.errorMessage);
     }
   }
+
+  Future<Res<List<Comment>>> getComments(String id, [String? nextUrl]) async {
+    var res = await apiGet(nextUrl ?? "/v3/illust/comments?illust_id=$id");
+    if (res.success) {
+      return Res(
+          (res.data["comments"] as List).map((e) => Comment.fromJson(e)).toList(),
+          subData: res.data["next_url"]);
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
+
+  Future<Res<bool>> comment(String id, String content) async {
+    var res = await apiPost("/v1/illust/comment/add",
+        data: {"illust_id": id, "comment": content});
+    if (res.success) {
+      return const Res(true);
+    } else {
+      return Res.fromErrorRes(res);
+    }
+  }
 }

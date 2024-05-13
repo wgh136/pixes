@@ -342,3 +342,44 @@ class UserPreview {
         isFollowed = json['is_followed'],
         isBlocking = json['is_access_blocking_user'] ?? false;
 }
+
+/*
+{
+      "id": 176418447,
+      "comment": "",
+      "date": "2024-05-13T19:28:13+09:00",
+      "user": {
+        "id": 54898889,
+        "name": "Rorigod",
+        "account": "user_gjzr2787",
+        "profile_image_urls": {
+          "medium": "https://i.pximg.net/user-profile/img/2021/09/01/00/46/58/21334581_94fac3456245d2b680ecf1c60aba2c95_170.png"
+        }
+      },
+      "has_replies": false,
+      "stamp": {
+        "stamp_id": 407,
+        "stamp_url": "https://s.pximg.net/common/images/stamp/generated-stamps/407_s.jpg?20180605"
+      }
+    }
+ */
+class Comment{
+  final String id;
+  final String comment;
+  final DateTime date;
+  final String uid;
+  final String name;
+  final String avatar;
+  final bool hasReplies;
+  final String? stampUrl;
+
+  Comment.fromJson(Map<String, dynamic> json)
+      : id = json['id'].toString(),
+        comment = json['comment'],
+        date = DateTime.parse(json['date']),
+        uid = json['user']['id'].toString(),
+        name = json['user']['name'],
+        avatar = json['user']['profile_image_urls']['medium'],
+        hasReplies = json['has_replies'],
+        stampUrl = json['stamp']?['stamp_url'];
+}
