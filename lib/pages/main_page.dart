@@ -8,8 +8,8 @@ import "package:pixes/components/md.dart";
 import "package:pixes/foundation/app.dart";
 import "package:pixes/network/network.dart";
 import "package:pixes/pages/bookmarks.dart";
-import "package:pixes/pages/explore_page.dart";
 import "package:pixes/pages/following_artworks.dart";
+import "package:pixes/pages/ranking.dart";
 import "package:pixes/pages/recommendation_page.dart";
 import "package:pixes/pages/login_page.dart";
 import "package:pixes/pages/search_page.dart";
@@ -20,6 +20,7 @@ import "package:pixes/utils/translation.dart";
 import "package:window_manager/window_manager.dart";
 
 import "../components/page_route.dart";
+import "download_page.dart";
 
 const _kAppBarHeight = 36.0;
 
@@ -33,7 +34,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with WindowListener {
   final navigatorKey = GlobalKey<NavigatorState>();
 
-  int index = 2;
+  int index = 3;
 
   int windowButtonKey = 0;
 
@@ -100,8 +101,13 @@ class _MainPageState extends State<MainPage> with WindowListener {
                     title: Text('Search'.tl),
                     body: const SizedBox.shrink(),
                   ),
+                  PaneItem(
+                    icon: const Icon(MdIcons.download, size: 20,),
+                    title: Text('Download'.tl),
+                    body: const SizedBox.shrink(),
+                  ),
                   PaneItemSeparator(),
-                  PaneItemHeader(header: Text("Artwork".tl).paddingVertical(4).paddingLeft(8)),
+                  PaneItemHeader(header: Text("Artwork".tl).paddingBottom(4).paddingLeft(8)),
                   PaneItem(
                     icon: const Icon(MdIcons.explore_outlined, size: 20,),
                     title: Text('Explore'.tl),
@@ -117,10 +123,9 @@ class _MainPageState extends State<MainPage> with WindowListener {
                     title: Text('Following'.tl),
                     body: const SizedBox.shrink(),
                   ),
-                  PaneItemSeparator(),
                   PaneItem(
-                    icon: const Icon(MdIcons.explore_outlined, size: 20),
-                    title: Text('Explore'.tl),
+                    icon: const Icon(MdIcons.leaderboard_outlined, size: 20),
+                    title: Text('Ranking'.tl),
                     body: const SizedBox.shrink(),
                   ),
                 ],
@@ -140,13 +145,14 @@ class _MainPageState extends State<MainPage> with WindowListener {
         ));
   }
 
-  static final pageBuilders = [
+  static final pageBuilders = <Widget Function()>[
     () => UserInfoPage(appdata.account!.user.id),
     () => const SearchPage(),
+    () => const DownloadPage(),
     () => const RecommendationPage(),
     () => const BookMarkedArtworkPage(),
     () => const FollowingArtworksPage(),
-    () => const ExplorePage(),
+    () => const RankingPage(),
     () => const SettingsPage(),
   ];
 

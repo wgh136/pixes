@@ -358,4 +358,16 @@ class Network {
       return Res.error(res.errorMessage);
     }
   }
+
+  /// mode: day, week, month, day_male, day_female, week_original, week_rookie, day_manga, week_manga, month_manga, day_r18_manga, day_r18
+  Future<Res<List<Illust>>> getRanking(String mode, [String? nextUrl]) async {
+    var res = await apiGet(nextUrl ?? "/v1/illust/ranking?filter=for_android&mode=$mode");
+    if (res.success) {
+      return Res(
+          (res.data["illusts"] as List).map((e) => Illust.fromJson(e)).toList(),
+          subData: res.data["next_url"]);
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
 }
