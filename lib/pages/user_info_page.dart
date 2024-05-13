@@ -106,7 +106,7 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
       child: Column(
         children: [
           buildHeader("Infomation".tl),
-          buildItem(icon: MdIcons.comment_outlined, title: "Comment".tl, content: data!.comment),
+          buildItem(icon: MdIcons.comment_outlined, title: "Introduction".tl, content: data!.comment),
           buildItem(icon: MdIcons.cake_outlined, title: "Birthday".tl, content: data!.birth),
           buildItem(icon: MdIcons.location_city_outlined, title: "Region", content: data!.region),
           buildItem(icon: MdIcons.work_outline, title: "Job".tl, content: data!.job),

@@ -9,6 +9,7 @@ import "package:pixes/foundation/app.dart";
 import "package:pixes/network/network.dart";
 import "package:pixes/pages/bookmarks.dart";
 import "package:pixes/pages/explore_page.dart";
+import "package:pixes/pages/following_artworks.dart";
 import "package:pixes/pages/recommendation_page.dart";
 import "package:pixes/pages/login_page.dart";
 import "package:pixes/pages/search_page.dart";
@@ -99,6 +100,7 @@ class _MainPageState extends State<MainPage> with WindowListener {
                     title: Text('Search'.tl),
                     body: const SizedBox.shrink(),
                   ),
+                  PaneItemSeparator(),
                   PaneItemHeader(header: Text("Artwork".tl).paddingVertical(4).paddingLeft(8)),
                   PaneItem(
                     icon: const Icon(MdIcons.star_border, size: 20,),
@@ -108,6 +110,11 @@ class _MainPageState extends State<MainPage> with WindowListener {
                   PaneItem(
                     icon: const Icon(MdIcons.bookmark_outline, size: 20),
                     title: Text('Bookmarks'.tl),
+                    body: const SizedBox.shrink(),
+                  ),
+                  PaneItem(
+                    icon: const Icon(MdIcons.interests_outlined, size: 20),
+                    title: Text('Following'.tl),
                     body: const SizedBox.shrink(),
                   ),
                   PaneItemSeparator(),
@@ -138,6 +145,7 @@ class _MainPageState extends State<MainPage> with WindowListener {
     () => const SearchPage(),
     () => const RecommendationPage(),
     () => const BookMarkedArtworkPage(),
+    () => const FollowingArtworksPage(),
     () => const ExplorePage(),
     () => const SettingsPage(),
   ];

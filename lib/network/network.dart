@@ -336,4 +336,15 @@ class Network {
       return Res.error(res.errorMessage);
     }
   }
+
+  Future<Res<List<Illust>>> getFollowingArtworks(String restrict, [String? nextUrl]) async {
+    var res = await apiGet(nextUrl ?? "/v2/illust/follow?restrict=$restrict");
+    if (res.success) {
+      return Res(
+          (res.data["illusts"] as List).map((e) => Illust.fromJson(e)).toList(),
+          subData: res.data["next_url"]);
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
 }
