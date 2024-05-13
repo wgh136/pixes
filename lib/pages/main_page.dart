@@ -103,8 +103,8 @@ class _MainPageState extends State<MainPage> with WindowListener {
                   PaneItemSeparator(),
                   PaneItemHeader(header: Text("Artwork".tl).paddingVertical(4).paddingLeft(8)),
                   PaneItem(
-                    icon: const Icon(MdIcons.star_border, size: 20,),
-                    title: Text('Recommendations'.tl),
+                    icon: const Icon(MdIcons.explore_outlined, size: 20,),
+                    title: Text('Explore'.tl),
                     body: const SizedBox.shrink(),
                   ),
                   PaneItem(

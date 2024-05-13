@@ -347,4 +347,15 @@ class Network {
       return Res.error(res.errorMessage);
     }
   }
+
+  Future<Res<List<UserPreview>>> getRecommendationUsers() async {
+    var res = await apiGet("/v1/user/recommended?filter=for_android");
+    if (res.success) {
+      return Res(
+          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e["user"])).toList(),
+          subData: res.data["next_url"]);
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
 }
