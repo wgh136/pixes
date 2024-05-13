@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:pixes/appdata.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/md.dart';
 import 'package:pixes/foundation/app.dart';
@@ -13,9 +14,11 @@ import 'package:url_launcher/url_launcher_string.dart';
 import '../components/illust_widget.dart';
 
 class UserInfoPage extends StatefulWidget {
-  const UserInfoPage(this.id, {super.key});
+  const UserInfoPage(this.id, {this.followCallback, super.key});
 
   final String id;
+
+  final void Function(bool)? followCallback;
 
   @override
   State<UserInfoPage> createState() => _UserInfoPageState();
@@ -34,6 +37,28 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
         ],
       ),
     );
+  }
+
+  bool isFollowing = false;
+
+  void follow() async{
+    if(isFollowing) return;
+    setState(() {
+      isFollowing = true;
+    });
+    var method = data!.isFollowed ? "delete" : "add";
+    var res = await Network().follow(data!.id.toString(), method);
+    if(res.error) {
+      if(mounted) {
+        context.showToast(message: "Network Error");
+      }
+    } else {
+      data!.isFollowed = !data!.isFollowed;
+      widget.followCallback?.call(data!.isFollowed);
+    }
+    setState(() {
+      isFollowing = false;
+    });
   }
 
   Widget buildUser() {
@@ -71,6 +96,27 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
             ),
             style: const TextStyle(fontSize: 14),
           ),
+          if(widget.id != appdata.account?.user.id)
+            const SizedBox(height: 8,),
+          if(widget.id != appdata.account?.user.id)
+            if(isFollowing)
+              Button(onPressed: follow, child: const SizedBox(
+                width: 42,
+                height: 24,
+                child: Center(
+                  child: SizedBox.square(
+                    dimension: 18,
+                    child: ProgressRing(strokeWidth: 2,),
+                  ),
+                ),
+              ))
+            else if (!data!.isFollowed)
+              Button(onPressed: follow, child: Text("Follow".tl))
+            else
+              Button(
+                onPressed: follow,
+                child: Text("Unfollow".tl, style: TextStyle(color: ColorScheme.of(context).error),),
+              ),
         ],
       ),
     );
@@ -105,7 +151,7 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
     return SliverToBoxAdapter(
       child: Column(
         children: [
-          buildHeader("Infomation".tl),
+          buildHeader("Information".tl),
           buildItem(icon: MdIcons.comment_outlined, title: "Introduction".tl, content: data!.comment),
           buildItem(icon: MdIcons.cake_outlined, title: "Birthday".tl, content: data!.birth),
           buildItem(icon: MdIcons.location_city_outlined, title: "Region", content: data!.region),

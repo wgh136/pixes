@@ -268,7 +268,11 @@ class _BottomBarState extends State<_BottomBar> {
                   color: ColorScheme.of(context).secondaryContainer,
                   child: GestureDetector(
                     onTap: () => context.to(() =>
-                        UserInfoPage(widget.illust.author.id.toString())),
+                        UserInfoPage(
+                          widget.illust.author.id.toString(),
+                          followCallback: (b) => setState(() {
+                            widget.illust.author.isFollowed = b;
+                        }),)),
                     child: AnimatedImage(
                       image: CachedImageProvider(widget.illust.author.avatar),
                       width: 40,

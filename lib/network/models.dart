@@ -54,7 +54,7 @@ class UserDetails {
   final String account;
   final String avatar;
   final String comment;
-  final bool isFollowed;
+  bool isFollowed;
   final bool isBlocking;
   final String? webpage;
   final String gender;

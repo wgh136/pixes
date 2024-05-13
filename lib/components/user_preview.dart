@@ -70,7 +70,11 @@ class _UserPreviewWidgetState extends State<UserPreviewWidget> {
                 Row(
                   children: [
                     Button(
-                      onPressed: () => context.to(() => UserInfoPage(widget.user.id.toString())),
+                      onPressed: () => context.to(() => UserInfoPage(widget.user.id.toString(), followCallback: (v){
+                        setState(() {
+                          widget.user.isFollowed = v;
+                        });
+                      },)),
                       child: Text("View".tl,),
                     ),
                     const SizedBox(width: 8,),
