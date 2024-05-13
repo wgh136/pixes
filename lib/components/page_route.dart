@@ -298,3 +298,88 @@ class _IOSBackGestureDetectorState extends State<IOSBackGestureDetector> {
         _convertToLogical(details.primaryDelta! / context.size!.width));
   }
 }
+
+const _kSideBarWidth = 420.0;
+
+class SideBarRoute<T> extends PopupRoute<T> {
+  SideBarRoute(this.child);
+
+  final Widget child;
+
+  @override
+  Color? get barrierColor => const Color.fromARGB(64, 205, 205, 205);
+
+  @override
+  bool get barrierDismissible => true;
+
+  @override
+  String? get barrierLabel => "side bar";
+
+  @override
+  Widget buildPage(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation) {
+    return Align(
+      alignment: Alignment.centerRight,
+      child: Stack(
+        children: [
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: FluentTheme.of(context).micaBackgroundColor.withOpacity(0.98),
+                borderRadius: const BorderRadius.only(topLeft: Radius.circular(4), bottomLeft: Radius.circular(4))
+              ),
+              constraints: const BoxConstraints(maxWidth: _kSideBarWidth),
+              width: double.infinity,
+              child: child,
+            ),
+          )
+        ],
+      ),
+    );
+  }
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 200);
+
+    static bool _isPopGestureEnabled<T>(PopupRoute<T> route) {
+    if (route.isFirst ||
+        route.willHandlePopInternally ||
+        route.popDisposition == RoutePopDisposition.doNotPop ||
+        route.animation!.status != AnimationStatus.completed ||
+        route.secondaryAnimation!.status != AnimationStatus.dismissed ||
+        route.navigator!.userGestureInProgress) {
+      return false;
+    }
+
+    return true;
+  }
+
+  bool get enableIOSGesture => true;
+
+  @override
+  Widget buildTransitions(BuildContext context, Animation<double> animation,
+      Animation<double> secondaryAnimation, Widget child) {
+    var offset =
+        Tween<Offset>(begin: const Offset(1, 0), end: const Offset(0, 0));
+    return SlideTransition(
+      position: offset.animate(CurvedAnimation(
+        parent: animation,
+        curve: Curves.fastOutSlowIn,
+      )),
+      child: enableIOSGesture
+          ? IOSBackGestureDetector(
+              gestureWidth: _kBackGestureWidth,
+              enabledCallback: () => _isPopGestureEnabled<T>(this),
+              onStartPopGesture: () => _startPopGesture(this),
+              child: child)
+          : child,
+    );
+  }
+
+  IOSBackGestureController _startPopGesture(PopupRoute<T> route) {
+    return IOSBackGestureController(route.controller!, route.navigator!);
+  }
+}

@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/components/loading.dart';
+import 'package:pixes/components/page_route.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/network.dart';
 import 'package:pixes/pages/user_info_page.dart';
@@ -108,6 +109,18 @@ class _SearchPageState extends State<SearchPage> {
                         );
                       },
                     ),
+                  ),
+                  const SizedBox(width: 4,),
+                  Button(
+                    child: const SizedBox(
+                      height: 42,
+                      child: Center(
+                        child: Icon(FluentIcons.settings),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(SideBarRoute(const SearchSettings()));
+                    },
                   )
                 ],
               ),
@@ -216,6 +229,40 @@ class _TrendingTagsViewState extends LoadingState<_TrendingTagsView, List<Trendi
   @override
   Future<Res<List<TrendingTag>>> loadData() {
     return Network().getHotTags();
+  }
+}
+
+class SearchSettings extends StatefulWidget {
+  const SearchSettings({super.key});
+
+  @override
+  State<SearchSettings> createState() => _SearchSettingsState();
+}
+
+class _SearchSettingsState extends State<SearchSettings> {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+            child: Text("Search Settings".tl, style: const TextStyle(fontSize: 18),),
+          ).toAlign(Alignment.centerLeft),
+        ],
+      ),
+    );
+  }
+
+  Widget buildItem({required String title, required Widget child}) {
+    return Card(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      padding: EdgeInsets.zero,
+      child: ListTile(
+        title: Text(title),
+        trailing: child,
+      ),
+    );
   }
 }
 
