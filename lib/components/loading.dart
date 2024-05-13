@@ -90,29 +90,42 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
   }
 
   @override
+  void initState() {
+    loadData(_page).then((value) {
+      if(value.success) {
+        _page++;
+        setState(() {
+          _isFirstLoading = false;
+          _data = value.data;
+        });
+      } else {
+        setState(() {
+          _isFirstLoading = false;
+          _error = value.errorMessage!;
+        });
+      }
+    });
+    super.initState();
+  }
+
+  Widget buildLoading(BuildContext context) {
+    return const Center(
+      child: ProgressRing(),
+    );
+  }
+
+  Widget buildError(BuildContext context, String error) {
+    return Center(
+      child: Text(error),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     if(_isFirstLoading){
-      loadData(_page).then((value) {
-        if(value.success) {
-          _page++;
-          setState(() {
-            _isFirstLoading = false;
-            _data = value.data;
-          });
-        } else {
-          setState(() {
-            _isFirstLoading = false;
-            _error = value.errorMessage!;
-          });
-        }
-      });
-      return const Center(
-        child: ProgressRing(),
-      );
+      return buildLoading(context);
     } else if (_error != null){
-      return Center(
-        child: Text(_error!),
-      );
+      return buildError(context, _error!);
     } else {
       return buildContent(context, _data!);
     }

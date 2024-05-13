@@ -9,7 +9,8 @@ import 'package:pixes/pages/image_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/translation.dart';
 
-import '../components/color_scheme.dart';
+import '../components/md.dart';
+
 
 const _kBottomBarHeight = 64.0;
 
@@ -304,7 +305,7 @@ class _BottomBarState extends State<_BottomBar> {
             else
               Button(
                 onPressed: follow,
-                child: Text("Unfollow".tl, style: TextStyle(color: ColorScheme.of(context).errorColor),),
+                child: Text("Unfollow".tl, style: TextStyle(color: ColorScheme.of(context).error),),
               ),
           ],
         ),
@@ -355,7 +356,7 @@ class _BottomBarState extends State<_BottomBar> {
             else if(widget.illust.isBookmarked)
               Icon(
                 Icons.favorite,
-                color: ColorScheme.of(context).errorColor,
+                color: ColorScheme.of(context).error,
                 size: 18,
               )
             else

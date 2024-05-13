@@ -1,12 +1,12 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:pixes/components/animated_image.dart';
-import 'package:pixes/components/color_scheme.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../network/network.dart';
+import 'md.dart';
 
 class UserPreviewWidget extends StatefulWidget {
   const UserPreviewWidget(this.user, {super.key});
@@ -90,7 +90,7 @@ class _UserPreviewWidgetState extends State<UserPreviewWidget> {
                     else
                       Button(
                         onPressed: follow,
-                        child: Text("Unfollow".tl, style: TextStyle(color: ColorScheme.of(context).errorColor),),
+                        child: Text("Unfollow".tl, style: TextStyle(color: ColorScheme.of(context).error),),
                       ),
                   ],
                 )

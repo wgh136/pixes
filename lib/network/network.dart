@@ -313,4 +313,15 @@ class Network {
       return Res.error(res.errorMessage);
     }
   }
+
+  Future<Res<List<Illust>>> getUserIllusts(String uid) async {
+    var res = await apiGet("/v1/user/illusts?filter=for_android&user_id=$uid&type=illust");
+    if (res.success) {
+      return Res(
+          (res.data["illusts"] as List).map((e) => Illust.fromJson(e)).toList(),
+          subData: res.data["next_url"]);
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
 }

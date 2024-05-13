@@ -10,9 +10,9 @@ import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../components/animated_image.dart';
-import '../components/color_scheme.dart';
 import '../components/grid.dart';
 import '../components/illust_widget.dart';
+import '../components/md.dart';
 import '../foundation/image_provider.dart';
 
 class SearchPage extends StatefulWidget {

@@ -2,8 +2,8 @@ import "dart:async";
 
 import "package:fluent_ui/fluent_ui.dart";
 import "package:flutter/foundation.dart";
+import "package:flutter/material.dart" as md;
 import "package:pixes/appdata.dart";
-import "package:pixes/components/color_scheme.dart";
 import "package:pixes/components/md.dart";
 import "package:pixes/foundation/app.dart";
 import "package:pixes/network/network.dart";
@@ -73,56 +73,64 @@ class _MainPageState extends State<MainPage> with WindowListener {
         content: LoginPage(() => setState(() {})),
       );
     }
-    return ColorScheme(
-        brightness: FluentTheme.of(context).brightness,
-        child: NavigationView(
-            appBar: buildAppBar(context, navigatorKey),
-            pane: NavigationPane(
-              selected: index,
-              onChanged: (value) {
-                setState(() {
-                  index = value;
-                });
-                navigate(value);
-              },
-              items: [
-                UserPane(),
-                PaneItem(
-                  icon: const Icon(MdIcons.search, size: 20,),
-                  title: Text('Search'.tl),
-                  body: const SizedBox.shrink(),
-                ),
-                PaneItemHeader(header: Text("Artwork".tl).paddingVertical(4).paddingLeft(8)),
-                PaneItem(
-                  icon: const Icon(MdIcons.star_border, size: 20,),
-                  title: Text('Recommendations'.tl),
-                  body: const SizedBox.shrink(),
-                ),
-                PaneItem(
-                  icon: const Icon(MdIcons.bookmark_outline, size: 20),
-                  title: Text('Bookmarks'.tl),
-                  body: const SizedBox.shrink(),
-                ),
-                PaneItemSeparator(),
-                PaneItem(
-                  icon: const Icon(MdIcons.explore_outlined, size: 20),
-                  title: Text('Explore'.tl),
-                  body: const SizedBox.shrink(),
-                ),
-              ],
-              footerItems: [
-                PaneItem(
-                  icon: const Icon(MdIcons.settings_outlined, size: 20),
-                  title: Text('Settings'.tl),
-                  body: const SizedBox.shrink(),
-                ),
-              ],
-            ),
-            paneBodyBuilder: (pane, child) => Navigator(
-                  key: navigatorKey,
-                  onGenerateRoute: (settings) => AppPageRoute(
-                      builder: (context) => const RecommendationPage()),
-                )));
+    return md.Theme(
+        data: md.ThemeData.from(
+          useMaterial3: true,
+            colorScheme: md.ColorScheme.fromSeed(
+              seedColor: FluentTheme.of(context).accentColor.withOpacity(1),
+              brightness: FluentTheme.of(context).brightness,
+            )),
+        child: DefaultSelectionStyle.merge(
+          selectionColor: FluentTheme.of(context).selectionColor.withOpacity(0.4),
+          child: NavigationView(
+              appBar: buildAppBar(context, navigatorKey),
+              pane: NavigationPane(
+                selected: index,
+                onChanged: (value) {
+                  setState(() {
+                    index = value;
+                  });
+                  navigate(value);
+                },
+                items: [
+                  UserPane(),
+                  PaneItem(
+                    icon: const Icon(MdIcons.search, size: 20,),
+                    title: Text('Search'.tl),
+                    body: const SizedBox.shrink(),
+                  ),
+                  PaneItemHeader(header: Text("Artwork".tl).paddingVertical(4).paddingLeft(8)),
+                  PaneItem(
+                    icon: const Icon(MdIcons.star_border, size: 20,),
+                    title: Text('Recommendations'.tl),
+                    body: const SizedBox.shrink(),
+                  ),
+                  PaneItem(
+                    icon: const Icon(MdIcons.bookmark_outline, size: 20),
+                    title: Text('Bookmarks'.tl),
+                    body: const SizedBox.shrink(),
+                  ),
+                  PaneItemSeparator(),
+                  PaneItem(
+                    icon: const Icon(MdIcons.explore_outlined, size: 20),
+                    title: Text('Explore'.tl),
+                    body: const SizedBox.shrink(),
+                  ),
+                ],
+                footerItems: [
+                  PaneItem(
+                    icon: const Icon(MdIcons.settings_outlined, size: 20),
+                    title: Text('Settings'.tl),
+                    body: const SizedBox.shrink(),
+                  ),
+                ],
+              ),
+              paneBodyBuilder: (pane, child) => Navigator(
+                key: navigatorKey,
+                onGenerateRoute: (settings) => AppPageRoute(
+                    builder: (context) => const RecommendationPage()),
+              )),
+        ));
   }
 
   static final pageBuilders = [

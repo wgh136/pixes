@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:pixes/foundation/app.dart';
 
-import 'color_scheme.dart';
+import 'md.dart';
 
 class SegmentedButton<T> extends StatelessWidget {
   const SegmentedButton(
