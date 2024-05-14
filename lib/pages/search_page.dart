@@ -2,10 +2,12 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/appdata.dart';
 import 'package:pixes/components/loading.dart';
+import 'package:pixes/components/message.dart';
 import 'package:pixes/components/page_route.dart';
 import 'package:pixes/components/user_preview.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/network.dart';
+import 'package:pixes/pages/illust_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/translation.dart';
 
@@ -41,17 +43,15 @@ class _SearchPageState extends State<SearchPage> {
       case 0:
         context.to(() => SearchResultPage(text));
       case 1:
-        // TODO: novel search
+        showToast(context, message: "Not implemented");
       case 2:
         context.to(() => SearchUserResultPage(text));
       case 3:
-        // TODO: artwork id
-        throw UnimplementedError();
+        context.to(() => IllustPageWithId(text));
       case 4:
         context.to(() => UserInfoPage(text));
       case 5:
-        // TODO: novel id
-        throw UnimplementedError();
+        showToast(context, message: "Not implemented");
     }
   }
 

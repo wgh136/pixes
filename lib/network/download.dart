@@ -233,6 +233,7 @@ class DownloadManager {
   }
 
   void addDownloadingTask(Illust illust) {
+    if(illust.downloaded || illust.downloading) return;
     var task = DownloadingTask(illust, receiveBytesCallback: receiveBytes, onCompleted: (task) {
       saveInfo(illust, task.imagePaths);
       tasks.remove(task);

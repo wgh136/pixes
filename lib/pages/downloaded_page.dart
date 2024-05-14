@@ -9,6 +9,7 @@ import 'package:pixes/components/page_route.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/download.dart';
+import 'package:pixes/pages/illust_page.dart';
 import 'package:pixes/utils/translation.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:window_manager/window_manager.dart';
@@ -54,7 +55,7 @@ class _DownloadedPageState extends State<DownloadedPage> {
     return GridViewWithFixedItemHeight(
       itemCount: illusts.length,
       itemHeight: 152,
-      maxCrossAxisExtent: 560,
+      maxCrossAxisExtent: 742,
       builder: (context, index) {
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
@@ -113,14 +114,22 @@ class _DownloadedPageState extends State<DownloadedPage> {
                           child: Text("View".tl).fixWidth(42),
                           onPressed: () {
                             App.rootNavigatorKey.currentState?.push(
-                              AppPageRoute(builder: (context) {
-                                return _DownloadedIllustViewPage(
-                                  DownloadManager().getImagePaths(
-                                    illusts[index].illustId));
-                            }));
+                                AppPageRoute(builder: (context) {
+                                  return _DownloadedIllustViewPage(
+                                      DownloadManager().getImagePaths(
+                                          illusts[index].illustId));
+                                }));
                           },
                         ),
-                        const SizedBox(width: 8),
+                        const SizedBox(width: 6),
+                        Button(
+                          child: Text("Info".tl).fixWidth(42),
+                          onPressed: () {
+                            context.to(() => IllustPageWithId(
+                                illusts[index].illustId.toString()));
+                          },
+                        ),
+                        const SizedBox(width: 6),
                         FlyoutTarget(
                           controller: flyoutControllers[index],
                           child: Button(

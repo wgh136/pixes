@@ -391,4 +391,13 @@ class Network {
       return Res.fromErrorRes(res);
     }
   }
+
+  Future<Res<Illust>> getIllustByID(String id) async {
+    var res = await apiGet("/v1/illust/detail?illust_id=$id");
+    if (res.success) {
+      return Res(Illust.fromJson(res.data["illust"]));
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
 }

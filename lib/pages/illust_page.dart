@@ -887,3 +887,23 @@ class _CommentsPageState extends MultiPageLoadingState<_CommentsPage, Comment> {
 
 }
 
+class IllustPageWithId extends StatefulWidget {
+  const IllustPageWithId(this.id, {super.key});
+
+  final String id;
+
+  @override
+  State<IllustPageWithId> createState() => _IllustPageWithIdState();
+}
+
+class _IllustPageWithIdState extends LoadingState<IllustPageWithId, Illust> {
+  @override
+  Widget buildContent(BuildContext context, Illust data) {
+    return IllustPage(data);
+  }
+
+  @override
+  Future<Res<Illust>> loadData() {
+    return Network().getIllustByID(widget.id);
+  }
+}
