@@ -266,4 +266,30 @@ class DownloadManager {
       }
     });
   }
+
+  void delete(DownloadedIllust illust) {
+    _db.execute('''
+      delete from download
+      where illust_id = ?;
+    ''', [illust.illustId]);
+    var images = _db.select('''
+      select * from images
+      where illust_id = ?;
+    ''', [illust.illustId]);
+    for(var image in images) {
+      File(image["path"] as String).deleteIfExists();
+    }
+    _db.execute('''
+      delete from images
+      where illust_id = ?;
+    ''', [illust.illustId]);
+  }
+
+  List<String> getImagePaths(int illustId) {
+    var res = _db.select('''
+      select * from images
+      where illust_id = ?;
+    ''', [illustId]);
+    return res.map((e) => e["path"] as String).toList();
+  }
 }

@@ -34,3 +34,42 @@ class SliverGridViewWithFixedItemHeight extends StatelessWidget {
     return itemWidth / itemHeight;
   }
 }
+
+class GridViewWithFixedItemHeight extends StatelessWidget {
+  const GridViewWithFixedItemHeight(
+      { required this.builder,
+        required this.itemCount,
+        required this.maxCrossAxisExtent,
+        required this.itemHeight,
+        super.key});
+
+  final Widget Function(BuildContext, int) builder;
+
+  final int itemCount;
+
+  final double maxCrossAxisExtent;
+
+  final double itemHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+        builder: ((context, constraints) => GridView.builder(
+          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+              maxCrossAxisExtent: maxCrossAxisExtent,
+              childAspectRatio:
+              calcChildAspectRatio(constraints.maxWidth)),
+          itemBuilder: builder,
+          itemCount: itemCount,
+        )));
+  }
+
+  double calcChildAspectRatio(double width) {
+    var crossItems = width ~/ maxCrossAxisExtent;
+    if (width % maxCrossAxisExtent != 0) {
+      crossItems += 1;
+    }
+    final itemWidth = width / crossItems;
+    return itemWidth / itemHeight;
+  }
+}
