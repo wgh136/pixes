@@ -58,7 +58,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
-      padding: EdgeInsets.zero,
+      padding: const EdgeInsets.only(top: 8),
       content: Column(
         children: [
           buildSearchBar(),

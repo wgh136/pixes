@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/components/illust_widget.dart';
 import 'package:pixes/components/loading.dart';
+import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/network.dart';
 import 'package:pixes/utils/translation.dart';
@@ -35,28 +36,22 @@ class _RecommendationPageState extends State<RecommendationPage> {
   }
 
   Widget buildTab() {
-    return SizedBox(
-      child: Row(
-        children: [
-          Text("Explore".tl,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-          const Spacer(),
-          SegmentedButton<int>(
-            options: [
-              SegmentedButtonOption(0, "Artworks".tl),
-              SegmentedButtonOption(1, "Users".tl),
-            ],
-            onPressed: (key) {
-              if(key != type) {
-                setState(() {
-                  type = key;
-                });
-              }
-            },
-            value: type,
-          )
+    return TitleBar(
+      title: "Explore".tl,
+      action: SegmentedButton<int>(
+        options: [
+          SegmentedButtonOption(0, "Artworks".tl),
+          SegmentedButtonOption(1, "Users".tl),
         ],
-      ).paddingHorizontal(16).paddingBottom(4),
+        onPressed: (key) {
+          if(key != type) {
+            setState(() {
+              type = key;
+            });
+          }
+        },
+        value: type,
+      ),
     );
   }
 }

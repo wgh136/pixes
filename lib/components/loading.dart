@@ -13,6 +13,40 @@ abstract class LoadingState<T extends StatefulWidget, S extends Object> extends 
 
   Widget buildContent(BuildContext context, S data);
 
+  Widget buildError() {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(error!),
+          const SizedBox(height: 12),
+          Button(
+            onPressed: () {
+              setState(() {
+                isLoading = true;
+                error = null;
+              });
+              loadData().then((value) {
+                if(value.success) {
+                  setState(() {
+                    isLoading = false;
+                    data = value.data;
+                  });
+                } else {
+                  setState(() {
+                    isLoading = false;
+                    error = value.errorMessage!;
+                  });
+                }
+              });
+            },
+            child: const Text("Retry"),
+          )
+        ],
+      ),
+    ).paddingHorizontal(16);
+  }
+
   @override
   @mustCallSuper
   void initState() {
@@ -40,9 +74,7 @@ abstract class LoadingState<T extends StatefulWidget, S extends Object> extends 
         child: ProgressRing(),
       );
     } else if (error != null){
-      return Center(
-        child: Text(error!),
-      );
+      return buildError();
     } else {
       return buildContent(context, data!);
     }
@@ -131,8 +163,20 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
 
   Widget buildError(BuildContext context, String error) {
     return Center(
-      child: Text(error),
-    );
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(error),
+          const SizedBox(height: 12),
+          Button(
+            onPressed: () {
+              reset();
+            },
+            child: const Text("Retry"),
+          )
+        ],
+      ),
+    ).paddingHorizontal(16);
   }
 
   @override

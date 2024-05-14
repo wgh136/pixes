@@ -1,6 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:pixes/foundation/app.dart';
+import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../components/illust_widget.dart';
@@ -31,28 +31,24 @@ class _FollowingArtworksPageState extends State<FollowingArtworksPage> {
   }
 
   Widget buildTab() {
-    return Row(
-      children: [
-        Text("Following".tl,
-          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
-        const Spacer(),
-        SegmentedButton(
-          options: [
-            SegmentedButtonOption("all", "All".tl),
-            SegmentedButtonOption("public", "Public".tl),
-            SegmentedButtonOption("private", "Private".tl),
-          ],
-          onPressed: (key) {
-            if(key != restrict) {
-              setState(() {
-                restrict = key;
-              });
-            }
-          },
-          value: restrict,
-        )
-      ],
-    ).paddingHorizontal(16).paddingBottom(4);
+    return TitleBar(
+      title: "Following".tl,
+      action: SegmentedButton(
+        options: [
+          SegmentedButtonOption("all", "All".tl),
+          SegmentedButtonOption("public", "Public".tl),
+          SegmentedButtonOption("private", "Private".tl),
+        ],
+        onPressed: (key) {
+          if(key != restrict) {
+            setState(() {
+              restrict = key;
+            });
+          }
+        },
+        value: restrict,
+      ),
+    );
   }
 }
 
