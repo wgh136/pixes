@@ -74,11 +74,6 @@ class _IllustPageState extends State<IllustPage> {
   }
 
   Widget buildImage(double width, double height, int index) {
-    File? downloadFile;
-    if(widget.illust.downloaded) {
-      downloadFile = DownloadManager().getImage(widget.illust.id, index);
-    }
-
     if (index == 0) {
       return Text(
         widget.illust.title,
@@ -86,6 +81,10 @@ class _IllustPageState extends State<IllustPage> {
       ).paddingVertical(8).paddingHorizontal(12);
     }
     index--;
+    File? downloadFile;
+    if(widget.illust.downloaded) {
+      downloadFile = DownloadManager().getImage(widget.illust.id, index);
+    }
     if (index == widget.illust.images.length) {
       return const SizedBox(
         height: _kBottomBarHeight,
@@ -107,6 +106,7 @@ class _IllustPageState extends State<IllustPage> {
             ? widget.illust.images[index].original
             : "file://${downloadFile.path}"),
         child: Image(
+          key: ValueKey(index),
           image: downloadFile == null
             ? CachedImageProvider(widget.illust.images[index].large) as ImageProvider
             : FileImage(downloadFile) as ImageProvider,

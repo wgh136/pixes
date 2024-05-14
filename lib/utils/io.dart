@@ -21,6 +21,18 @@ extension FSExt on FileSystemEntity {
   }
 }
 
+extension DirectoryExt on Directory {
+  bool havePermission() {
+    if(!existsSync()) return false;
+    try {
+      listSync();
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+}
+
 String bytesToText(int bytes) {
   if(bytes < 1024) {
     return "$bytes B";

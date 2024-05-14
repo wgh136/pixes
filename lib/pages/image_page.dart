@@ -53,9 +53,9 @@ class _ImagePageState extends State<ImagePage> with WindowListener{
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: FluentTheme.of(context).micaBackgroundColor.withOpacity(1),
-      child: Stack(
+    return ScaffoldPage(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      content: Stack(
         children: [
           Positioned.fill(child: PhotoView(
             backgroundDecoration: const BoxDecoration(
@@ -82,7 +82,8 @@ class _ImagePageState extends State<ImagePage> with WindowListener{
                   const Expanded(
                     child: DragToMoveArea(child: SizedBox.expand(),),
                   ),
-                  WindowButtons(key: ValueKey(windowButtonKey),),
+                  if(App.isDesktop)
+                    WindowButtons(key: ValueKey(windowButtonKey),),
                 ],
               ),
             ),

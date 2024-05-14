@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pixes/utils/io.dart';
 
 import 'foundation/app.dart';
 import 'network/models.dart';
@@ -43,12 +44,13 @@ class _Appdata {
     }
   }
 
-  String get downloadPath => settings["downloadPath"];
-
   Future<String> get _defaultDownloadPath async{
     if(App.isAndroid) {
-      var externalStoragePaths = await getExternalStorageDirectories(type: StorageDirectory.downloads);
-      var res = externalStoragePaths?.first.path;
+      String? downloadPath = "/storage/emulated/0/download";
+      if (!Directory(downloadPath).havePermission()) {
+        downloadPath = null;
+      }
+      var res = downloadPath;
       res ??= (await getExternalStorageDirectory())!.path;
       return "$res/pixes";
     } else if (App.isWindows){
@@ -58,7 +60,7 @@ class _Appdata {
       }
     } else if (App.isMacOS || App.isLinux) {
       var downloadPath = (await getDownloadsDirectory())?.path;
-      if(downloadPath != null) {
+      if(downloadPath != null && Directory(downloadPath).havePermission()) {
         return "$downloadPath/pixes";
       }
     }

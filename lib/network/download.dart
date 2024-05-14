@@ -113,18 +113,19 @@ class DownloadingTask {
 
   static String _generateFilePath(Illust illust, int index, String ext) {
     final String downloadPath = appdata.settings["downloadPath"];
-    final String subPathPatten = appdata.settings["downloadSubPath"];
+    String subPathPatten = appdata.settings["downloadSubPath"];
     final tags = appdata.settings["useTranslatedNameForDownload"] == false
         ? illust.tags.map((e) => e.name).toList()
         : illust.tags.map((e) => e.translatedName ?? e.name).toList();
     final tagsWeight = (appdata.settings["tagsWeight"] as String).split(' ');
     tags.sort((a, b) => tagsWeight.indexOf(a) - tagsWeight.indexOf(b));
-    subPathPatten.replaceAll(r"${id}", illust.id.toString());
-    subPathPatten.replaceAll(r"${title}", illust.title);
-    subPathPatten.replaceAll(r"${author}", illust.author.name);
-    subPathPatten.replaceAll(r"${ext}", ext);
+    subPathPatten = subPathPatten.replaceAll(r"${id}", illust.id.toString());
+    subPathPatten = subPathPatten.replaceAll(r"${title}", illust.title);
+    subPathPatten = subPathPatten.replaceAll(r"${author}", illust.author.name);
+    subPathPatten = subPathPatten.replaceAll(r"${index}", index.toString());
+    subPathPatten = subPathPatten.replaceAll(r"${ext}", ext);
     for(int i=0; i<tags.length; i++) {
-      subPathPatten.replaceAll("\${tag$i}", tags[i]);
+      subPathPatten = subPathPatten.replaceAll("\${tag$i}", tags[i]);
     }
     return "$downloadPath$subPathPatten";
   }
@@ -203,7 +204,7 @@ class DownloadManager {
     var res = _db.select('''
       select * from images
       where illust_id = ? and image_index = ?;
-    ''');
+    ''', [illustId, index]);
     if (res.isEmpty) return null;
     var file = File(res.first["path"] as String);
     if (!file.existsSync()) return null;
