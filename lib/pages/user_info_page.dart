@@ -77,6 +77,7 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
                 image: CachedImageProvider(data!.avatar),
                 width: 64,
                 height: 64,
+                fit: BoxFit.cover,
               ),
             ),),
           const SizedBox(height: 8),

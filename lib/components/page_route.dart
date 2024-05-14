@@ -307,7 +307,7 @@ class SideBarRoute<T> extends PopupRoute<T> {
   final Widget child;
 
   @override
-  Color? get barrierColor => const Color.fromARGB(64, 205, 205, 205);
+  Color? get barrierColor => Colors.transparent;
 
   @override
   bool get barrierDismissible => true;
@@ -331,7 +331,8 @@ class SideBarRoute<T> extends PopupRoute<T> {
                 color: FluentTheme.of(context).micaBackgroundColor.withOpacity(0.98),
                 borderRadius: const BorderRadius.only(topLeft: Radius.circular(4), bottomLeft: Radius.circular(4))
               ),
-              constraints: const BoxConstraints(maxWidth: _kSideBarWidth),
+              constraints: BoxConstraints(maxWidth: min(_kSideBarWidth,
+                  MediaQuery.of(context).size.width)),
               width: double.infinity,
               child: child,
             ),

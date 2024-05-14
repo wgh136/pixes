@@ -23,7 +23,7 @@ import "package:window_manager/window_manager.dart";
 import "../components/page_route.dart";
 import "downloading_page.dart";
 
-const _kAppBarHeight = 36.0;
+double get _appBarHeight => App.isDesktop ? 36.0 : 48.0;
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -143,11 +143,14 @@ class _MainPageState extends State<MainPage> with WindowListener {
                   ),
                 ],
               ),
-              paneBodyBuilder: (pane, child) => Navigator(
-                key: navigatorKey,
-                onGenerateRoute: (settings) => AppPageRoute(
-                    builder: (context) => const RecommendationPage()),
-              )),
+              paneBodyBuilder: (pane, child) => NavigatorPopHandler(
+                key: const Key("navigator"),
+                onPop: () => navigatorKey.currentState?.pop(),
+                child: Navigator(
+                  key: navigatorKey,
+                  onGenerateRoute: (settings) => AppPageRoute(
+                      builder: (context) => const RecommendationPage()),
+              ))),
         ));
   }
 
@@ -176,7 +179,7 @@ class _MainPageState extends State<MainPage> with WindowListener {
       BuildContext context, GlobalKey<NavigatorState> navigatorKey) {
     return NavigationAppBar(
       automaticallyImplyLeading: false,
-      height: _kAppBarHeight,
+      height: _appBarHeight,
       title: () {
         if (!App.isDesktop) {
           return const Align(
@@ -198,9 +201,9 @@ class _MainPageState extends State<MainPage> with WindowListener {
         );
       }(),
       leading: _BackButton(navigatorKey),
-      actions: WindowButtons(
+      actions: App.isDesktop ? WindowButtons(
         key: ValueKey(windowButtonKey),
-      ),
+      ) : null,
     );
   }
 }
@@ -298,7 +301,7 @@ class WindowButtons extends StatelessWidget {
 
     return SizedBox(
       width: 138,
-      height: _kAppBarHeight,
+      height: _appBarHeight,
       child: Row(
         children: [
           WindowButton(

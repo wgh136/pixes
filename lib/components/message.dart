@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:pixes/components/md.dart';
 
 void showToast(BuildContext context, {required String message, IconData? icon}) {
   var newEntry = OverlayEntry(
@@ -27,7 +28,7 @@ class ToastOverlay extends StatelessWidget {
       child: Align(
         alignment: Alignment.bottomCenter,
         child: PhysicalModel(
-          color: Colors.white,
+          color: ColorScheme.of(context).surface,
           borderRadius: BorderRadius.circular(4),
           elevation: 1,
           child: Container(
@@ -42,8 +43,11 @@ class ToastOverlay extends StatelessWidget {
                   ),
                 Text(
                   message,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: ColorScheme.of(context).onSurface
+                  ),
                   maxLines: 3,
                 ),
               ],

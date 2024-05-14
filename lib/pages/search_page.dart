@@ -58,6 +58,7 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
+      padding: EdgeInsets.zero,
       content: Column(
         children: [
           buildSearchBar(),
@@ -171,6 +172,7 @@ class _TrendingTagsViewState extends LoadingState<_TrendingTagsView, List<Trendi
   @override
   Widget buildContent(BuildContext context, List<TrendingTag> data) {
     return MasonryGridView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
       gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 240,
       ),

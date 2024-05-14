@@ -35,20 +35,29 @@ class _RecommendationPageState extends State<RecommendationPage> {
   }
 
   Widget buildTab() {
-    return SegmentedButton<int>(
-      options: [
-        SegmentedButtonOption(0, "Artworks".tl),
-        SegmentedButtonOption(1, "Users".tl),
-      ],
-      onPressed: (key) {
-        if(key != type) {
-          setState(() {
-            type = key;
-          });
-        }
-      },
-      value: type,
-    ).padding(const EdgeInsets.symmetric(vertical: 8, horizontal: 8));
+    return SizedBox(
+      child: Row(
+        children: [
+          Text("Explore".tl,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+          const Spacer(),
+          SegmentedButton<int>(
+            options: [
+              SegmentedButtonOption(0, "Artworks".tl),
+              SegmentedButtonOption(1, "Users".tl),
+            ],
+            onPressed: (key) {
+              if(key != type) {
+                setState(() {
+                  type = key;
+                });
+              }
+            },
+            value: type,
+          )
+        ],
+      ).paddingHorizontal(16).paddingBottom(4),
+    );
   }
 }
 
@@ -65,6 +74,7 @@ class _RecommendationArtworksPageState extends MultiPageLoadingState<_Recommenda
   Widget buildContent(BuildContext context, final List<Illust> data) {
     return LayoutBuilder(builder: (context, constrains){
       return MasonryGridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 240,
         ),

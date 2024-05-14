@@ -31,21 +31,28 @@ class _FollowingArtworksPageState extends State<FollowingArtworksPage> {
   }
 
   Widget buildTab() {
-    return SegmentedButton(
-      options: [
-        SegmentedButtonOption("all", "All".tl),
-        SegmentedButtonOption("public", "Public".tl),
-        SegmentedButtonOption("private", "Private".tl),
+    return Row(
+      children: [
+        Text("Following".tl,
+          style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+        const Spacer(),
+        SegmentedButton(
+          options: [
+            SegmentedButtonOption("all", "All".tl),
+            SegmentedButtonOption("public", "Public".tl),
+            SegmentedButtonOption("private", "Private".tl),
+          ],
+          onPressed: (key) {
+            if(key != restrict) {
+              setState(() {
+                restrict = key;
+              });
+            }
+          },
+          value: restrict,
+        )
       ],
-      onPressed: (key) {
-        if(key != restrict) {
-          setState(() {
-            restrict = key;
-          });
-        }
-      },
-      value: restrict,
-    ).padding(const EdgeInsets.symmetric(vertical: 8, horizontal: 8));
+    ).paddingHorizontal(16).paddingBottom(4);
   }
 }
 
@@ -63,6 +70,7 @@ class _OneFollowingPageState extends MultiPageLoadingState<_OneFollowingPage, Il
   Widget buildContent(BuildContext context, final List<Illust> data) {
     return LayoutBuilder(builder: (context, constrains){
       return MasonryGridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 240,
         ),

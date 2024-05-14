@@ -31,20 +31,26 @@ class _BookMarkedArtworkPageState extends State<BookMarkedArtworkPage>{
   }
 
   Widget buildTab() {
-    return SegmentedButton(
-      options: [
-        SegmentedButtonOption("public", "Public".tl),
-        SegmentedButtonOption("private", "Private".tl),
+    return Row(
+      children: [
+        Text("Following".tl, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
+        const Spacer(),
+        SegmentedButton(
+          options: [
+            SegmentedButtonOption("public", "Public".tl),
+            SegmentedButtonOption("private", "Private".tl),
+          ],
+          onPressed: (key) {
+            if(key != restrict) {
+              setState(() {
+                restrict = key;
+              });
+            }
+          },
+          value: restrict,
+        )
       ],
-      onPressed: (key) {
-        if(key != restrict) {
-          setState(() {
-            restrict = key;
-          });
-        }
-      },
-      value: restrict,
-    ).padding(const EdgeInsets.symmetric(vertical: 8, horizontal: 8));
+    ).paddingHorizontal(16).paddingVertical(4);
   }
 }
 
@@ -62,6 +68,7 @@ class _OneBookmarkedPageState extends MultiPageLoadingState<_OneBookmarkedPage, 
   Widget buildContent(BuildContext context, final List<Illust> data) {
     return LayoutBuilder(builder: (context, constrains){
       return MasonryGridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 240,
         ),

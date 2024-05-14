@@ -67,7 +67,7 @@ class _RankingPageState extends State<RankingPage> {
           )
         ],
       )
-    ).padding(const EdgeInsets.symmetric(vertical: 8, horizontal: 12));
+    ).padding(const EdgeInsets.symmetric(vertical: 8, horizontal: 16));
   }
 }
 
@@ -85,6 +85,7 @@ class _OneRankingPageState extends MultiPageLoadingState<_OneRankingPage, Illust
   Widget buildContent(BuildContext context, final List<Illust> data) {
     return LayoutBuilder(builder: (context, constrains){
       return MasonryGridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
         gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 240,
         ),

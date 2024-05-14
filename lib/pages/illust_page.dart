@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show Icons;
 import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/components/loading.dart';
@@ -11,6 +12,7 @@ import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/network/download.dart';
 import 'package:pixes/network/network.dart';
 import 'package:pixes/pages/image_page.dart';
+import 'package:pixes/pages/search_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/translation.dart';
 
@@ -65,6 +67,7 @@ class _IllustPageState extends State<IllustPage> {
   Widget buildBody(double width, double height) {
     return ListView.builder(
         itemCount: widget.illust.images.length + 2,
+        padding: EdgeInsets.zero,
         itemBuilder: (context, index) {
           return buildImage(width, height, index);
         });
@@ -155,9 +158,7 @@ class _BottomBar extends StatefulWidget {
   State<_BottomBar> createState() => _BottomBarState();
 }
 
-class _BottomBarState extends State<_BottomBar> {
-  double? top;
-
+class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
   double pageHeight = 0;
 
   double widgetHeight = 48;
@@ -166,16 +167,59 @@ class _BottomBarState extends State<_BottomBar> {
 
   double _width = 0;
 
+  late VerticalDragGestureRecognizer _recognizer;
+
+  late final AnimationController animationController;
+
+  double get minValue => pageHeight - widgetHeight;
+  double get maxValue => pageHeight - _kBottomBarHeight;
+
   @override
   void initState() {
     _width = widget.width;
     pageHeight = widget.height;
-    top = pageHeight - _kBottomBarHeight;
     Future.delayed(const Duration(milliseconds: 200), () {
       final box = key.currentContext?.findRenderObject() as RenderBox?;
       widgetHeight = (box?.size.height) ?? 0;
     });
+    _recognizer = VerticalDragGestureRecognizer()
+      ..onStart = _handlePointerDown
+      ..onUpdate = _handlePointerMove
+      ..onEnd = _handlePointerUp
+      ..onCancel = _handlePointerCancel;
+    animationController = AnimationController(
+      vsync: this, duration: const Duration(milliseconds: 180),
+      value: 1
+    );
     super.initState();
+  }
+
+  void _handlePointerDown(DragStartDetails details) {}
+  void _handlePointerMove(DragUpdateDetails details) {
+    var offset = details.primaryDelta ?? 0;
+    final minValue = pageHeight - widgetHeight;
+    final maxValue = pageHeight - _kBottomBarHeight;
+    var top = animationController.value * (maxValue - minValue) + minValue;
+    top  = (top + offset).clamp(minValue, maxValue);
+    animationController.value = (top - minValue) / (maxValue - minValue);
+  }
+  void _handlePointerUp(DragEndDetails details) {
+    var speed = details.primaryVelocity ?? 0;
+    const minShouldTransitionSpeed = 1000;
+    if(speed > minShouldTransitionSpeed) {
+      animationController.forward();
+    } else if(speed < minShouldTransitionSpeed) {
+      animationController.reverse();
+    } else {
+      _handlePointerCancel();
+    }
+  }
+  void _handlePointerCancel() {
+    if(animationController.value >= 0.5 ) {
+      animationController.forward();
+    } else {
+      animationController.reverse();
+    }
   }
 
   @override
@@ -183,19 +227,17 @@ class _BottomBarState extends State<_BottomBar> {
     if (widget.height != pageHeight) {
       setState(() {
         pageHeight = widget.height;
-        top = pageHeight - _kBottomBarHeight;
       });
     }
+    _recognizer.dispose();
     if(_width != widget.width) {
       _width = widget.width;
       Future.microtask(() {
         final box = key.currentContext?.findRenderObject() as RenderBox?;
         var oldHeight = widgetHeight;
         widgetHeight = (box?.size.height) ?? 0;
-        if(oldHeight != widgetHeight && top != pageHeight - _kBottomBarHeight) {
-          setState(() {
-            top = pageHeight - widgetHeight;
-          });
+        if(oldHeight != widgetHeight) {
+          setState(() {});
         }
       });
     }
@@ -204,32 +246,44 @@ class _BottomBarState extends State<_BottomBar> {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedPositioned(
-      top: top,
-      left: 0,
-      right: 0,
-      duration: const Duration(milliseconds: 180),
-      curve: Curves.ease,
-      child: Card(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
-        backgroundColor:
-            FluentTheme.of(context).micaBackgroundColor.withOpacity(0.96),
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        child: SizedBox(
-          width: double.infinity,
-          key: key,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              buildTop(),
-              buildStats(),
-              buildTags(),
-              SelectableText("${"Artwork ID".tl}: ${widget.illust.id}\n${"Artist ID".tl}: ${widget.illust.author.id}", style: TextStyle(color: ColorScheme.of(context).outline),).paddingLeft(4),
-              const SizedBox(height: 8,)
-            ],
-          ),
-        ),
+    return AnimatedBuilder(
+      animation: CurvedAnimation(
+        parent: animationController,
+        curve: Curves.ease,
+        reverseCurve: Curves.ease,
       ),
+      builder: (context, child) {
+        return Positioned(
+          top: minValue + (maxValue - minValue) * animationController.value,
+          left: 0,
+          right: 0,
+          child: Listener(
+            onPointerDown: (event) {
+              _recognizer.addPointer(event);
+            },
+            child: Card(
+              borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
+              backgroundColor:
+              FluentTheme.of(context).micaBackgroundColor.withOpacity(0.96),
+              padding: const EdgeInsets.symmetric(horizontal: 8),
+              child: SizedBox(
+                width: double.infinity,
+                key: key,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    buildTop(),
+                    buildStats(),
+                    buildTags(),
+                    SelectableText("${"Artwork ID".tl}: ${widget.illust.id}\n${"Artist ID".tl}: ${widget.illust.author.id}", style: TextStyle(color: ColorScheme.of(context).outline),).paddingLeft(4),
+                    const SizedBox(height: 8,)
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -243,21 +297,17 @@ class _BottomBarState extends State<_BottomBar> {
             buildAuthor(),
             ...buildActions(constrains.maxWidth),
             const Spacer(),
-            if (top == pageHeight - _kBottomBarHeight)
+            if (animationController.value == 1)
               IconButton(
                   icon: const Icon(FluentIcons.up),
                   onPressed: () {
-                    setState(() {
-                      top = pageHeight - widgetHeight;
-                    });
+                    animationController.reverse();
                   })
             else
               IconButton(
                   icon: const Icon(FluentIcons.down),
                   onPressed: () {
-                    setState(() {
-                      top = pageHeight - _kBottomBarHeight;
-                    });
+                    animationController.forward();
                   })
           ],
         );
@@ -287,14 +337,15 @@ class _BottomBarState extends State<_BottomBar> {
       });
     }
 
+    final bool showUserName = MediaQuery.of(context).size.width > 640;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       padding: const EdgeInsets.symmetric(horizontal: 8),
       borderRadius: BorderRadius.circular(8),
-      backgroundColor: FluentTheme.of(context).cardColor.withOpacity(0.72),
       child: SizedBox(
         height: double.infinity,
-        width: 246,
+        width: showUserName ? 246 : 128,
         child: Row(
           children: [
             SizedBox(
@@ -325,12 +376,13 @@ class _BottomBarState extends State<_BottomBar> {
             const SizedBox(
               width: 8,
             ),
-            Expanded(
-              child: Text(
-                widget.illust.author.name,
-                maxLines: 2,
+            if(showUserName)
+              Expanded(
+                child: Text(
+                  widget.illust.author.name,
+                  maxLines: 2,
+                ),
               ),
-            ),
             if(isFollowing)
               Button(onPressed: follow, child: const SizedBox(
                 width: 42,
@@ -343,11 +395,14 @@ class _BottomBarState extends State<_BottomBar> {
                 ),
               ))
             else if (!widget.illust.author.isFollowed)
-              Button(onPressed: follow, child: Text("Follow".tl))
+              Button(onPressed: follow, child: Text("Follow".tl).fixWidth(56))
             else
               Button(
                 onPressed: follow,
-                child: Text("Unfollow".tl, style: TextStyle(color: ColorScheme.of(context).error),),
+                child: Text(
+                  "Unfollow".tl,
+                  style: TextStyle(color: ColorScheme.of(context).error),
+                ).fixWidth(56),
               ),
           ],
         ),
@@ -558,9 +613,17 @@ class _BottomBarState extends State<_BottomBar> {
           if(e.translatedName != null && e.name != e.translatedName) {
             text += "/${e.translatedName}";
           }
-          return Card(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
-            child: Text(text, style: const TextStyle(fontSize: 13),),
+          return MouseRegion(
+            cursor: SystemMouseCursors.click,
+            child: GestureDetector(
+              onTap: () {
+                context.to(() => SearchResultPage(e.name));
+              },
+              child: Card(
+                padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 6),
+                child: Text(text, style: const TextStyle(fontSize: 13),),
+              ),
+            ),
           );
         }).toList(),
       ),
@@ -601,10 +664,11 @@ class _CommentsPageState extends MultiPageLoadingState<_CommentsPage, Comment> {
 
   Widget buildBody(BuildContext context, List<Comment> data) {
     return ListView.builder(
+        padding: EdgeInsets.zero,
         itemCount: data.length + 2,
         itemBuilder: (context, index) {
           if(index == 0) {
-            return Text("Comments".tl, style: const TextStyle(fontSize: 20)).paddingVertical(8).paddingHorizontal(12);
+            return Text("Comments".tl, style: const TextStyle(fontSize: 20)).paddingVertical(16).paddingHorizontal(12);
           } else if(index == data.length + 1) {
             return const SizedBox(height: 64,);
           }
