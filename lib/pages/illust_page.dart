@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/material.dart' show Icons;
 import 'package:pixes/components/animated_image.dart';
@@ -69,6 +71,11 @@ class _IllustPageState extends State<IllustPage> {
   }
 
   Widget buildImage(double width, double height, int index) {
+    File? downloadFile;
+    if(widget.illust.downloaded) {
+      downloadFile = DownloadManager().getImage(widget.illust.id, index);
+    }
+
     if (index == 0) {
       return Text(
         widget.illust.title,
@@ -93,9 +100,13 @@ class _IllustPageState extends State<IllustPage> {
       width: imageWidth,
       height: imageHeight,
       child: GestureDetector(
-        onTap: () => ImagePage.show(widget.illust.images[index].original),
+        onTap: () => ImagePage.show(downloadFile == null
+            ? widget.illust.images[index].original
+            : "file://${downloadFile.path}"),
         child: Image(
-          image: CachedImageProvider(widget.illust.images[index].large),
+          image: downloadFile == null
+            ? CachedImageProvider(widget.illust.images[index].large) as ImageProvider
+            : FileImage(downloadFile) as ImageProvider,
           width: imageWidth,
           fit: BoxFit.cover,
           height: imageHeight,
@@ -123,14 +134,9 @@ class _IllustPageState extends State<IllustPage> {
       ),
     );
 
-    if (index == 0) {
-      return Hero(
-        tag: "illust_${widget.illust.id}",
-        child: image,
-      );
-    } else {
-      return image;
-    }
+    return Center(
+      child: image,
+    );
   }
 }
 
@@ -374,7 +380,10 @@ class _BottomBarState extends State<_BottomBar> {
       });
     }
 
-    void download() {}
+    void download() {
+      DownloadManager().addDownloadingTask(widget.illust);
+      setState(() {});
+    }
 
     bool showText = width > 640;
 
@@ -416,24 +425,47 @@ class _BottomBarState extends State<_BottomBar> {
     yield const SizedBox(width: 8,);
 
     if (!widget.illust.downloaded) {
-      yield Button(
-        onPressed: download,
-        child: SizedBox(
-          height: 28,
-          child: Row(
-            children: [
-              const Icon(
-                FluentIcons.download,
-                size: 18,
-              ),
-              if(showText)
-                const SizedBox(width: 8,),
-              if(showText)
-                Text("Download".tl),
-            ],
+      if(widget.illust.downloading) {
+        yield Button(
+          onPressed: () => {},
+          child: SizedBox(
+            height: 28,
+            child: Row(
+              children: [
+                Icon(
+                  FluentIcons.download,
+                  color: ColorScheme.of(context).outline,
+                  size: 18,
+                ),
+                if(showText)
+                  const SizedBox(width: 8,),
+                if(showText)
+                  Text("Downloading".tl,
+                    style: TextStyle(color: ColorScheme.of(context).outline),),
+              ],
+            ),
           ),
-        ),
-      );
+        );
+      } else {
+        yield Button(
+          onPressed: download,
+          child: SizedBox(
+            height: 28,
+            child: Row(
+              children: [
+                const Icon(
+                  FluentIcons.download,
+                  size: 18,
+                ),
+                if(showText)
+                  const SizedBox(width: 8,),
+                if(showText)
+                  Text("Download".tl),
+              ],
+            ),
+          ),
+        );
+      }
     }
 
     yield const SizedBox(width: 8,);

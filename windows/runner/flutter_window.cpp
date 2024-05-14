@@ -1,13 +1,45 @@
+#pragma comment(lib, "winhttp.lib")
 #include "flutter_window.h"
+#include <flutter/method_channel.h>
 #include <flutter/event_channel.h>
 #include <flutter/event_sink.h>
 #include <flutter/event_stream_handler_functions.h>
 #include <flutter/standard_method_codec.h>
 #include <optional>
-
+#include <ShlObj.h>
+#include <winhttp.h>
 #include "flutter/generated_plugin_registrant.h"
+#include "utils.h"
 
 std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>&& mouseEvents = nullptr;
+
+static std::string getProxy() {
+    _WINHTTP_CURRENT_USER_IE_PROXY_CONFIG net;
+    WinHttpGetIEProxyConfigForCurrentUser(&net);
+    if (net.lpszProxy == nullptr) {
+        GlobalFree(net.lpszAutoConfigUrl);
+        GlobalFree(net.lpszProxyBypass);
+        return "No Proxy";
+    }
+    else {
+        GlobalFree(net.lpszAutoConfigUrl);
+        GlobalFree(net.lpszProxyBypass);
+        return Utf8FromUtf16(net.lpszProxy);
+    }
+}
+
+static std::string getPicturePath() {
+    PWSTR picturesPath;
+    HRESULT result = SHGetKnownFolderPath(FOLDERID_Pictures, 0, NULL, &picturesPath);
+    if (SUCCEEDED(result)) {
+        auto res = Utf8FromUtf16(picturesPath);
+        CoTaskMemFree(picturesPath);
+        return res;
+    }
+    else {
+        return "error";
+    }
+}
 
 FlutterWindow::FlutterWindow(const flutter::DartProject& project)
     : project_(project) {}
@@ -31,15 +63,13 @@ bool FlutterWindow::OnCreate() {
   }
   RegisterPlugins(flutter_controller_->engine());
 
-    //监听鼠标侧键的EventChannel
-    const auto channelName = "pixes/mouse";
-    flutter::EventChannel<> channel2(
+  const auto channelName = "pixes/mouse";
+  flutter::EventChannel<> channel2(
         flutter_controller_->engine()->messenger(), channelName,
         &flutter::StandardMethodCodec::GetInstance()
-    );
-
-    auto eventHandler = std::make_unique<
-        flutter::StreamHandlerFunctions<flutter::EncodableValue>>(
+  );
+  auto eventHandler = std::make_unique<
+      flutter::StreamHandlerFunctions<flutter::EncodableValue>>(
     [](
         const flutter::EncodableValue* arguments,
         std::unique_ptr<flutter::EventSink<flutter::EncodableValue>>&& events){
@@ -50,9 +80,27 @@ bool FlutterWindow::OnCreate() {
         -> std::unique_ptr<flutter::StreamHandlerError<flutter::EncodableValue>> {
             mouseEvents = nullptr;
             return nullptr;
-    });
+  });
+  channel2.SetStreamHandler(std::move(eventHandler));
 
-    channel2.SetStreamHandler(std::move(eventHandler));
+  const auto pictureFolderChannel = "pixes/picture_folder";
+  flutter::MethodChannel<> channel3(
+      flutter_controller_->engine()->messenger(), pictureFolderChannel,
+      &flutter::StandardMethodCodec::GetInstance()
+  );
+  channel3.SetMethodCallHandler([](
+      const flutter::MethodCall<>& call, const std::unique_ptr<flutter::MethodResult<>>& result) {
+          result->Success(getPicturePath());
+      });
+
+  const flutter::MethodChannel<> channel(
+      flutter_controller_->engine()->messenger(), "pixes/proxy",
+      &flutter::StandardMethodCodec::GetInstance()
+  );
+  channel.SetMethodCallHandler(
+      [](const flutter::MethodCall<>& call, const std::unique_ptr<flutter::MethodResult<>>& result) {
+          result->Success(getProxy());
+      });
 
   SetChildContent(flutter_controller_->view()->GetNativeWindow());
 

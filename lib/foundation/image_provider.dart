@@ -150,12 +150,16 @@ class CachedImageProvider extends BaseImageProvider<CachedImageProvider> {
   Future<Uint8List> load(StreamController<ImageChunkEvent> chunkEvents) async{
     var cached = await CacheManager().findCache(key);
     if(cached != null) {
+      chunkEvents.add(const ImageChunkEvent(
+        cumulativeBytesLoaded: 1,
+        expectedTotalBytes: 1,
+      ));
       return await File(cached).readAsBytes();
     }
     var dio = AppDio();
     final time = DateFormat("yyyy-MM-dd'T'HH:mm:ss'+00:00'").format(DateTime.now());
     final hash = md5.convert(utf8.encode(time + Network.hashSalt)).toString();
-    var res = await dio.get(
+    var res = await dio.get<ResponseBody>(
       url,
       options: Options(
         responseType: ResponseType.stream,
@@ -174,12 +178,16 @@ class CachedImageProvider extends BaseImageProvider<CachedImageProvider> {
     }
     var data = <int>[];
     var cachingFile = await CacheManager().openWrite(key);
-    await for (var chunk in res.data.stream) {
+    await for (var chunk in res.data!.stream) {
+      var length = res.data!.contentLength+1;
+      if(length < data.length) {
+        length = data.length + 1;
+      }
       data.addAll(chunk);
       await cachingFile.writeBytes(chunk);
       chunkEvents.add(ImageChunkEvent(
         cumulativeBytesLoaded: data.length,
-        expectedTotalBytes: res.data.contentLength+1,
+        expectedTotalBytes: length,
       ));
     }
     await cachingFile.close();

@@ -39,7 +39,7 @@ class Network {
 
   final dio = AppDio();
 
-  Map<String, String> get _headers {
+  Map<String, String> get headers {
     final time =
         DateFormat("yyyy-MM-dd'T'HH:mm:ss'+00:00'").format(DateTime.now());
     final hash = md5.convert(utf8.encode(time + hashSalt)).toString();
@@ -80,7 +80,7 @@ class Network {
           },
           options: Options(
               contentType: Headers.formUrlEncodedContentType,
-              headers: _headers));
+              headers: headers));
       if (res.statusCode != 200) {
         throw "Invalid Status code ${res.statusCode}";
       }
@@ -106,7 +106,7 @@ class Network {
           },
           options: Options(
               contentType: Headers.formUrlEncodedContentType,
-              headers: _headers));
+              headers: headers));
       var account = Account.fromJson(json.decode(res.data!));
       appdata.account = account;
       appdata.writeData();
@@ -126,7 +126,7 @@ class Network {
       final res = await dio.get<Map<String, dynamic>>(path,
           queryParameters: query,
           options:
-              Options(headers: _headers, validateStatus: (status) => true));
+              Options(headers: headers, validateStatus: (status) => true));
       if (res.statusCode == 200) {
         return Res(res.data!);
       } else if (res.statusCode == 400) {
@@ -162,7 +162,7 @@ class Network {
           queryParameters: query,
           data: data,
           options: Options(
-              headers: _headers,
+              headers: headers,
               validateStatus: (status) => true,
               contentType: Headers.formUrlEncodedContentType));
       if (res.statusCode == 200) {

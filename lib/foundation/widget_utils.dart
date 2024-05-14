@@ -56,4 +56,12 @@ extension WidgetExtension on Widget{
   Widget sliverPaddingHorizontal(double padding){
     return SliverPadding(padding: EdgeInsets.symmetric(horizontal: padding), sliver: this);
   }
+
+  Widget fixWidth(double width){
+    return SizedBox(width: width, child: this);
+  }
+
+  Widget fixHeight(double height){
+    return SizedBox(height: height, child: this);
+  }
 }

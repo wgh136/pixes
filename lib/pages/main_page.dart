@@ -8,6 +8,7 @@ import "package:pixes/components/md.dart";
 import "package:pixes/foundation/app.dart";
 import "package:pixes/network/network.dart";
 import "package:pixes/pages/bookmarks.dart";
+import "package:pixes/pages/downloaded_page.dart";
 import "package:pixes/pages/following_artworks.dart";
 import "package:pixes/pages/ranking.dart";
 import "package:pixes/pages/recommendation_page.dart";
@@ -20,7 +21,7 @@ import "package:pixes/utils/translation.dart";
 import "package:window_manager/window_manager.dart";
 
 import "../components/page_route.dart";
-import "download_page.dart";
+import "downloading_page.dart";
 
 const _kAppBarHeight = 36.0;
 
@@ -34,7 +35,7 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> with WindowListener {
   final navigatorKey = GlobalKey<NavigatorState>();
 
-  int index = 3;
+  int index = 4;
 
   int windowButtonKey = 0;
 
@@ -102,8 +103,13 @@ class _MainPageState extends State<MainPage> with WindowListener {
                     body: const SizedBox.shrink(),
                   ),
                   PaneItem(
+                    icon: const Icon(MdIcons.downloading, size: 20,),
+                    title: Text('Downloading'.tl),
+                    body: const SizedBox.shrink(),
+                  ),
+                  PaneItem(
                     icon: const Icon(MdIcons.download, size: 20,),
-                    title: Text('Download'.tl),
+                    title: Text('Downloaded'.tl),
                     body: const SizedBox.shrink(),
                   ),
                   PaneItemSeparator(),
@@ -148,7 +154,8 @@ class _MainPageState extends State<MainPage> with WindowListener {
   static final pageBuilders = <Widget Function()>[
     () => UserInfoPage(appdata.account!.user.id),
     () => const SearchPage(),
-    () => const DownloadPage(),
+    () => const DownloadingPage(),
+    () => const DownloadedPage(),
     () => const RecommendationPage(),
     () => const BookMarkedArtworkPage(),
     () => const FollowingArtworksPage(),

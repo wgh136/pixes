@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:pixes/components/page_route.dart';
@@ -60,7 +62,9 @@ class _ImagePageState extends State<ImagePage> with WindowListener{
                 color: Colors.transparent
             ),
             filterQuality: FilterQuality.medium,
-            imageProvider: CachedImageProvider(widget.url),
+            imageProvider: widget.url.startsWith("file://")
+                ? FileImage(File(widget.url.replaceFirst("file://", "")))
+                : CachedImageProvider(widget.url) as ImageProvider,
           )),
           Positioned(
             top: 0,
