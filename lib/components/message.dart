@@ -7,9 +7,11 @@ void showToast(BuildContext context, {required String message, IconData? icon}) 
   var newEntry = OverlayEntry(
       builder: (context) => ToastOverlay(message: message, icon: icon));
 
-  OverlayWidget.of(context)?.addOverlay(newEntry);
+  var overlay = OverlayWidget.of(context);
 
-  Timer(const Duration(seconds: 2), () => OverlayWidget.of(context)?.remove(newEntry));
+  overlay?.addOverlay(newEntry);
+
+  Timer(const Duration(seconds: 2), () => overlay?.remove(newEntry));
 }
 
 class ToastOverlay extends StatelessWidget {
