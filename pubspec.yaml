@@ -51,6 +51,9 @@ dependencies:
     git:
       url: https://github.com/wgh136/photo_view
       ref: main
+  share_plus: ^9.0.0
+  file_selector: ^1.0.1
+  flutter_file_dialog: 3.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

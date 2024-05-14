@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show Icons;
+import 'package:flutter/services.dart';
 import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/message.dart';
@@ -15,6 +16,7 @@ import 'package:pixes/pages/image_page.dart';
 import 'package:pixes/pages/search_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/translation.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../components/md.dart';
 
@@ -203,18 +205,21 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
     top  = (top + offset).clamp(minValue, maxValue);
     animationController.value = (top - minValue) / (maxValue - minValue);
   }
+
   void _handlePointerUp(DragEndDetails details) {
     var speed = details.primaryVelocity ?? 0;
     const minShouldTransitionSpeed = 1000;
     if(speed > minShouldTransitionSpeed) {
       animationController.forward();
-    } else if(speed < minShouldTransitionSpeed) {
+    } else if(speed < 0 - minShouldTransitionSpeed) {
       animationController.reverse();
     } else {
       _handlePointerCancel();
     }
   }
+
   void _handlePointerCancel() {
+    if(animationController.value == 1 || animationController.value == 0) return;
     if(animationController.value >= 0.5 ) {
       animationController.forward();
     } else {
@@ -261,6 +266,16 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
             onPointerDown: (event) {
               _recognizer.addPointer(event);
             },
+            onPointerSignal: (event) {
+              if(event is PointerScrollEvent) {
+                var offset = (event).scrollDelta.dy;
+                if(offset < 0) {
+                  animationController.reverse();
+                } else {
+                  animationController.forward();
+                }
+              }
+            },
             child: Card(
               borderRadius: const BorderRadius.vertical(top: Radius.circular(8)),
               backgroundColor:
@@ -275,6 +290,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
                     buildTop(),
                     buildStats(),
                     buildTags(),
+                    buildMoreActions(),
                     SelectableText("${"Artwork ID".tl}: ${widget.illust.id}\n${"Artist ID".tl}: ${widget.illust.author.id}", style: TextStyle(color: ColorScheme.of(context).outline),).paddingLeft(4),
                     const SizedBox(height: 8,)
                   ],
@@ -395,14 +411,14 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
                 ),
               ))
             else if (!widget.illust.author.isFollowed)
-              Button(onPressed: follow, child: Text("Follow".tl).fixWidth(56))
+              Button(onPressed: follow, child: Text("Follow".tl).fixWidth(62))
             else
               Button(
                 onPressed: follow,
                 child: Text(
                   "Unfollow".tl,
                   style: TextStyle(color: ColorScheme.of(context).error),
-                ).fixWidth(56),
+                ).fixWidth(62),
               ),
           ],
         ),
@@ -412,28 +428,28 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
 
   bool isBookmarking = false;
 
+  void favorite([String type = "public"]) async{
+    if(isBookmarking) return;
+    setState(() {
+      isBookmarking = true;
+    });
+    var method = widget.illust.isBookmarked ? "delete" : "add";
+    var res = await Network().addBookmark(widget.illust.id.toString(), method, type);
+    if(res.error) {
+      if(mounted) {
+        context.showToast(message: "Network Error");
+      }
+    } else {
+      widget.illust.isBookmarked = !widget.illust.isBookmarked;
+      widget.favoriteCallback?.call(widget.illust.isBookmarked);
+    }
+    setState(() {
+      isBookmarking = false;
+    });
+  }
+
   Iterable<Widget> buildActions(double width) sync* {
     yield const SizedBox(width: 8,);
-
-    void favorite() async{
-      if(isBookmarking) return;
-      setState(() {
-        isBookmarking = true;
-      });
-      var method = widget.illust.isBookmarked ? "delete" : "add";
-      var res = await Network().addBookmark(widget.illust.id.toString(), method);
-      if(res.error) {
-        if(mounted) {
-          context.showToast(message: "Network Error");
-        }
-      } else {
-        widget.illust.isBookmarked = !widget.illust.isBookmarked;
-        widget.favoriteCallback?.call(widget.illust.isBookmarked);
-      }
-      setState(() {
-        isBookmarking = false;
-      });
-    }
 
     void download() {
       DownloadManager().addDownloadingTask(widget.illust);
@@ -628,6 +644,87 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
         }).toList(),
       ),
     ).paddingVertical(8).paddingHorizontal(2);
+  }
+
+  Widget buildMoreActions() {
+    return Row(
+      children: [
+        Button(
+          onPressed: () => favorite("private"),
+          child: SizedBox(
+            height: 28,
+            child: Row(
+              children: [
+                if(isBookmarking)
+                  const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: ProgressRing(strokeWidth: 2,),
+                  )
+                else if(widget.illust.isBookmarked)
+                  Icon(
+                    Icons.favorite,
+                    color: ColorScheme.of(context).error,
+                    size: 18,
+                  )
+                else
+                  const Icon(
+                    Icons.favorite_border,
+                    size: 18,
+                  ),
+                  const SizedBox(width: 8,),
+                  if(widget.illust.isBookmarked)
+                    Text("Cancel".tl)
+                  else
+                    Text("Private".tl)
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 8,),
+        Button(
+          onPressed: () {
+            Share.share("${widget.illust.title}\nhttps://pixiv.net/artworks/${widget.illust.id}");
+          },
+          child: SizedBox(
+            height: 28,
+            child: Row(
+              children: [
+                Icon(
+                  Icons.share,
+                  color: ColorScheme.of(context).error,
+                  size: 18,
+                ),
+                const SizedBox(width: 8,),
+                Text("Share".tl)
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(width: 8,),
+        Button(
+          onPressed: () {
+            var text = "https://pixiv.net/artworks/${widget.illust.id}";
+            Clipboard.setData(ClipboardData(text: text));
+            showToast(context, message: "Copied".tl);
+          },
+          child: SizedBox(
+            height: 28,
+            child: Row(
+              children: [
+                Icon(
+                  Icons.copy,
+                  color: ColorScheme.of(context).error,
+                  size: 18,
+                ),
+                const SizedBox(width: 8,),
+                Text("Link".tl)
+              ],
+            ),
+          ),
+        ),
+      ],
+    ).paddingHorizontal(4).paddingBottom(4);
   }
 }
 

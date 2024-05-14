@@ -28,7 +28,7 @@ class ToastOverlay extends StatelessWidget {
       child: Align(
         alignment: Alignment.bottomCenter,
         child: PhysicalModel(
-          color: ColorScheme.of(context).surface,
+          color: ColorScheme.of(context).surface.withOpacity(1),
           borderRadius: BorderRadius.circular(4),
           elevation: 1,
           child: Container(

@@ -2,10 +2,15 @@ import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:photo_view/photo_view.dart';
+import 'package:pixes/components/md.dart';
 import 'package:pixes/components/page_route.dart';
 import 'package:pixes/foundation/app.dart';
+import 'package:pixes/foundation/cache_manager.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/pages/main_page.dart';
+import 'package:pixes/utils/io.dart';
+import 'package:pixes/utils/translation.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
 class ImagePage extends StatefulWidget {
@@ -14,15 +19,15 @@ class ImagePage extends StatefulWidget {
   final String url;
 
   static show(String url) {
-    App.rootNavigatorKey.currentState?.push(
-        AppPageRoute(builder: (context) => ImagePage(url)));
+    App.rootNavigatorKey.currentState
+        ?.push(AppPageRoute(builder: (context) => ImagePage(url)));
   }
 
   @override
   State<ImagePage> createState() => _ImagePageState();
 }
 
-class _ImagePageState extends State<ImagePage> with WindowListener{
+class _ImagePageState extends State<ImagePage> with WindowListener {
   int windowButtonKey = 0;
 
   @override
@@ -53,14 +58,15 @@ class _ImagePageState extends State<ImagePage> with WindowListener{
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldPage(
+    return Container(
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-      content: Stack(
+      color: FluentTheme.of(context).micaBackgroundColor,
+      child: Stack(
         children: [
-          Positioned.fill(child: PhotoView(
-            backgroundDecoration: const BoxDecoration(
-                color: Colors.transparent
-            ),
+          Positioned.fill(
+              child: PhotoView(
+            backgroundDecoration: BoxDecoration(
+                color: FluentTheme.of(context).micaBackgroundColor),
             filterQuality: FilterQuality.medium,
             imageProvider: widget.url.startsWith("file://")
                 ? FileImage(File(widget.url.replaceFirst("file://", "")))
@@ -74,22 +80,97 @@ class _ImagePageState extends State<ImagePage> with WindowListener{
               height: 36,
               child: Row(
                 children: [
-                  const SizedBox(width: 6,),
+                  const SizedBox(
+                    width: 6,
+                  ),
                   IconButton(
                       icon: const Icon(FluentIcons.back).paddingAll(2),
-                      onPressed: () => context.pop()
-                  ),
+                      onPressed: () => context.pop()),
                   const Expanded(
-                    child: DragToMoveArea(child: SizedBox.expand(),),
+                    child: DragToMoveArea(
+                      child: SizedBox.expand(),
+                    ),
                   ),
-                  if(App.isDesktop)
-                    WindowButtons(key: ValueKey(windowButtonKey),),
+                  buildActions(),
+                  if (App.isDesktop)
+                    WindowButtons(
+                      key: ValueKey(windowButtonKey),
+                    ),
                 ],
               ),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  var menuController = FlyoutController();
+
+  Future<File?> getFile() async{
+    if (widget.url.startsWith("file://")) {
+      return File(widget.url.replaceFirst("file://", ""));
+    }
+    var res = await CacheManager().findCache(widget.url);
+    if(res == null){
+      return null;
+    }
+    return File(res);
+  }
+
+  void showMenu() {
+    menuController.showFlyout(builder: (context) => MenuFlyout(
+      items: [
+        MenuFlyoutItem(text: Text("Save to".tl), onPressed: () async{
+          var file = await getFile();
+          if(file != null){
+            saveFile(file);
+          }
+        }),
+        MenuFlyoutItem(text: Text("Share".tl), onPressed: () async{
+          var file = await getFile();
+          if(file != null){
+            var ext = file.path.split('.').last;
+            var mediaType = switch(ext){
+              'jpg' => 'image/jpeg',
+              'jpeg' => 'image/jpeg',
+              'png' => 'image/png',
+              'gif' => 'image/gif',
+              'webp' => 'image/webp',
+              _ => 'application/octet-stream'
+            };
+            Share.shareXFiles([XFile(file.path, mimeType: mediaType, name: file.path.split('/').last)]);
+          }
+        }),
+      ],
+    ));
+  }
+
+  Widget buildActions() {
+    var width = MediaQuery.of(context).size.width;
+    return FlyoutTarget(
+      controller: menuController,
+      child: width > 600
+          ? Button(
+          onPressed: showMenu,
+          child: const Row(
+            children: [
+              Icon(
+                MdIcons.menu,
+                size: 18,
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Text('Actions'),
+            ],
+          ))
+          : IconButton(
+          icon: const Icon(
+            MdIcons.more_horiz,
+            size: 20,
+          ),
+          onPressed: showMenu),
     );
   }
 }

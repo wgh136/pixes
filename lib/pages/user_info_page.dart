@@ -43,11 +43,28 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
 
   void follow() async{
     if(isFollowing) return;
+    String type = "";
+    if(!data!.isFollowed) {
+      await flyoutController.showFlyout(
+          navigatorKey: App.rootNavigatorKey.currentState,
+          builder: (context) =>
+              MenuFlyout(
+                items: [
+                  MenuFlyoutItem(text: Text("Public".tl),
+                      onPressed: () => type = "public"),
+                  MenuFlyoutItem(text: Text("Private".tl),
+                      onPressed: () => type = "private"),
+                ],
+              ));
+    }
+    if(type.isEmpty && !data!.isFollowed) {
+      return;
+    }
     setState(() {
       isFollowing = true;
     });
     var method = data!.isFollowed ? "delete" : "add";
-    var res = await Network().follow(data!.id.toString(), method);
+    var res = await Network().follow(data!.id.toString(), method, type);
     if(res.error) {
       if(mounted) {
         context.showToast(message: "Network Error");
@@ -60,6 +77,8 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
       isFollowing = false;
     });
   }
+
+  var flyoutController = FlyoutController();
 
   Widget buildUser() {
     return SliverToBoxAdapter(
@@ -112,7 +131,10 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
                 ),
               ))
             else if (!data!.isFollowed)
-              Button(onPressed: follow, child: Text("Follow".tl))
+              FlyoutTarget(
+                controller: flyoutController,
+                child: Button(onPressed: follow, child: Text("Follow".tl))
+              )
             else
               Button(
                 onPressed: follow,

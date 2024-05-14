@@ -10,8 +10,10 @@ import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/download.dart';
 import 'package:pixes/utils/translation.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
+import '../utils/io.dart';
 import 'main_page.dart';
 
 class DownloadedPage extends StatefulWidget {
@@ -208,6 +210,46 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
 
   var controller = PageController();
 
+  int currentPage = 0;
+
+  var menuController = FlyoutController();
+
+  Future<File?> getFile() async {
+    var file = File(widget.imagePaths[currentPage]);
+    if(file.existsSync()) {
+      return file;
+    }
+    return null;
+  }
+
+  void showMenu() {
+    menuController.showFlyout(builder: (context) => MenuFlyout(
+      items: [
+        MenuFlyoutItem(text: Text("Save to".tl), onPressed: () async{
+          var file = await getFile();
+          if(file != null){
+            saveFile(file);
+          }
+        }),
+        MenuFlyoutItem(text: Text("Share".tl), onPressed: () async{
+          var file = await getFile();
+          if(file != null){
+            var ext = file.path.split('.').last;
+            var mediaType = switch(ext){
+              'jpg' => 'image/jpeg',
+              'jpeg' => 'image/jpeg',
+              'png' => 'image/png',
+              'gif' => 'image/gif',
+              'webp' => 'image/webp',
+              _ => 'application/octet-stream'
+            };
+            Share.shareXFiles([XFile(file.path, mimeType: mediaType, name: file.path.split('/').last)]);
+          }
+        }),
+      ],
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
@@ -240,7 +282,9 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
                     );
                   },
                   onPageChanged: (index) {
-                    setState(() {});
+                    setState(() {
+                      currentPage = index;
+                    });
                   },
                 )),
                 Positioned(
@@ -259,6 +303,7 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
                         const Expanded(
                           child: DragToMoveArea(child: SizedBox.expand(),),
                         ),
+                        buildActions(),
                         if(App.isDesktop)
                           WindowButtons(key: ValueKey(windowButtonKey),),
                       ],
@@ -295,7 +340,7 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
                   left: 12,
                   bottom: 8,
                   child: Text(
-                    "${controller.page!.toInt() + 1}/${widget.imagePaths.length}",
+                    "${currentPage + 1}/${widget.imagePaths.length}",
                   ),
                 )
               ],
@@ -303,6 +348,34 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
           },
         ),
       ),
+    );
+  }
+
+  Widget buildActions() {
+    var width = MediaQuery.of(context).size.width;
+    return FlyoutTarget(
+      controller: menuController,
+      child: width > 600
+          ? Button(
+          onPressed: showMenu,
+          child: const Row(
+            children: [
+              Icon(
+                MdIcons.menu,
+                size: 18,
+              ),
+              SizedBox(
+                width: 8,
+              ),
+              Text('Actions'),
+            ],
+          ))
+          : IconButton(
+          icon: const Icon(
+            MdIcons.more_horiz,
+            size: 20,
+          ),
+          onPressed: showMenu),
     );
   }
 }

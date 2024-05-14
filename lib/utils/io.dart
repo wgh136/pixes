@@ -1,4 +1,9 @@
 import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:file_selector/file_selector.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
+import 'package:pixes/foundation/app.dart';
 
 extension FSExt on FileSystemEntity {
   Future<void> deleteIfExists() async {
@@ -42,5 +47,25 @@ String bytesToText(int bytes) {
     return "${(bytes / 1024 / 1024).toStringAsFixed(2)} MB";
   } else {
     return "${(bytes / 1024 / 1024 / 1024).toStringAsFixed(2)} GB";
+  }
+}
+
+void saveFile(File file) async{
+  if(App.isDesktop) {
+    var fileName = file.path.split('/').last;
+    final FileSaveLocation? result =
+    await getSaveLocation(suggestedName: fileName);
+    if (result == null) {
+      return;
+    }
+
+    final Uint8List fileData = await file.readAsBytes();
+    String mimeType = 'image/${fileName.split('.').last}';
+    final XFile textFile = XFile.fromData(
+        fileData, mimeType: mimeType, name: fileName);
+    await textFile.saveTo(result.path);
+  } else {
+    final params = SaveFileDialogParams(sourceFilePath: file.path);
+    await FlutterFileDialog.saveFile(params: params);
   }
 }
