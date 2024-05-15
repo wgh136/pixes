@@ -148,6 +148,10 @@ class CachedImageProvider extends BaseImageProvider<CachedImageProvider> {
 
   @override
   Future<Uint8List> load(StreamController<ImageChunkEvent> chunkEvents) async{
+    chunkEvents.add(const ImageChunkEvent(
+      cumulativeBytesLoaded: 0,
+      expectedTotalBytes: 1,
+    ));
     var cached = await CacheManager().findCache(key);
     if(cached != null) {
       chunkEvents.add(const ImageChunkEvent(

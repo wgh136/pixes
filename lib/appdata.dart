@@ -18,7 +18,7 @@ class _Appdata {
     "downloadSubPath": r"/${id}-p${index}.${ext}",
     "tagsWeight": "",
     "useTranslatedNameForDownload": false,
-    "maxDownloadParallels": 3
+    "maxParallels": 3
   };
 
   bool lock = false;
@@ -54,7 +54,9 @@ class _Appdata {
     if (settingsFile.existsSync()) {
       var json = jsonDecode(await settingsFile.readAsString());
       for (var key in json.keys) {
-        settings[key] = json[key];
+        if(json[key] != null) {
+          settings[key] = json[key];
+        }
       }
     }
     if (settings["downloadPath"] == null) {

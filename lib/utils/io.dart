@@ -50,11 +50,11 @@ String bytesToText(int bytes) {
   }
 }
 
-void saveFile(File file) async{
+void saveFile(File file, [String? name]) async{
   if(App.isDesktop) {
     var fileName = file.path.split('/').last;
     final FileSaveLocation? result =
-    await getSaveLocation(suggestedName: fileName);
+    await getSaveLocation(suggestedName: name ?? fileName);
     if (result == null) {
       return;
     }
@@ -62,10 +62,10 @@ void saveFile(File file) async{
     final Uint8List fileData = await file.readAsBytes();
     String mimeType = 'image/${fileName.split('.').last}';
     final XFile textFile = XFile.fromData(
-        fileData, mimeType: mimeType, name: fileName);
+        fileData, mimeType: mimeType, name: name ?? fileName);
     await textFile.saveTo(result.path);
   } else {
-    final params = SaveFileDialogParams(sourceFilePath: file.path);
+    final params = SaveFileDialogParams(sourceFilePath: file.path, fileName: name);
     await FlutterFileDialog.saveFile(params: params);
   }
 }

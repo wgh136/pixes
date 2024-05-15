@@ -118,13 +118,25 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
     return File(res);
   }
 
+  String getExtensionName() {
+    var fileName = widget.url.split('/').last;
+    if(fileName.contains('.')){
+      return '.${fileName.split('.').last}';
+    }
+    return '.jpg';
+  }
+
   void showMenu() {
     menuController.showFlyout(builder: (context) => MenuFlyout(
       items: [
         MenuFlyoutItem(text: Text("Save to".tl), onPressed: () async{
           var file = await getFile();
           if(file != null){
-            saveFile(file);
+            var fileName = file.path.split('/').last;
+            if(!fileName.contains('.')){
+              fileName += getExtensionName();
+            }
+            saveFile(file, fileName);
           }
         }),
         MenuFlyoutItem(text: Text("Share".tl), onPressed: () async{
@@ -133,12 +145,12 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
             var fileName = file.path.split('/').last;
             String ext;
             if(!fileName.contains('.')){
-              ext = 'jpg';
-              fileName += '.jpg';
+              ext = getExtensionName();
+              fileName += getExtensionName();
             } else {
               ext = file.path.split('.').last;
             }
-            var mediaType = switch(ext){
+            var mediaType = switch(ext.replaceFirst('.', "")){
               'jpg' => 'image/jpeg',
               'jpeg' => 'image/jpeg',
               'png' => 'image/png',
