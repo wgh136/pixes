@@ -27,8 +27,8 @@ class _RecommendationPageState extends State<RecommendationPage> {
       children: [
         buildTab(),
         Expanded(
-          child: type == 0
-            ? const _RecommendationArtworksPage()
+          child: type != 2
+            ? _RecommendationArtworksPage(type, key: Key(type.toString()),)
             : const _RecommendationUsersPage(),
         )
       ],
@@ -41,7 +41,8 @@ class _RecommendationPageState extends State<RecommendationPage> {
       action: SegmentedButton<int>(
         options: [
           SegmentedButtonOption(0, "Artworks".tl),
-          SegmentedButtonOption(1, "Users".tl),
+          SegmentedButtonOption(1, "Mangas".tl),
+          SegmentedButtonOption(2, "Users".tl),
         ],
         onPressed: (key) {
           if(key != type) {
@@ -58,7 +59,9 @@ class _RecommendationPageState extends State<RecommendationPage> {
 
 
 class _RecommendationArtworksPage extends StatefulWidget {
-  const _RecommendationArtworksPage();
+  const _RecommendationArtworksPage(this.type, {super.key});
+
+  final int type;
 
   @override
   State<_RecommendationArtworksPage> createState() => _RecommendationArtworksPageState();
@@ -87,7 +90,9 @@ class _RecommendationArtworksPageState extends MultiPageLoadingState<_Recommenda
 
   @override
   Future<Res<List<Illust>>> loadData(page) {
-    return Network().getRecommendedIllusts();
+    return widget.type == 0
+        ? Network().getRecommendedIllusts()
+        : Network().getRecommendedMangas();
   }
 }
 
