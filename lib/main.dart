@@ -7,6 +7,7 @@ import "package:pixes/foundation/log.dart";
 import "package:pixes/network/app_dio.dart";
 import "package:pixes/pages/main_page.dart";
 import "package:pixes/utils/app_links.dart";
+import "package:pixes/utils/translation.dart";
 import "package:window_manager/window_manager.dart";
 import 'package:system_theme/system_theme.dart';
 
@@ -20,6 +21,7 @@ void main() async {
   await SystemTheme.accentColor.load();
   await App.init();
   await appdata.readData();
+  await Translation.init();
   handleLinks();
   SystemTheme.onChange.listen((event) {
     StateController.findOrNull(tag: "MyApp")?.update();

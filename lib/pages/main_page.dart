@@ -22,6 +22,7 @@ import "package:pixes/utils/translation.dart";
 import "package:window_manager/window_manager.dart";
 
 import "../components/page_route.dart";
+import "../utils/debug.dart";
 import "downloading_page.dart";
 
 double get _appBarHeight => App.isDesktop ? 36.0 : 48.0;
@@ -203,9 +204,19 @@ class _MainPageState extends State<MainPage> with WindowListener {
             padding: EdgeInsets.only(bottom: 4),
             child: Align(
               alignment: AlignmentDirectional.centerStart,
-              child: Text(
-                "Pixes",
-                style: TextStyle(fontSize: 13),
+              child: Row(
+                children: [
+                  Text(
+                    "Pixes",
+                    style: TextStyle(fontSize: 13),
+                  ),
+                  Spacer(),
+                  if(kDebugMode)
+                    Padding(
+                      padding: EdgeInsets.only(right: 138),
+                      child: Button(onPressed: debug, child: Text("Debug")),
+                    )
+                ],
               ),
             ),
           ),
