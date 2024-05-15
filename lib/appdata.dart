@@ -18,7 +18,7 @@ class _Appdata {
     "downloadSubPath": r"/${id}-p${index}.${ext}",
     "tagsWeight": "",
     "useTranslatedNameForDownload": false,
-    "maxDownloadParallelism": 3
+    "maxDownloadParallels": 3
   };
 
   bool lock = false;

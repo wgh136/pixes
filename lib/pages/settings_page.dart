@@ -115,7 +115,7 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Column(
         children: [
           buildItem(
-            title: "Download Path",
+            title: "Download Path".tl,
             subtitle: appdata.settings["downloadPath"],
             action: Button(
                 child: Text("Manage".tl).fixWidth(64),
@@ -128,13 +128,30 @@ class _SettingsPageState extends State<SettingsPage> {
                 }),
           ),
           buildItem(
-            title: "Subpath",
+            title: "Subpath".tl,
             subtitle: appdata.settings["downloadSubPath"],
             action: Button(
                 child: Text("Manage".tl).fixWidth(64),
                 onPressed: () {
                   context.to(() => const _SetDownloadSubPathPage());
                 }),
+          ),
+          buildItem(
+            title: "Max parallels".tl,
+            action: SizedBox(
+              width: 64,
+              height: 32,
+              child: NumberBox<int>(
+                value: appdata.settings["maxParallels"],
+                autofocus: false,
+                onChanged: (value) {
+                  appdata.settings["maxParallels"] = value;
+                  appdata.writeSettings();
+                },
+                clearButton: false,
+                mode: SpinButtonPlacementMode.none,
+              ),
+            ),
           ),
         ],
       ),
@@ -289,7 +306,7 @@ class __SetDownloadSubPathPageState extends State<_SetDownloadSubPathPage> {
 ${"Edit the rule for where to save an image.".tl}
 ${"Note: The rule should include the filename.".tl}
 
-${"Some keywords will be replaced by the following rule:"}
+${"Some keywords will be replaced by the following rule:".tl}
   \${title} -> ${"Title of the work".tl}
   \${author} -> ${"Name of the author".tl}
   \${id} -> ${"Artwork ID".tl}
@@ -303,7 +320,7 @@ ${"The final text will be affected by the \"Use translated tag name\" setting.".
   ...
 
 ${"Weights of the tags".tl}:
-Filled with tags. The tags should be separated by a space. The tag in front has higher weight.
-It is required to use the original name instead of the translated name.
+${"Filled with tags. The tags should be separated by a space. The tag in front has higher weight.".tl}
+${"It is required to use the original name instead of the translated name.".tl}
 """;
 }

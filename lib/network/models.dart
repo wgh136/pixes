@@ -217,7 +217,7 @@ class TrendingTag {
 }
 
 enum KeywordMatchType {
-  tagsPartialMatches("Tags partial matches"),
+  tagsPartialMatches("Tags partial match"),
   tagsExactMatch("Tags exact match"),
   titleOrDescriptionSearch("Title or description search");
 

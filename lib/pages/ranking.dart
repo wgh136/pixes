@@ -57,7 +57,7 @@ class _RankingPageState extends State<RankingPage> {
           BatchDownloadButton(request: () => Network().getRanking(type)),
           const SizedBox(width: 8,),
           DropDownButton(
-            title: Text(types[type]!),
+            title: Text(types[type]!.tl),
             items: types.entries.map((e) => MenuFlyoutItem(
               text: Text(e.value.tl),
               onPressed: () {

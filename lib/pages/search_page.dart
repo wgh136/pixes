@@ -267,10 +267,10 @@ class _SearchSettingsState extends State<SearchSettings> {
             child: Text("Search Settings".tl, style: const TextStyle(fontSize: 18),),
           ).toAlign(Alignment.centerLeft),
           buildItem(title: "Match".tl, child: DropDownButton(
-            title: Text(appdata.searchOptions.matchType.toString()),
+            title: Text(appdata.searchOptions.matchType.toString().tl),
             items: KeywordMatchType.values.map((e) =>
               MenuFlyoutItem(
-                text: Text(e.toString()),
+                text: Text(e.toString().tl),
                 onPressed: () {
                   if(appdata.searchOptions.matchType != e) {
                     setState(() => appdata.searchOptions.matchType = e);
@@ -281,10 +281,10 @@ class _SearchSettingsState extends State<SearchSettings> {
             ).toList(),
           )),
           buildItem(title: "Favorite number".tl, child: DropDownButton(
-            title: Text(appdata.searchOptions.favoriteNumber.toString()),
+            title: Text(appdata.searchOptions.favoriteNumber.toString().tl),
             items: FavoriteNumber.values.map((e) =>
                 MenuFlyoutItem(
-                    text: Text(e.toString()),
+                    text: Text(e.toString().tl),
                     onPressed: () {
                       if(appdata.searchOptions.favoriteNumber != e) {
                         setState(() => appdata.searchOptions.favoriteNumber = e);
@@ -295,10 +295,10 @@ class _SearchSettingsState extends State<SearchSettings> {
             ).toList(),
           )),
           buildItem(title: "Sort".tl, child: DropDownButton(
-            title: Text(appdata.searchOptions.sort.toString()),
+            title: Text(appdata.searchOptions.sort.toString().tl),
             items: SearchSort.values.map((e) =>
                 MenuFlyoutItem(
-                    text: Text(e.toString()),
+                    text: Text(e.toString().tl),
                     onPressed: () {
                       if(appdata.searchOptions.sort != e) {
                         setState(() => appdata.searchOptions.sort = e);
@@ -315,7 +315,7 @@ class _SearchSettingsState extends State<SearchSettings> {
               width: double.infinity,
               child: Column(
                 children: [
-                  const Text("Start Time", style: TextStyle(fontSize: 16),)
+                  Text("Start Time".tl, style: const TextStyle(fontSize: 16),)
                       .paddingVertical(8)
                       .toAlign(Alignment.centerLeft)
                       .paddingLeft(16),
@@ -339,7 +339,7 @@ class _SearchSettingsState extends State<SearchSettings> {
                 width: double.infinity,
                 child: Column(
                   children: [
-                    const Text("End Time", style: TextStyle(fontSize: 16),)
+                    Text("End Time".tl, style: const TextStyle(fontSize: 16),)
                         .paddingVertical(8)
                         .toAlign(Alignment.centerLeft)
                         .paddingLeft(16),
@@ -357,10 +357,10 @@ class _SearchSettingsState extends State<SearchSettings> {
                 ),
               )),
           buildItem(title: "Age limit".tl, child: DropDownButton(
-            title: Text(appdata.searchOptions.ageLimit.toString()),
+            title: Text(appdata.searchOptions.ageLimit.toString().tl),
             items: AgeLimit.values.map((e) =>
                 MenuFlyoutItem(
-                    text: Text(e.toString()),
+                    text: Text(e.toString().tl),
                     onPressed: () {
                       if(appdata.searchOptions.ageLimit != e) {
                         setState(() => appdata.searchOptions.ageLimit = e);
