@@ -66,6 +66,7 @@ class _DownloadingPageState extends State<DownloadingPage> {
     controller[task.illust.id.toString()] ??= FlyoutController();
 
     return Card(
+      margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: SizedBox(
         height: 96,

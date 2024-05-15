@@ -23,7 +23,7 @@ class SegmentedButton<T> extends StatelessWidget {
       child: Card(
         padding: EdgeInsets.zero,
         child: SizedBox(
-          height: 36,
+          height: 28,
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: options.map((e) => buildButton(e)).toList(),

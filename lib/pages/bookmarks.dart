@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:pixes/components/batch_download.dart';
 import 'package:pixes/components/segmented_button.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
@@ -34,19 +35,25 @@ class _BookMarkedArtworkPageState extends State<BookMarkedArtworkPage>{
   Widget buildTab() {
     return TitleBar(
       title: "Bookmarks".tl,
-      action: SegmentedButton(
-        options: [
-          SegmentedButtonOption("public", "Public".tl),
-          SegmentedButtonOption("private", "Private".tl),
+      action: Row(
+        children: [
+          BatchDownloadButton(request: () => Network().getBookmarkedIllusts(restrict)),
+          const SizedBox(width: 8,),
+          SegmentedButton(
+            options: [
+              SegmentedButtonOption("public", "Public".tl),
+              SegmentedButtonOption("private", "Private".tl),
+            ],
+            onPressed: (key) {
+              if(key != restrict) {
+                setState(() {
+                  restrict = key;
+                });
+              }
+            },
+            value: restrict,
+          )
         ],
-        onPressed: (key) {
-          if(key != restrict) {
-            setState(() {
-              restrict = key;
-            });
-          }
-        },
-        value: restrict,
       ),
     );
   }

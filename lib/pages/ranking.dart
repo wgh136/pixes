@@ -3,8 +3,10 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/utils/translation.dart';
 
+import '../components/batch_download.dart';
 import '../components/illust_widget.dart';
 import '../components/loading.dart';
+import '../components/title_bar.dart';
 import '../network/network.dart';
 
 class RankingPage extends StatefulWidget {
@@ -48,12 +50,12 @@ class _RankingPageState extends State<RankingPage> {
   }
 
   Widget buildHeader() {
-    return SizedBox(
-      child: Row(
+    return TitleBar(
+      title: "Ranking".tl,
+      action: Row(
         children: [
-          Text("Ranking".tl, style: const TextStyle(
-              fontSize: 20, fontWeight: FontWeight.bold),),
-          const Spacer(),
+          BatchDownloadButton(request: () => Network().getRanking(type)),
+          const SizedBox(width: 8,),
           DropDownButton(
             title: Text(types[type]!),
             items: types.entries.map((e) => MenuFlyoutItem(
@@ -66,8 +68,8 @@ class _RankingPageState extends State<RankingPage> {
             )).toList(),
           )
         ],
-      )
-    ).padding(const EdgeInsets.symmetric(vertical: 8, horizontal: 16));
+      ),
+    );
   }
 }
 

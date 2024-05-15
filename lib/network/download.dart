@@ -101,14 +101,27 @@ class DownloadingTask {
         }
         imagePaths.add(path);
         _downloadingIndex++;
+        _retryCount = 0;
       }
       onCompleted?.call(this);
     }
     catch(e, s) {
-      error = e.toString();
-      _stop = true;
+      _handleError(e);
       Log.error("Download", "Download error: $e\n$s");
     }
+  }
+
+  int _retryCount = 0;
+
+  void _handleError(Object error) async{
+    _retryCount++;
+    if(_retryCount > 3) {
+      _stop = true;
+      error = error.toString();
+      return;
+    }
+    await Future.delayed(Duration(seconds: 1 << _retryCount));
+    _download();
   }
 
   static String _generateFilePath(Illust illust, int index, String ext) {
@@ -296,5 +309,33 @@ class DownloadManager {
       where illust_id = ?;
     ''', [illustId]);
     return res.map((e) => e["path"] as String).toList();
+  }
+
+  Future<void> batchDownload(Future<Res<List<Illust>>> request, int maxCount) async{
+    List<Illust> all = [];
+    String? nextUrl;
+    int retryCount = 0;
+    while(nextUrl != "end" && all.length < maxCount) {
+      if(nextUrl != null) {
+        request = Network().getIllustsWithNextUrl(nextUrl);
+      }
+      var res = await request;
+      if(res.error) {
+        retryCount++;
+        if(retryCount > 3) {
+          throw res.error;
+        }
+        await Future.delayed(Duration(seconds: 1 << retryCount));
+        continue;
+      }
+      all.addAll(res.data);
+      nextUrl = res.subData ?? "end";
+    }
+    int i = 0;
+    for(var illust in all) {
+      if(i > maxCount)  return;
+      addDownloadingTask(illust);
+      i++;
+    }
   }
 }

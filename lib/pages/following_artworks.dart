@@ -4,6 +4,7 @@ import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/utils/translation.dart';
 
+import '../components/batch_download.dart';
 import '../components/illust_widget.dart';
 import '../components/loading.dart';
 import '../components/segmented_button.dart';
@@ -34,20 +35,26 @@ class _FollowingArtworksPageState extends State<FollowingArtworksPage> {
   Widget buildTab() {
     return TitleBar(
       title: "Following".tl,
-      action: SegmentedButton(
-        options: [
-          SegmentedButtonOption("all", "All".tl),
-          SegmentedButtonOption("public", "Public".tl),
-          SegmentedButtonOption("private", "Private".tl),
+      action: Row(
+        children: [
+          BatchDownloadButton(request: () => Network().getFollowingArtworks(restrict)),
+          const SizedBox(width: 8,),
+          SegmentedButton(
+            options: [
+              SegmentedButtonOption("all", "All".tl),
+              SegmentedButtonOption("public", "Public".tl),
+              SegmentedButtonOption("private", "Private".tl),
+            ],
+            onPressed: (key) {
+              if(key != restrict) {
+                setState(() {
+                  restrict = key;
+                });
+              }
+            },
+            value: restrict,
+          )
         ],
-        onPressed: (key) {
-          if(key != restrict) {
-            setState(() {
-              restrict = key;
-            });
-          }
-        },
-        value: restrict,
       ),
     );
   }

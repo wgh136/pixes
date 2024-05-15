@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/appdata.dart';
+import 'package:pixes/components/batch_download.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/md.dart';
 import 'package:pixes/foundation/app.dart';
@@ -32,7 +33,12 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
         slivers: [
           buildUser(),
           buildInformation(),
-          SliverToBoxAdapter(child: buildHeader("Artworks"),),
+          SliverToBoxAdapter(
+            child: buildHeader(
+              "Artworks",
+              action: BatchDownloadButton(
+                  request: () => Network().getUserIllusts(widget.id))
+            ),),
           _UserArtworks(data.id.toString(), key: ValueKey(data.id),),
           SliverPadding(padding: EdgeInsets.only(bottom: context.padding.bottom)),
         ],
@@ -146,13 +152,21 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
     );
   }
 
-  Widget buildHeader(String title) {
+  Widget buildHeader(String title, {Widget? action}) {
     return SizedBox(
         width: double.infinity,
-        child: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ).toAlign(Alignment.centerLeft)).paddingLeft(16).paddingVertical(4);
+        height: 38,
+        child: Row(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ).toAlign(Alignment.centerLeft),
+            const Spacer(),
+            if(action != null)
+              action.toAlign(Alignment.centerRight)
+          ],
+        ).paddingHorizontal(16)).paddingTop(8);
   }
 
   Widget buildInformation() {
@@ -181,7 +195,6 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
           buildItem(icon: MdIcons.location_city_outlined, title: "Region", content: data!.region),
           buildItem(icon: MdIcons.work_outline, title: "Job".tl, content: data!.job),
           buildItem(icon: MdIcons.person_2_outlined, title: "Gender".tl, content: data!.gender),
-          const SizedBox(height: 8,),
           buildHeader("Social Network".tl),
           buildItem(title: "Webpage",
               content: data!.webpage,
