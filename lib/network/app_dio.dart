@@ -135,7 +135,7 @@ class _ProxyHttpOverrides extends HttpOverrides {
     if(!App.isLinux) {
       var channel = const MethodChannel("pixes/proxy");
       channel.invokeMethod("getProxy").then((value) {
-        if(value == "No proxy"){
+        if(value.toString().toLowerCase() == "no proxy"){
           proxy = "DIRECT";
         } else {
           if(proxy.contains("https")){
