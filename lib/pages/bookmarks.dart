@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/components/segmented_button.dart';
 import 'package:pixes/components/title_bar.dart';
+import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/network.dart';
 import 'package:pixes/utils/translation.dart';
 
@@ -65,7 +66,8 @@ class _OneBookmarkedPageState extends MultiPageLoadingState<_OneBookmarkedPage, 
   Widget buildContent(BuildContext context, final List<Illust> data) {
     return LayoutBuilder(builder: (context, constrains){
       return MasonryGridView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8)
+            + EdgeInsets.only(bottom: context.padding.bottom),
         gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 240,
         ),

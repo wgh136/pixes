@@ -16,4 +16,8 @@ extension Navigation on BuildContext {
   void showToast({required String message, IconData? icon}) {
     overlay.showToast(this, message: message, icon: icon);
   }
+
+  Size get size => MediaQuery.of(this).size;
+
+  EdgeInsets get padding => MediaQuery.of(this).padding;
 }

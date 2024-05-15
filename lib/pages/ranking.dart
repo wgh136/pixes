@@ -85,7 +85,8 @@ class _OneRankingPageState extends MultiPageLoadingState<_OneRankingPage, Illust
   Widget buildContent(BuildContext context, final List<Illust> data) {
     return LayoutBuilder(builder: (context, constrains){
       return MasonryGridView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 8)
+            + EdgeInsets.only(bottom: context.padding.bottom),
         gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 240,
         ),

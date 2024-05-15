@@ -130,7 +130,14 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
         MenuFlyoutItem(text: Text("Share".tl), onPressed: () async{
           var file = await getFile();
           if(file != null){
-            var ext = file.path.split('.').last;
+            var fileName = file.path.split('/').last;
+            String ext;
+            if(!file.path.split('.').last.contains('.')){
+              ext = 'jpg';
+              fileName += '.jpg';
+            } else {
+              ext = file.path.split('.').last;
+            }
             var mediaType = switch(ext){
               'jpg' => 'image/jpeg',
               'jpeg' => 'image/jpeg',
@@ -139,7 +146,7 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
               'webp' => 'image/webp',
               _ => 'application/octet-stream'
             };
-            Share.shareXFiles([XFile(file.path, mimeType: mediaType, name: file.path.split('/').last)]);
+            Share.shareXFiles([XFile(file.path, mimeType: mediaType, name: fileName)]);
           }
         }),
       ],

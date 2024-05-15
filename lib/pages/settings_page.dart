@@ -24,6 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
           SliverTitleBar(title: "Settings".tl),
           buildHeader("Account".tl),
           buildAccount(),
+          SliverPadding(padding: EdgeInsets.only(bottom: context.padding.bottom)),
         ],
       ),
     );

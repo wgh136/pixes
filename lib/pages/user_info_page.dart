@@ -34,6 +34,7 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
           buildInformation(),
           SliverToBoxAdapter(child: buildHeader("Artworks"),),
           _UserArtworks(data.id.toString(), key: ValueKey(data.id),),
+          SliverPadding(padding: EdgeInsets.only(bottom: context.padding.bottom)),
         ],
       ),
     );

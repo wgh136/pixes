@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:pixes/foundation/app.dart';
 
 class SliverGridViewWithFixedItemHeight extends StatelessWidget {
   const SliverGridViewWithFixedItemHeight(
@@ -22,7 +23,7 @@ class SliverGridViewWithFixedItemHeight extends StatelessWidget {
               maxCrossAxisExtent: maxCrossAxisExtent,
               childAspectRatio:
               calcChildAspectRatio(constraints.crossAxisExtent)),
-        )));
+        ).sliverPadding(EdgeInsets.only(bottom: context.padding.bottom))));
   }
 
   double calcChildAspectRatio(double width) {
@@ -61,6 +62,7 @@ class GridViewWithFixedItemHeight extends StatelessWidget {
               calcChildAspectRatio(constraints.maxWidth)),
           itemBuilder: builder,
           itemCount: itemCount,
+          padding: EdgeInsets.only(bottom: context.padding.bottom),
         )));
   }
 

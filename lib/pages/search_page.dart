@@ -172,7 +172,8 @@ class _TrendingTagsViewState extends LoadingState<_TrendingTagsView, List<Trendi
   @override
   Widget buildContent(BuildContext context, List<TrendingTag> data) {
     return MasonryGridView.builder(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 8.0)
+          + EdgeInsets.only(bottom: context.padding.bottom),
       gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 240,
       ),
@@ -336,6 +337,7 @@ class _SearchSettingsState extends State<SearchSettings> {
                 )
             ).toList(),
           )),
+          SizedBox(height: context.padding.bottom,)
         ],
       ),
     );
@@ -386,7 +388,8 @@ class _SearchResultPageState extends MultiPageLoadingState<SearchResultPage, Ill
             },
             childCount: data.length,
           ),
-        ).sliverPaddingHorizontal(8)
+        ).sliverPaddingHorizontal(8),
+        SliverPadding(padding: EdgeInsets.only(bottom: context.padding.bottom),)
       ],
     );
   }
@@ -440,7 +443,8 @@ class _SearchUserResultPageState extends MultiPageLoadingState<SearchUserResultP
           ),
           maxCrossAxisExtent: 520,
           itemHeight: 114,
-        ).sliverPaddingHorizontal(8)
+        ).sliverPaddingHorizontal(8),
+        SliverPadding(padding: EdgeInsets.only(bottom: context.padding.bottom),)
       ],
     );
   }

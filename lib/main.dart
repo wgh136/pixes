@@ -1,4 +1,5 @@
 import "package:fluent_ui/fluent_ui.dart";
+import "package:flutter/services.dart";
 import "package:pixes/appdata.dart";
 import "package:pixes/components/message.dart";
 import "package:pixes/foundation/app.dart";
@@ -43,55 +44,61 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return StateBuilder<SimpleController>(
-        init: SimpleController(),
-        tag: "MyApp",
-        builder: (controller) {
-          return FluentApp(
-              navigatorKey: App.rootNavigatorKey,
-              debugShowCheckedModeBanner: false,
-              title: 'pixes',
-              theme: FluentThemeData(
-                  brightness: Brightness.light,
-                  fontFamily: App.isWindows ? 'font' : null,
-                  accentColor: AccentColor.swatch({
-                    'darkest': SystemTheme.accentColor.darkest,
-                    'darker': SystemTheme.accentColor.darker,
-                    'dark': SystemTheme.accentColor.dark,
-                    'normal': SystemTheme.accentColor.accent,
-                    'light': SystemTheme.accentColor.light,
-                    'lighter': SystemTheme.accentColor.lighter,
-                    'lightest': SystemTheme.accentColor.lightest,
-                  })),
-              darkTheme: FluentThemeData(
-                  brightness: Brightness.dark,
-                  fontFamily: App.isWindows ? 'font' : null,
-                  accentColor: AccentColor.swatch({
-                    'darkest': SystemTheme.accentColor.darkest,
-                    'darker': SystemTheme.accentColor.darker,
-                    'dark': SystemTheme.accentColor.dark,
-                    'normal': SystemTheme.accentColor.accent,
-                    'light': SystemTheme.accentColor.light,
-                    'lighter': SystemTheme.accentColor.lighter,
-                    'lightest': SystemTheme.accentColor.lightest,
-                  })),
-              home: const MainPage(),
-              builder: (context, child) {
-                ErrorWidget.builder = (details) {
-                  if (details.exception
-                      .toString()
-                      .contains("RenderFlex overflowed")) {
-                    return const SizedBox.shrink();
+    SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+          systemNavigationBarColor: Colors.transparent,
+          statusBarColor: Colors.transparent),
+      child: StateBuilder<SimpleController>(
+          init: SimpleController(),
+          tag: "MyApp",
+          builder: (controller) {
+            return FluentApp(
+                navigatorKey: App.rootNavigatorKey,
+                debugShowCheckedModeBanner: false,
+                title: 'pixes',
+                theme: FluentThemeData(
+                    brightness: Brightness.light,
+                    fontFamily: App.isWindows ? 'font' : null,
+                    accentColor: AccentColor.swatch({
+                      'darkest': SystemTheme.accentColor.darkest,
+                      'darker': SystemTheme.accentColor.darker,
+                      'dark': SystemTheme.accentColor.dark,
+                      'normal': SystemTheme.accentColor.accent,
+                      'light': SystemTheme.accentColor.light,
+                      'lighter': SystemTheme.accentColor.lighter,
+                      'lightest': SystemTheme.accentColor.lightest,
+                    })),
+                darkTheme: FluentThemeData(
+                    brightness: Brightness.dark,
+                    fontFamily: App.isWindows ? 'font' : null,
+                    accentColor: AccentColor.swatch({
+                      'darkest': SystemTheme.accentColor.darkest,
+                      'darker': SystemTheme.accentColor.darker,
+                      'dark': SystemTheme.accentColor.dark,
+                      'normal': SystemTheme.accentColor.accent,
+                      'light': SystemTheme.accentColor.light,
+                      'lighter': SystemTheme.accentColor.lighter,
+                      'lightest': SystemTheme.accentColor.lightest,
+                    })),
+                home: const MainPage(),
+                builder: (context, child) {
+                  ErrorWidget.builder = (details) {
+                    if (details.exception
+                        .toString()
+                        .contains("RenderFlex overflowed")) {
+                      return const SizedBox.shrink();
+                    }
+                    Log.error("UI", "${details.exception}\n${details.stack}");
+                    return Text(details.exception.toString());
+                  };
+                  if (child == null) {
+                    throw "widget is null";
                   }
-                  Log.error("UI", "${details.exception}\n${details.stack}");
-                  return Text(details.exception.toString());
-                };
-                if (child == null) {
-                  throw "widget is null";
-                }
 
-                return OverlayWidget(child);
-              });
-        });
+                  return OverlayWidget(child);
+                });
+          }),
+    );
   }
 }

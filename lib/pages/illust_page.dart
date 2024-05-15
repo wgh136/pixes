@@ -88,8 +88,8 @@ class _IllustPageState extends State<IllustPage> {
       downloadFile = DownloadManager().getImage(widget.illust.id, index);
     }
     if (index == widget.illust.images.length) {
-      return const SizedBox(
-        height: _kBottomBarHeight,
+      return SizedBox(
+        height: _kBottomBarHeight + context.padding.bottom,
       );
     }
     var imageWidth = width;
@@ -174,7 +174,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
   late final AnimationController animationController;
 
   double get minValue => pageHeight - widgetHeight;
-  double get maxValue => pageHeight - _kBottomBarHeight;
+  double get maxValue => pageHeight - _kBottomBarHeight - context.padding.bottom;
 
   @override
   void initState() {
@@ -200,7 +200,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
   void _handlePointerMove(DragUpdateDetails details) {
     var offset = details.primaryDelta ?? 0;
     final minValue = pageHeight - widgetHeight;
-    final maxValue = pageHeight - _kBottomBarHeight;
+    final maxValue = pageHeight - _kBottomBarHeight - context.padding.bottom;
     var top = animationController.value * (maxValue - minValue) + minValue;
     top  = (top + offset).clamp(minValue, maxValue);
     animationController.value = (top - minValue) / (maxValue - minValue);
@@ -292,7 +292,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
                     buildTags(),
                     buildMoreActions(),
                     SelectableText("${"Artwork ID".tl}: ${widget.illust.id}\n${"Artist ID".tl}: ${widget.illust.author.id}", style: TextStyle(color: ColorScheme.of(context).outline),).paddingLeft(4),
-                    const SizedBox(height: 8,)
+                    SizedBox(height: 8 + context.padding.bottom,)
                   ],
                 ),
               ),
@@ -361,7 +361,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
       borderRadius: BorderRadius.circular(8),
       child: SizedBox(
         height: double.infinity,
-        width: showUserName ? 246 : 128,
+        width: showUserName ? 246 : 136,
         child: Row(
           children: [
             SizedBox(
@@ -866,7 +866,7 @@ class _CommentsPageState extends MultiPageLoadingState<_CommentsPage, Comment> {
             });
           },
         ).paddingVertical(8).paddingHorizontal(12),
-      ),
+      ).paddingBottom(context.padding.bottom),
     );
   }
 
