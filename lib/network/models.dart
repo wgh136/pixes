@@ -259,9 +259,21 @@ enum FavoriteNumber {
 enum SearchSort {
   newToOld,
   oldToNew,
-  popular;
+  popular,
+  popularMale,
+  popularFemale;
 
   bool get isPremium => appdata.account?.user.isPremium == true;
+
+  static List<SearchSort> get availableValues => [
+    SearchSort.newToOld,
+    SearchSort.oldToNew,
+    SearchSort.popular,
+    if(appdata.account?.user.isPremium == true)
+      SearchSort.popularMale,
+    if(appdata.account?.user.isPremium == true)
+      SearchSort.popularFemale
+  ];
 
   @override
   toString() {
@@ -269,16 +281,21 @@ enum SearchSort {
       return isPremium ? "Popular" : "Popular(limited)";
     } else if(this == SearchSort.newToOld) {
       return "New to old";
-    } else {
+    } else if(this == SearchSort.oldToNew){
       return "Old to new";
+    } else if(this == SearchSort.popularMale){
+      return "Popular(Male)";
+    } else {
+      return "Popular(Female)";
     }
   }
 
   String toParam() => switch(this) {
     SearchSort.newToOld => "date_desc",
     SearchSort.oldToNew => "date_asc",
-    // TODO: 等我开个会员
-    SearchSort.popular => "",
+    SearchSort.popular => "popular_desc",
+    SearchSort.popularMale => "popular_male_desc",
+    SearchSort.popularFemale => "popular_female_desc",
   };
 }
 
