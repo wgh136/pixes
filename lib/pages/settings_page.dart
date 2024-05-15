@@ -279,10 +279,11 @@ class __SetDownloadSubPathPageState extends State<_SetDownloadSubPathPage> {
               var text = controller.text;
               if (check(text)) {
                 appdata.settings["downloadSubPath"] = text;
+                appdata.settings["tagsWeight"] = controller2.text;
                 appdata.writeData();
                 context.pop();
               } else {
-                showToast(context, message: "No Permission".tl);
+                showToast(context, message: "Invalid".tl);
               }
             },
           ).toAlign(Alignment.centerRight).paddingRight(16),
@@ -296,10 +297,10 @@ class __SetDownloadSubPathPageState extends State<_SetDownloadSubPathPage> {
   }
 
   bool check(String text) {
-    if (!text.startsWith('/') || !text.startsWith('\\')) {
-      return false;
+    if (text.startsWith('/') || text.startsWith('\\')) {
+      return true;
     }
-    return true;
+    return false;
   }
 
   String get _instruction => """

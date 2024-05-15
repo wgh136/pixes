@@ -137,6 +137,11 @@ class Tag {
   final String? translatedName;
 
   const Tag(this.name, this.translatedName);
+
+  @override
+  String toString() {
+    return "$name${translatedName == null ? "" : "($translatedName)"}";
+  }
 }
 
 class IllustImage {
