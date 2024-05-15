@@ -432,4 +432,27 @@ class Network {
       return Res.error(res.errorMessage);
     }
   }
+
+  Future<List<Tag>> getMutedTags() async {
+    var res = await apiGet("/v1/mute/list");
+    if (res.success) {
+      return res.data["mute_tags"].map<Tag>((e) =>
+          Tag(e["tag"]["name"], e["tag"]["translated_name"]))
+          .toList();
+    } else {
+      return [];
+    }
+  }
+
+  Future<Res<bool>> muteTags(List<String> muteTags, List<String> unmuteTags) async {
+    var res = await apiPost("/v1/mute/edit", data: {
+      "add_tags": muteTags,
+      "delete_tags": unmuteTags
+    });
+    if (res.success) {
+      return const Res(true);
+    } else {
+      return Res.fromErrorRes(res);
+    }
+  }
 }
