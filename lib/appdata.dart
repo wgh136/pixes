@@ -20,11 +20,28 @@ class _Appdata {
     "useTranslatedNameForDownload": false,
   };
 
+  bool lock = false;
+
   void writeData() async {
+    while (lock) {
+      await Future.delayed(const Duration(milliseconds: 20));
+    }
+    lock = true;
     await File("${App.dataPath}/account.json")
         .writeAsString(jsonEncode(account));
     await File("${App.dataPath}/settings.json")
         .writeAsString(jsonEncode(settings));
+    lock = false;
+  }
+
+  void writeSettings() async {
+    while (lock) {
+      await Future.delayed(const Duration(milliseconds: 20));
+    }
+    lock = true;
+    await File("${App.dataPath}/settings.json")
+        .writeAsString(jsonEncode(settings));
+    lock = false;
   }
 
   Future<void> readData() async {
@@ -35,17 +52,17 @@ class _Appdata {
     final settingsFile = File("${App.dataPath}/settings.json");
     if (settingsFile.existsSync()) {
       var json = jsonDecode(await settingsFile.readAsString());
-      for(var key in json.keys) {
+      for (var key in json.keys) {
         settings[key] = json[key];
       }
     }
-    if(settings["downloadPath"] == null) {
+    if (settings["downloadPath"] == null) {
       settings["downloadPath"] = await _defaultDownloadPath;
     }
   }
 
-  Future<String> get _defaultDownloadPath async{
-    if(App.isAndroid) {
+  Future<String> get _defaultDownloadPath async {
+    if (App.isAndroid) {
       String? downloadPath = "/storage/emulated/0/download";
       if (!Directory(downloadPath).havePermission()) {
         downloadPath = null;
@@ -53,14 +70,15 @@ class _Appdata {
       var res = downloadPath;
       res ??= (await getExternalStorageDirectory())!.path;
       return "$res/pixes";
-    } else if (App.isWindows){
-      var res = await const MethodChannel("pixes/picture_folder").invokeMethod("");
-      if(res != "error") {
+    } else if (App.isWindows) {
+      var res =
+          await const MethodChannel("pixes/picture_folder").invokeMethod("");
+      if (res != "error") {
         return res + "/pixes";
       }
     } else if (App.isMacOS || App.isLinux) {
       var downloadPath = (await getDownloadsDirectory())?.path;
-      if(downloadPath != null && Directory(downloadPath).havePermission()) {
+      if (downloadPath != null && Directory(downloadPath).havePermission()) {
         return "$downloadPath/pixes";
       }
     }

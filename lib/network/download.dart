@@ -114,11 +114,15 @@ class DownloadingTask {
   static String _generateFilePath(Illust illust, int index, String ext) {
     final String downloadPath = appdata.settings["downloadPath"];
     String subPathPatten = appdata.settings["downloadSubPath"];
-    final tags = appdata.settings["useTranslatedNameForDownload"] == false
-        ? illust.tags.map((e) => e.name).toList()
-        : illust.tags.map((e) => e.translatedName ?? e.name).toList();
     final tagsWeight = (appdata.settings["tagsWeight"] as String).split(' ');
-    tags.sort((a, b) => tagsWeight.indexOf(a) - tagsWeight.indexOf(b));
+    final originalTags = List<Tag>.from(illust.tags);
+    originalTags.sort((a, b){
+      return tagsWeight.indexOf(a.name) - tagsWeight.indexOf(b.name);
+    });
+    final tags = appdata.settings["useTranslatedNameForDownload"] == false
+        ? originalTags.map((e) => e.name).toList()
+        : originalTags.map((e) => e.translatedName ?? e.name).toList();
+    
     subPathPatten = subPathPatten.replaceAll(r"${id}", illust.id.toString());
     subPathPatten = subPathPatten.replaceAll(r"${title}", illust.title);
     subPathPatten = subPathPatten.replaceAll(r"${author}", illust.author.name);

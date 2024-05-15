@@ -106,7 +106,14 @@ class Network {
           },
           options: Options(
               contentType: Headers.formUrlEncodedContentType,
+              validateStatus: (i) => true,
               headers: headers));
+      if(res.statusCode != 200) {
+        var data = res.data ?? "";
+        if(data.contains("Invalid refresh token")) {
+          throw "Failed to refresh token. Plaese logout and re-login";
+        }
+      }
       var account = Account.fromJson(json.decode(res.data!));
       appdata.account = account;
       appdata.writeData();
