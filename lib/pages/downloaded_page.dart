@@ -5,6 +5,7 @@ import 'package:flutter/gestures.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:pixes/components/grid.dart';
 import 'package:pixes/components/md.dart';
+import 'package:pixes/components/message.dart';
 import 'package:pixes/components/page_route.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
@@ -57,6 +58,7 @@ class _DownloadedPageState extends State<DownloadedPage> {
       itemHeight: 152,
       maxCrossAxisExtent: 742,
       builder: (context, index) {
+        var image = DownloadManager().getImage(illusts[index].illustId, 0);
         return Card(
           margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
@@ -70,9 +72,8 @@ class _DownloadedPageState extends State<DownloadedPage> {
                   color: ColorScheme.of(context).secondaryContainer
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: Image(
-                  image: FileImage(DownloadManager().getImage(
-                      illusts[index].illustId, 0)!),
+                child: image == null ? null : Image(
+                  image: FileImage(image),
                   fit: BoxFit.cover,
                   filterQuality: FilterQuality.medium,
                 ),
@@ -113,11 +114,15 @@ class _DownloadedPageState extends State<DownloadedPage> {
                         Button(
                           child: Text("View".tl).fixWidth(42),
                           onPressed: () {
+                            var images = DownloadManager().getImagePaths(
+                                illusts[index].illustId);
+                            if(images.isEmpty) {
+                              showToast(context, message: "No images found".tl);
+                              return;
+                            }
                             App.rootNavigatorKey.currentState?.push(
                                 AppPageRoute(builder: (context) {
-                                  return _DownloadedIllustViewPage(
-                                      DownloadManager().getImagePaths(
-                                          illusts[index].illustId));
+                                  return _DownloadedIllustViewPage(images);
                                 }));
                           },
                         ),
