@@ -248,7 +248,9 @@ class _TrendingTagsViewState extends LoadingState<_TrendingTagsView, List<Trendi
 }
 
 class SearchSettings extends StatefulWidget {
-  const SearchSettings({super.key});
+  const SearchSettings({this.onChanged, super.key});
+
+  final void Function()? onChanged;
 
   @override
   State<SearchSettings> createState() => _SearchSettingsState();
@@ -269,7 +271,12 @@ class _SearchSettingsState extends State<SearchSettings> {
             items: KeywordMatchType.values.map((e) =>
               MenuFlyoutItem(
                 text: Text(e.toString()),
-                onPressed: () => setState(() => appdata.searchOptions.matchType = e)
+                onPressed: () {
+                  if(appdata.searchOptions.matchType != e) {
+                    setState(() => appdata.searchOptions.matchType = e);
+                    widget.onChanged?.call();
+                  }
+                }
               )
             ).toList(),
           )),
@@ -278,7 +285,12 @@ class _SearchSettingsState extends State<SearchSettings> {
             items: FavoriteNumber.values.map((e) =>
                 MenuFlyoutItem(
                     text: Text(e.toString()),
-                    onPressed: () => setState(() => appdata.searchOptions.favoriteNumber = e)
+                    onPressed: () {
+                      if(appdata.searchOptions.favoriteNumber != e) {
+                        setState(() => appdata.searchOptions.favoriteNumber = e);
+                        widget.onChanged?.call();
+                      }
+                    }
                 )
             ).toList(),
           )),
@@ -287,7 +299,12 @@ class _SearchSettingsState extends State<SearchSettings> {
             items: SearchSort.values.map((e) =>
                 MenuFlyoutItem(
                     text: Text(e.toString()),
-                    onPressed: () => setState(() => appdata.searchOptions.sort = e)
+                    onPressed: () {
+                      if(appdata.searchOptions.sort != e) {
+                        setState(() => appdata.searchOptions.sort = e);
+                        widget.onChanged?.call();
+                      }
+                    }
                 )
             ).toList(),
           )),
@@ -304,7 +321,12 @@ class _SearchSettingsState extends State<SearchSettings> {
                       .paddingLeft(16),
                   DatePicker(
                     selected: appdata.searchOptions.startTime,
-                    onChanged: (t) => setState(() => appdata.searchOptions.startTime = t),
+                    onChanged: (t) {
+                      if(appdata.searchOptions.startTime != t) {
+                        setState(() => appdata.searchOptions.startTime = t);
+                        widget.onChanged?.call();
+                      }
+                    },
                   ),
                   const SizedBox(height: 8,)
                 ],
@@ -323,7 +345,12 @@ class _SearchSettingsState extends State<SearchSettings> {
                         .paddingLeft(16),
                     DatePicker(
                       selected: appdata.searchOptions.endTime,
-                      onChanged: (t) => setState(() => appdata.searchOptions.endTime = t),
+                      onChanged: (t) {
+                        if(appdata.searchOptions.endTime != t) {
+                          setState(() => appdata.searchOptions.endTime = t);
+                          widget.onChanged?.call();
+                        }
+                      },
                     ),
                     const SizedBox(height: 8,)
                   ],
@@ -334,7 +361,12 @@ class _SearchSettingsState extends State<SearchSettings> {
             items: AgeLimit.values.map((e) =>
                 MenuFlyoutItem(
                     text: Text(e.toString()),
-                    onPressed: () => setState(() => appdata.searchOptions.ageLimit = e)
+                    onPressed: () {
+                      if(appdata.searchOptions.ageLimit != e) {
+                        setState(() => appdata.searchOptions.ageLimit = e);
+                        widget.onChanged?.call();
+                      }
+                    }
                 )
             ).toList(),
           )),
@@ -367,15 +399,24 @@ class SearchResultPage extends StatefulWidget {
 }
 
 class _SearchResultPageState extends MultiPageLoadingState<SearchResultPage, Illust> {
+  late String keyword = widget.keyword;
+
+  late String oldKeyword = widget.keyword;
+
+  late final controller = TextEditingController(text: widget.keyword);
+
+  void search() {
+    if(keyword != oldKeyword) {
+      oldKeyword = keyword;
+      reset();
+    }
+  }
+
   @override
   Widget buildContent(BuildContext context, final List<Illust> data) {
     return CustomScrollView(
       slivers: [
-        SliverToBoxAdapter(
-          child: Text("${"Search".tl}: ${widget.keyword}",
-            style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)
-              .paddingVertical(12).paddingHorizontal(16),
-        ),
+        buildSearchBar(),
         SliverMasonryGrid(
           gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
             maxCrossAxisExtent: 240,
@@ -395,6 +436,74 @@ class _SearchResultPageState extends MultiPageLoadingState<SearchResultPage, Ill
     );
   }
 
+  Widget buildSearchBar() {
+    return SliverToBoxAdapter(
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 560),
+          child: SizedBox(
+            height: 42,
+            width: double.infinity,
+            child: LayoutBuilder(
+              builder: (context, constrains) {
+                return SizedBox(
+                  height: 42,
+                  width: constrains.maxWidth,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextBox(
+                          controller: controller,
+                          placeholder: "Search artworks".tl,
+                          onChanged: (s) => keyword = s,
+                          onSubmitted: (s) => search(),
+                          foregroundDecoration: BoxDecoration(
+                              border: Border.all(
+                                  color: ColorScheme.of(context)
+                                      .outlineVariant
+                                      .withOpacity(0.6)),
+                              borderRadius: BorderRadius.circular(4)),
+                          suffix: MouseRegion(
+                            cursor: SystemMouseCursors.click,
+                            child: GestureDetector(
+                              onTap: search,
+                              child: const Icon(
+                                FluentIcons.search,
+                                size: 16,
+                              ).paddingHorizontal(12),
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 4,),
+                      Button(
+                        child: const SizedBox(
+                          height: 42,
+                          child: Center(
+                            child: Icon(FluentIcons.settings),
+                          ),
+                        ),
+                        onPressed: () async{
+                          bool isChanged = false;
+                          await Navigator.of(context).push(
+                              SideBarRoute(SearchSettings(
+                                onChanged: () => isChanged = true,)));
+                          if(isChanged) {
+                            reset();
+                          }
+                        },
+                      )
+                    ],
+                  ),
+                );
+              },
+            ),
+          ).paddingHorizontal(16),
+        ),
+      ),
+    ).sliverPadding(const EdgeInsets.only(top: 12));
+  }
+
   String? nextUrl;
 
   @override
@@ -403,7 +512,7 @@ class _SearchResultPageState extends MultiPageLoadingState<SearchResultPage, Ill
       return Res.error("No more data");
     }
     var res = nextUrl == null
-        ? await Network().search(widget.keyword, appdata.searchOptions)
+        ? await Network().search(keyword, appdata.searchOptions)
         : await Network().getIllustsWithNextUrl(nextUrl!);
     if(!res.error) {
       nextUrl = res.subData;
