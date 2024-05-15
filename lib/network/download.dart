@@ -267,7 +267,7 @@ class DownloadManager {
     _currentBytes += bytes;
   }
 
-  int get maxConcurrentTasks => appdata.settings["maxDownloadParallels"];
+  int get maxConcurrentTasks => appdata.settings["maxParallels"];
 
   void run() {
     _loop ??= Timer.periodic(const Duration(seconds: 1), (timer) {
