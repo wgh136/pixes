@@ -2,7 +2,10 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+import 'package:flutter/services.dart';
+import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/log.dart';
+import 'package:pixes/utils/ext.dart';
 
 export 'package:dio/dio.dart';
 
@@ -121,13 +124,34 @@ class AppDio extends DioForNative {
 }
 
 void setSystemProxy() {
-  HttpOverrides.global = _ProxyHttpOverrides();
+  HttpOverrides.global = _ProxyHttpOverrides()
+    ..findProxy(Uri());
 }
 
 class _ProxyHttpOverrides extends HttpOverrides {
+  String proxy = "DIRECT";
+
   String findProxy(Uri uri) {
-    // TODO: proxy
-    return "DIRECT";
+    if(!App.isLinux) {
+      var channel = const MethodChannel("pixes/proxy");
+      channel.invokeMethod("getProxy").then((value) {
+        if(value == "No proxy"){
+          proxy = "DIRECT";
+        } else {
+          if(proxy.contains("https")){
+            var proxies = value.split(";");
+            for (String proxy in proxies) {
+              proxy = proxy.removeAllBlank;
+              if (proxy.startsWith('https=')) {
+                value = proxy.substring(6);
+              }
+            }
+          }
+          proxy = "PROXY $value";
+        }
+      });
+    }
+    return proxy;
   }
 
   @override
