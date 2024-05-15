@@ -16,8 +16,8 @@ class _Appdata {
   Map<String, dynamic> settings = {
     "downloadPath": null,
     "downloadSubPath": r"/${id}-p${index}.${ext}",
-    "tagsWeight": "",
-    "useTranslatedNameForDownload": false,
+    "tagsWeight": "風景 ロリ 巨乳 女の子",
+    "useTranslatedNameForDownload": true,
     "maxParallels": 3
   };
 
