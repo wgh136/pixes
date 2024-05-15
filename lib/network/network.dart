@@ -223,7 +223,7 @@ class Network {
   Future<Res<List<Illust>>> getBookmarkedIllusts(String restrict,
       [String? nextUrl]) async {
     var res = await apiGet(nextUrl ??
-        "/v1/user/bookmarks/illust?user_id=49258688&restrict=$restrict");
+        "/v1/user/bookmarks/illust?user_id=${appdata.account?.user.id}&restrict=$restrict");
     if (res.success) {
       return Res(
           (res.data["illusts"] as List).map((e) => Illust.fromJson(e)).toList(),
