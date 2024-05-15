@@ -1,5 +1,6 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:pixes/components/md.dart';
+import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/network/download.dart';
@@ -32,6 +33,7 @@ class _DownloadingPageState extends State<DownloadingPage> {
   @override
   Widget build(BuildContext context) {
     return ScaffoldPage(
+      padding: EdgeInsets.zero,
       content: CustomScrollView(
         slivers: [
           buildTop(),
@@ -45,15 +47,7 @@ class _DownloadingPageState extends State<DownloadingPage> {
   Widget buildTop() {
     int bytesPerSecond = DownloadManager().bytesPerSecond;
 
-    return SliverToBoxAdapter(
-      child: SizedBox(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Text("${"Speed".tl}: ${bytesToText(bytesPerSecond)}/s",
-              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
-        ),
-      ),
-    );
+    return SliverTitleBar(title: "${"Speed".tl}: ${bytesToText(bytesPerSecond)}/s");
   }
 
   Widget buildContent() {

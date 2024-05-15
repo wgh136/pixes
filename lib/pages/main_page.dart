@@ -146,11 +146,15 @@ class _MainPageState extends State<MainPage> with WindowListener {
               paneBodyBuilder: (pane, child) => NavigatorPopHandler(
                 key: const Key("navigator"),
                 onPop: () => navigatorKey.currentState?.pop(),
-                child: Navigator(
-                  key: navigatorKey,
-                  onGenerateRoute: (settings) => AppPageRoute(
-                      builder: (context) => const RecommendationPage()),
-              ))),
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: Navigator(
+                    key: navigatorKey,
+                    onGenerateRoute: (settings) => AppPageRoute(
+                        builder: (context) => const RecommendationPage()),
+                  ),
+                ))),
         ));
   }
 

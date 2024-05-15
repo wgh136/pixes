@@ -111,7 +111,7 @@ class Network {
       if(res.statusCode != 200) {
         var data = res.data ?? "";
         if(data.contains("Invalid refresh token")) {
-          throw "Failed to refresh token. Plaese logout and re-login";
+          throw "Failed to refresh token. Please log out.";
         }
       }
       var account = Account.fromJson(json.decode(res.data!));

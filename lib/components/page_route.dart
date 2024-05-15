@@ -120,7 +120,7 @@ mixin _AppRouteTransitionMixin<T> on PageRoute<T> {
         parent: animation,
         curve: FluentTheme.of(context).animationCurve,
       ),
-      child: enableIOSGesture
+      child: enableIOSGesture && App.isIOS
           ? IOSBackGestureDetector(
               gestureWidth: _kBackGestureWidth,
               enabledCallback: () => _isPopGestureEnabled<T>(this),

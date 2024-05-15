@@ -208,7 +208,7 @@ class __SetDownloadPathPageState extends State<_SetDownloadPathPage> {
 }
 
 class _SetDownloadSubPathPage extends StatefulWidget {
-  const _SetDownloadSubPathPage({super.key});
+  const _SetDownloadSubPathPage();
 
   @override
   State<_SetDownloadSubPathPage> createState() =>
@@ -227,7 +227,7 @@ class __SetDownloadSubPathPageState extends State<_SetDownloadSubPathPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          TitleBar(title: "Download Subpath".tl),
+          TitleBar(title: "Download subpath".tl),
           Text("Rule".tl)
               .padding(const EdgeInsets.symmetric(vertical: 8, horizontal: 16)),
           TextBox(
@@ -246,7 +246,9 @@ class __SetDownloadSubPathPageState extends State<_SetDownloadSubPathPage> {
             trailing: ToggleSwitch(
               checked: appdata.settings["useTranslatedNameForDownload"],
               onChanged: (value) {
-                appdata.settings["useTranslatedNameForDownload"] = value;
+                setState(() {
+                  appdata.settings["useTranslatedNameForDownload"] = value;
+                });
                 appdata.writeSettings();
               },
             ),
@@ -270,7 +272,7 @@ class __SetDownloadSubPathPageState extends State<_SetDownloadSubPathPage> {
           const SizedBox(
             height: 16,
           ),
-          Text(_instruction).paddingHorizontal(16)
+          SelectableText(_instruction).paddingHorizontal(16)
         ],
       ),
     );
@@ -284,22 +286,24 @@ class __SetDownloadSubPathPageState extends State<_SetDownloadSubPathPage> {
   }
 
   String get _instruction => """
-${"Edit the rule of where to store a image.".tl}
-${"Note: The rule should contain file name.".tl}
+${"Edit the rule for where to save an image.".tl}
+${"Note: The rule should include the filename.".tl}
 
-${"Some keyword will be replaced as following rule:"}
-  \${title} -> ${"Title of the actwork".tl}
+${"Some keywords will be replaced by the following rule:"}
+  \${title} -> ${"Title of the work".tl}
   \${author} -> ${"Name of the author".tl}
-  \${id} -> ${"Actwork ID".tl}
+  \${id} -> ${"Artwork ID".tl}
   \${index} -> ${"Index of the image in the artwork".tl}
   \${ext} -> ${"File extension".tl}
-  ${"Tags: Tags will be sorted with \"Weights of tags\" setting and be replaced with following rule".tl}
-  ${"The final text will be affect by the setting og \"Use translated tag name\"".tl}
+
+${"Tags: Tags will be sorted by the \"Weights of tags\" setting and replaced by the following rule:".tl}
+${"The final text will be affected by the \"Use translated tag name\" setting.".tl}
   \${tag0} -> ${"The first tag of the artwork".tl}
-  \${tag1} -> ${"The sencondary tag of the artwork".tl}
+  \${tag1} -> ${"The second tag of the artwork".tl}
+  ...
 
 ${"Weights of the tags".tl}:
-Filled with tags. The tags should be splited with a space. The tag in the front have higher weight.
-It is required to use originlal name instead of translated name.
+Filled with tags. The tags should be separated by a space. The tag in front has higher weight.
+It is required to use the original name instead of the translated name.
 """;
 }

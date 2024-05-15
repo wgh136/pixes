@@ -124,6 +124,7 @@ class _SearchPageState extends State<SearchPage> {
                       onPressed: () {
                         optionController.showFlyout(
                           navigatorKey: App.rootNavigatorKey.currentState,
+                          placementMode: FlyoutPlacementMode.bottomCenter,
                           builder: buildSearchOption,
                         );
                       },
