@@ -1,0 +1,40 @@
+name: Build IOS
+run-name: Build IOS
+on:
+  workflow_dispatch: {}
+jobs:
+  Build_IOS:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+        architecture: x64
+    - run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app
+    - run: flutter pub get
+    - run: flutter build ios --release --no-codesign
+    - run: bash .github/generate_ipa.sh
+    - uses: actions/upload-artifact@v3
+      with:
+        name: app-ios.ipa
+        path: build/ios/iphoneos/app-ios.ipa
+  Build_MacOS:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+    - uses: subosito/flutter-action@v2
+      with:
+        channel: 'stable'
+        architecture: x64
+    - run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app
+    - run: flutter pub get
+    - run: flutter build macos --release
+    - run: |
+           cd build/macos/Build/Products/Release
+           zip -r macos-build.zip pica_comic.app
+    - uses: actions/upload-artifact@v4
+      with:
+        name: macos-build.zip
+        path: build/macos/Build/Products/Release/macos-build.zip
+ 
