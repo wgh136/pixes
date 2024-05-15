@@ -129,7 +129,6 @@ class DownloadingTask {
     String subPathPatten = appdata.settings["downloadSubPath"];
     final tagsWeight = (appdata.settings["tagsWeight"] as String).split(' ');
     final originalTags = List<Tag>.from(illust.tags);
-    print(originalTags);
     originalTags.sort((a, b){
       var aWeight = tagsWeight.indexOf(a.name);
       if(aWeight == -1) aWeight = tagsWeight.length;
@@ -137,7 +136,6 @@ class DownloadingTask {
       if(bWeight == -1) bWeight = tagsWeight.length;
       return aWeight - bWeight;
     });
-    print(originalTags);
     final tags = appdata.settings["useTranslatedNameForDownload"] == false
         ? originalTags.map((e) => e.name).toList()
         : originalTags.map((e) => e.translatedName ?? e.name).toList();

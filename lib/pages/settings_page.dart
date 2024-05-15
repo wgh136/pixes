@@ -12,6 +12,8 @@ import 'package:pixes/utils/io.dart';
 import 'package:pixes/utils/translation.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import 'logs.dart';
+
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
@@ -176,6 +178,12 @@ class _SettingsPageState extends State<SettingsPage> {
                 icon: const Icon(MdIcons.open_in_new, size: 18,),
                 onPressed: () =>
                     launchUrlString("https://t.me/pica_group"),
+              )),
+          buildItem(
+              title: "Logs",
+              action: IconButton(
+                icon: const Icon(MdIcons.open_in_new, size: 18,),
+                onPressed: () => context.to(() => const LogsPage())
               )),
         ],
       ),
