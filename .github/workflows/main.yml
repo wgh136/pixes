@@ -32,7 +32,7 @@ jobs:
     - run: flutter build macos --release
     - run: |
            cd build/macos/Build/Products/Release
-           zip -r macos-build.zip pica_comic.app
+           zip -r macos-build.zip pixes.app
     - uses: actions/upload-artifact@v4
       with:
         name: macos-build.zip
