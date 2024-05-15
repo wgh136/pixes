@@ -132,7 +132,7 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
           if(file != null){
             var fileName = file.path.split('/').last;
             String ext;
-            if(!file.path.split('.').last.contains('.')){
+            if(!fileName.contains('.')){
               ext = 'jpg';
               fileName += '.jpg';
             } else {
@@ -146,7 +146,11 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
               'webp' => 'image/webp',
               _ => 'application/octet-stream'
             };
-            Share.shareXFiles([XFile(file.path, mimeType: mediaType, name: fileName)]);
+            Share.shareXFiles([XFile.fromData(
+              await file.readAsBytes(),
+              mimeType: mediaType,
+              name: fileName)]
+            );
           }
         }),
       ],
