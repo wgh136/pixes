@@ -30,7 +30,7 @@ class ToastOverlay extends StatelessWidget {
       child: Align(
         alignment: Alignment.bottomCenter,
         child: PhysicalModel(
-          color: FluentTheme.of(context).cardColor.withOpacity(1),
+          color: FluentTheme.of(context).cardColor.withOpacity(0),
           borderRadius: BorderRadius.circular(4),
           elevation: 1,
           child: Container(
