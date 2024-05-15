@@ -10,6 +10,7 @@ import "package:pixes/network/network.dart";
 import "package:pixes/pages/bookmarks.dart";
 import "package:pixes/pages/downloaded_page.dart";
 import "package:pixes/pages/following_artworks.dart";
+import "package:pixes/pages/history.dart";
 import "package:pixes/pages/ranking.dart";
 import "package:pixes/pages/recommendation_page.dart";
 import "package:pixes/pages/login_page.dart";
@@ -130,6 +131,11 @@ class _MainPageState extends State<MainPage> with WindowListener {
                     body: const SizedBox.shrink(),
                   ),
                   PaneItem(
+                    icon: const Icon(MdIcons.history, size: 20),
+                    title: Text('History'.tl),
+                    body: const SizedBox.shrink(),
+                  ),
+                  PaneItem(
                     icon: const Icon(MdIcons.leaderboard_outlined, size: 20),
                     title: Text('Ranking'.tl),
                     body: const SizedBox.shrink(),
@@ -166,6 +172,7 @@ class _MainPageState extends State<MainPage> with WindowListener {
     () => const RecommendationPage(),
     () => const BookMarkedArtworkPage(),
     () => const FollowingArtworksPage(),
+    () => const HistoryPage(),
     () => const RankingPage(),
     () => const SettingsPage(),
   ];

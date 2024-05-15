@@ -418,4 +418,18 @@ class Network {
       return Res.error(res.errorMessage);
     }
   }
+
+  Future<Res<List<Illust>>> getHistory(int page) async {
+    String param = "";
+    if(page > 1) {
+      param = "?offset=${30*(page-1)}";
+    }
+    var res = await apiGet("/v1/user/browsing-history/illusts$param");
+    if (res.success) {
+      return Res((res.data["illusts"] as List)
+          .map((e) => Illust.fromJson(e)).toList());
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
 }
