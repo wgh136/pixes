@@ -11,7 +11,7 @@ export "state_controller.dart";
 export "navigation.dart";
 
 class _App {
-  final version = "1.0.1";
+  final version = "1.0.2";
 
   bool get isAndroid => Platform.isAndroid;
   bool get isIOS => Platform.isIOS;
