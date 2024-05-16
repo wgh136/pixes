@@ -1,3 +1,5 @@
+import "dart:ui";
+
 import "package:fluent_ui/fluent_ui.dart";
 import "package:flutter/services.dart";
 import "package:pixes/appdata.dart";
@@ -47,40 +49,31 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-          systemNavigationBarColor: Colors.transparent,
-          statusBarColor: Colors.transparent),
-      child: StateBuilder<SimpleController>(
-          init: SimpleController(),
-          tag: "MyApp",
-          builder: (controller) {
-            Brightness? brightness;
+    return StateBuilder<SimpleController>(
+        init: SimpleController(),
+        tag: "MyApp",
+        builder: (controller) {
+          Brightness brightness = PlatformDispatcher.instance.platformBrightness;
 
-            if(appdata.settings["theme"] == "Dark") {
-              brightness = Brightness.dark;
-            } else if(appdata.settings["theme"] == "Light") {
-              brightness = Brightness.light;
-            }
+          if(appdata.settings["theme"] == "Dark") {
+            brightness = Brightness.dark;
+          } else if(appdata.settings["theme"] == "Light") {
+            brightness = Brightness.light;
+          }
 
-            return FluentApp(
+          return AnnotatedRegion<SystemUiOverlayStyle>(
+            value: SystemUiOverlayStyle(
+              systemNavigationBarColor: Colors.transparent,
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness: brightness.opposite,
+              systemNavigationBarIconBrightness: brightness.opposite,
+            ),
+            child: FluentApp(
                 navigatorKey: App.rootNavigatorKey,
                 debugShowCheckedModeBanner: false,
                 title: 'pixes',
                 theme: FluentThemeData(
-                    brightness: brightness ?? Brightness.light,
-                    fontFamily: App.isWindows ? 'font' : null,
-                    accentColor: AccentColor.swatch({
-                      'darkest': SystemTheme.accentColor.darkest,
-                      'darker': SystemTheme.accentColor.darker,
-                      'dark': SystemTheme.accentColor.dark,
-                      'normal': SystemTheme.accentColor.accent,
-                      'light': SystemTheme.accentColor.light,
-                      'lighter': SystemTheme.accentColor.lighter,
-                      'lightest': SystemTheme.accentColor.lightest,
-                    })),
-                darkTheme: FluentThemeData(
-                    brightness: brightness ?? Brightness.dark,
+                    brightness: brightness,
                     fontFamily: App.isWindows ? 'font' : null,
                     accentColor: AccentColor.swatch({
                       'darkest': SystemTheme.accentColor.darkest,
@@ -107,8 +100,8 @@ class MyApp extends StatelessWidget {
                   }
 
                   return OverlayWidget(child);
-                });
-          }),
-    );
+                }),
+          );
+        });
   }
 }
