@@ -889,7 +889,7 @@ class _CommentsPageState extends MultiPageLoadingState<_CommentsPage, Comment> {
             });
           },
         ).paddingVertical(8).paddingHorizontal(12),
-      ).paddingBottom(context.padding.bottom),
+      ).paddingBottom(context.padding.bottom + context.viewInsets.bottom),
     );
   }
 

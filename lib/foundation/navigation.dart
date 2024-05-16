@@ -20,4 +20,6 @@ extension Navigation on BuildContext {
   Size get size => MediaQuery.of(this).size;
 
   EdgeInsets get padding => MediaQuery.of(this).padding;
+
+  EdgeInsets get viewInsets => MediaQuery.of(this).viewInsets;
 }
