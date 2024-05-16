@@ -29,6 +29,9 @@ extension FSExt on FileSystemEntity {
 extension DirectoryExt on Directory {
   bool havePermission() {
     if(!existsSync()) return false;
+    if(App.isMacOS) {
+      return true;
+    }
     try {
       listSync();
       return true;

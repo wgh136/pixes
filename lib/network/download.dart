@@ -127,28 +127,37 @@ class DownloadingTask {
   static String _generateFilePath(Illust illust, int index, String ext) {
     final String downloadPath = appdata.settings["downloadPath"];
     String subPathPatten = appdata.settings["downloadSubPath"];
-    final tagsWeight = (appdata.settings["tagsWeight"] as String).split(' ');
-    final originalTags = List<Tag>.from(illust.tags);
-    originalTags.sort((a, b){
-      var aWeight = tagsWeight.indexOf(a.name);
-      if(aWeight == -1) aWeight = tagsWeight.length;
-      var bWeight = tagsWeight.indexOf(b.name);
-      if(bWeight == -1) bWeight = tagsWeight.length;
-      return aWeight - bWeight;
-    });
-    final tags = appdata.settings["useTranslatedNameForDownload"] == false
-        ? originalTags.map((e) => e.name).toList()
-        : originalTags.map((e) => e.translatedName ?? e.name).toList();
-    
     subPathPatten = subPathPatten.replaceAll(r"${id}", illust.id.toString());
     subPathPatten = subPathPatten.replaceAll(r"${title}", illust.title);
     subPathPatten = subPathPatten.replaceAll(r"${author}", illust.author.name);
     subPathPatten = subPathPatten.replaceAll(r"${index}", index.toString());
     subPathPatten = subPathPatten.replaceAll(r"${ext}", ext);
-    for(int i=0; i<tags.length; i++) {
-      subPathPatten = subPathPatten.replaceAll("\${tag$i}", tags[i]);
+    subPathPatten = subPathPatten.replaceAll(r"${AI}", illust.isAi ? "AI" : "");
+    List<String> extractTags(String input) {
+      final regex = RegExp(r'\$\{tag\((.*?)\)\}');
+      final matches = regex.allMatches(input);
+      return matches.map((match) => match.group(1)!).toList();
     }
-    return "$downloadPath$subPathPatten";
+    var tags = extractTags(subPathPatten);
+    print(illust.tags);
+    for(var tag in tags) {
+      print(tag);
+      if (illust.tags.where((e) => e.name == tag || e.translatedName == tag).isNotEmpty) {
+        subPathPatten = subPathPatten.replaceAll("\${tag($tag)}", tag);
+      }
+    }
+    return _cleanFilePath("$downloadPath$subPathPatten");
+  }
+
+  static String _cleanFilePath(String filePath) {
+    const invalidChars = ['*', '?', '"', '<', '>', '|'];
+
+    String cleanedPath =
+        filePath.replaceAll(RegExp('[${invalidChars.join(' ')}]'), '');
+
+    cleanedPath = cleanedPath.replaceAll(RegExp(r'[/\\]+'), '/');
+
+    return cleanedPath;
   }
 
   void retry() {
