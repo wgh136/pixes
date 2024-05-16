@@ -99,6 +99,23 @@ class _IllustWidgetState extends State<IllustWidget> {
                           style: TextStyle(fontSize: 12),),
                       )),
                 ),
+              if(widget.illust.isUgoira)
+                Positioned(
+                  bottom: 12,
+                  left: 12,
+                  child: Container(
+                      width: 28,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).primaryContainer.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6),
+                      ),
+                      child: const Center(
+                        child: Text("GIF",
+                          style: TextStyle(fontSize: 12),),
+                      )),
+                ),
               if(widget.illust.isR18)
                 Positioned(
                   bottom: 12,

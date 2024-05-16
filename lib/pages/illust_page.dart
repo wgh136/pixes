@@ -19,6 +19,7 @@ import 'package:pixes/utils/translation.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../components/md.dart';
+import '../components/ugoira.dart';
 
 
 const _kBottomBarHeight = 64.0;
@@ -100,44 +101,55 @@ class _IllustPageState extends State<IllustPage> {
       imageWidth = imageWidth / scale;
       imageHeight = height;
     }
-    var image = SizedBox(
-      width: imageWidth,
-      height: imageHeight,
-      child: GestureDetector(
-        onTap: () => ImagePage.show(downloadFile == null
-            ? widget.illust.images[index].original
-            : "file://${downloadFile.path}"),
-        child: Image(
-          key: ValueKey(index),
-          image: downloadFile == null
-            ? CachedImageProvider(widget.illust.images[index].large) as ImageProvider
-            : FileImage(downloadFile) as ImageProvider,
-          width: imageWidth,
-          fit: BoxFit.cover,
-          height: imageHeight,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            double? value;
-            if(loadingProgress.expectedTotalBytes != null) {
-              value = (loadingProgress.cumulativeBytesLoaded /
-                  loadingProgress.expectedTotalBytes!)*100;
-            }
-            if(value != null && (value > 100 || value < 0)) {
-              value = null;
-            }
-            return Center(
-              child: SizedBox(
-                width: 24,
-                height: 24,
-                child: ProgressRing(
-                  value: value,
-                ),
-              ),
-            );
-          }
+    Widget image;
+
+    if(!widget.illust.isUgoira) {
+      image = SizedBox(
+        width: imageWidth,
+        height: imageHeight,
+        child: GestureDetector(
+          onTap: () => ImagePage.show(downloadFile == null
+              ? widget.illust.images[index].original
+              : "file://${downloadFile.path}"),
+          child: Image(
+              key: ValueKey(index),
+              image: downloadFile == null
+                  ? CachedImageProvider(widget.illust.images[index].large) as ImageProvider
+                  : FileImage(downloadFile) as ImageProvider,
+              width: imageWidth,
+              fit: BoxFit.cover,
+              height: imageHeight,
+              loadingBuilder: (context, child, loadingProgress) {
+                if (loadingProgress == null) return child;
+                double? value;
+                if(loadingProgress.expectedTotalBytes != null) {
+                  value = (loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes!)*100;
+                }
+                if(value != null && (value > 100 || value < 0)) {
+                  value = null;
+                }
+                return Center(
+                  child: SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: ProgressRing(
+                      value: value,
+                    ),
+                  ),
+                );
+              }
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      image = UgoiraWidget(
+        id: widget.illust.id.toString(),
+        previewImage: CachedImageProvider(widget.illust.images[index].large),
+        width: imageWidth,
+        height: imageHeight,
+      );
+    }
 
     return Center(
       child: image,

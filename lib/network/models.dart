@@ -181,6 +181,7 @@ class Illust {
   final int totalBookmarks;
   bool isBookmarked;
   final bool isAi;
+  final bool isUgoira;
 
   bool get isR18 => tags.contains(const Tag("R-18", null));
 
@@ -226,7 +227,8 @@ class Illust {
         totalView = json['total_view'],
         totalBookmarks = json['total_bookmarks'],
         isBookmarked = json['is_bookmarked'],
-        isAi = json['illust_ai_type'] == 2;
+        isAi = json['illust_ai_type'] == 2,
+        isUgoira = json['type'] == "ugoira";
 }
 
 class TrendingTag {
