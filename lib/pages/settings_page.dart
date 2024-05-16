@@ -31,6 +31,8 @@ class _SettingsPageState extends State<SettingsPage> {
           SliverTitleBar(title: "Settings".tl),
           buildHeader("Account".tl),
           buildAccount(),
+          buildHeader("Browser".tl),
+          buildBrowser(),
           buildHeader("Download".tl),
           buildDownload(),
           buildHeader("About".tl),
@@ -123,10 +125,20 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Text("Manage".tl).fixWidth(64),
                 onPressed: () {
                   if (Platform.isIOS) {
-                    showToast(context, message: "Unsupport platform".tl);
+                    showToast(context, message: "Unsupported platform".tl);
                     return;
                   }
-                  context.to(() => const _SetDownloadPathPage());
+                  context.to(() => _SetSingleFieldPage(
+                    "Download Path".tl,
+                    "downloadPath",
+                    check: (text) {
+                      if(!Directory(text).havePermission()) {
+                        return "No permission".tl;
+                      } else {
+                        return null;
+                      }
+                    },
+                  ));
                 }),
           ),
           buildItem(
@@ -189,25 +201,51 @@ class _SettingsPageState extends State<SettingsPage> {
       ),
     );
   }
+
+  Widget buildBrowser() {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          buildItem(
+              title: "Proxy".tl,
+              action: Button(
+                child: Text("Edit".tl).fixWidth(64),
+                onPressed: () {
+                  context.to(() => _SetSingleFieldPage(
+                    "Http ${"Proxy".tl}",
+                    "proxy",
+                  ));
+                },
+              )),
+        ],
+      ),
+    );
+  }
 }
 
-class _SetDownloadPathPage extends StatefulWidget {
-  const _SetDownloadPathPage();
+class _SetSingleFieldPage extends StatefulWidget {
+  const _SetSingleFieldPage(this.title, this.field, {this.check});
+
+  final String title;
+
+  final String field;
+
+  final String? Function(String)? check;
 
   @override
-  State<_SetDownloadPathPage> createState() => __SetDownloadPathPageState();
+  State<_SetSingleFieldPage> createState() => _SetSingleFieldPageState();
 }
 
-class __SetDownloadPathPageState extends State<_SetDownloadPathPage> {
-  final controller =
-      TextEditingController(text: appdata.settings["downloadPath"]);
+class _SetSingleFieldPageState extends State<_SetSingleFieldPage> {
+  late final controller =
+      TextEditingController(text: appdata.settings[widget.field]);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        TitleBar(title: "Download Path".tl),
+        TitleBar(title: widget.title),
         TextBox(
           controller: controller,
         ).paddingHorizontal(16),
@@ -218,12 +256,13 @@ class __SetDownloadPathPageState extends State<_SetDownloadPathPage> {
           child: Text("Confirm".tl),
           onPressed: () {
             var text = controller.text;
-            if (Directory(text).havePermission()) {
-              appdata.settings["downloadPath"] = text;
+            var checkRes = widget.check?.call(text);
+            if (checkRes == null) {
+              appdata.settings[widget.field] = text;
               appdata.writeData();
               context.pop();
             } else {
-              showToast(context, message: "No Permission".tl);
+              showToast(context, message: checkRes);
             }
           },
         ).toAlign(Alignment.centerRight).paddingRight(16),

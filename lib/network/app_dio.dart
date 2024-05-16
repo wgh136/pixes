@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:flutter/services.dart';
+import 'package:pixes/appdata.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/log.dart';
 import 'package:pixes/utils/ext.dart';
@@ -132,7 +133,9 @@ class _ProxyHttpOverrides extends HttpOverrides {
   String proxy = "DIRECT";
 
   String findProxy(Uri uri) {
-    if(!App.isLinux) {
+    var haveUserProxy = appdata.settings["proxy"] != null
+        && appdata.settings["proxy"].toString().isNotEmpty;
+    if(!App.isLinux && !haveUserProxy){
       var channel = const MethodChannel("pixes/proxy");
       channel.invokeMethod("getProxy").then((value) {
         if(value.toString().toLowerCase() == "no proxy"){
@@ -150,6 +153,10 @@ class _ProxyHttpOverrides extends HttpOverrides {
           proxy = "PROXY $value";
         }
       });
+    } else {
+      if(haveUserProxy){
+        proxy = "PROXY ${appdata.settings["proxy"]}";
+      }
     }
     return proxy;
   }

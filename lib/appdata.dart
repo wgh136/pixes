@@ -18,7 +18,8 @@ class _Appdata {
     "downloadSubPath": r"/${id}-p${index}.${ext}",
     "tagsWeight": "風景 ロリ 巨乳 女の子",
     "useTranslatedNameForDownload": true,
-    "maxParallels": 3
+    "maxParallels": 3,
+    "proxy": "",
   };
 
   bool lock = false;
