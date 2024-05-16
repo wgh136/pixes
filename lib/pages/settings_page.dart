@@ -31,8 +31,8 @@ class _SettingsPageState extends State<SettingsPage> {
           SliverTitleBar(title: "Settings".tl),
           buildHeader("Account".tl),
           buildAccount(),
-          buildHeader("Browser".tl),
-          buildBrowser(),
+          buildHeader("Browse".tl),
+          buildBrowse(),
           buildHeader("Download".tl),
           buildDownload(),
           buildHeader("About".tl),
@@ -202,7 +202,7 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget buildBrowser() {
+  Widget buildBrowse() {
     return SliverToBoxAdapter(
       child: Column(
         children: [
