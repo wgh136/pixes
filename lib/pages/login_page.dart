@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/network.dart';
+import 'package:pixes/pages/webview_page.dart';
 import 'package:pixes/utils/app_links.dart';
 import 'package:pixes/utils/translation.dart';
 import 'package:url_launcher/url_launcher_string.dart';
@@ -186,7 +187,6 @@ class _LoginPageState extends State<LoginPage> {
 
   void onContinue() async {
     var url = await Network().generateWebviewUrl();
-    launchUrlString(url);
     onLink = (uri) {
       if (uri.scheme == "pixiv") {
         onFinished(uri.queryParameters["code"]!);
@@ -198,6 +198,18 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       waitingForAuth = true;
     });
+    if(App.isMobile && mounted) {
+      context.to(() => WebviewPage(url, onNavigation: (req) {
+        if(req.url.startsWith("pixiv://")) {
+          App.rootNavigatorKey.currentState!.pop();
+          onLink?.call(Uri.parse(req.url));
+          return false;
+        }
+        return true;
+      },));
+    } else {
+      launchUrlString(url);
+    }
   }
 
   void onFinished(String code) async {

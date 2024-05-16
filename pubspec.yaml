@@ -55,6 +55,7 @@ dependencies:
   file_selector: ^1.0.1
   flutter_file_dialog: 3.0.1
   archive: ^3.5.1
+  webview_flutter: ^4.7.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
