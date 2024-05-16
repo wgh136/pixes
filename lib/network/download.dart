@@ -139,9 +139,7 @@ class DownloadingTask {
       return matches.map((match) => match.group(1)!).toList();
     }
     var tags = extractTags(subPathPatten);
-    print(illust.tags);
     for(var tag in tags) {
-      print(tag);
       if (illust.tags.where((e) => e.name == tag || e.translatedName == tag).isNotEmpty) {
         subPathPatten = subPathPatten.replaceAll("\${tag($tag)}", tag);
       }

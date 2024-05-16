@@ -6,6 +6,7 @@ import "package:flutter/material.dart" as md;
 import "package:pixes/appdata.dart";
 import "package:pixes/components/md.dart";
 import "package:pixes/foundation/app.dart";
+import "package:pixes/foundation/image_provider.dart";
 import "package:pixes/network/network.dart";
 import "package:pixes/pages/bookmarks.dart";
 import "package:pixes/pages/downloaded_page.dart";
@@ -465,7 +466,7 @@ class UserPane extends PaneItem {
                       child: Image(
                         height: 48,
                         width: 48,
-                        image: NetworkImage(appdata.account!.user.profile),
+                        image: CachedImageProvider(appdata.account!.user.profile),
                         fit: BoxFit.fill,
                       ),
                     ),
