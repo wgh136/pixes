@@ -76,6 +76,19 @@ class _IllustPageState extends State<IllustPage> {
         });
   }
 
+  void openImage(int index) {
+    var images = <String>[];
+    for(var i = 0; i < widget.illust.images.length; i++) {
+      var downloadFile = DownloadManager().getImage(widget.illust.id, i);
+      if(downloadFile != null) {
+        images.add("file://${downloadFile.path}");
+      } else {
+        images.add(widget.illust.images[i].original);
+      }
+    }
+    ImagePage.show(images, initialPage: index);
+  }
+
   Widget buildImage(double width, double height, int index) {
     if (index == 0) {
       return Text(
@@ -108,9 +121,7 @@ class _IllustPageState extends State<IllustPage> {
         width: imageWidth,
         height: imageHeight,
         child: GestureDetector(
-          onTap: () => ImagePage.show(downloadFile == null
-              ? widget.illust.images[index].original
-              : "file://${downloadFile.path}"),
+          onTap: () => openImage(index),
           child: Image(
               key: ValueKey(index),
               image: downloadFile == null

@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:photo_view/photo_view.dart';
+import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
+import 'package:photo_view/photo_view_gallery.dart';
 import 'package:pixes/components/md.dart';
 import 'package:pixes/components/page_route.dart';
 import 'package:pixes/foundation/app.dart';
@@ -14,13 +16,16 @@ import 'package:share_plus/share_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
 class ImagePage extends StatefulWidget {
-  const ImagePage(this.url, {super.key});
+  const ImagePage(this.urls, {this.initialPage = 1, super.key});
 
-  final String url;
+  final List<String> urls;
 
-  static show(String url) {
+  final int initialPage;
+
+  static show(List<String> urls, {int initialPage = 1}) {
     App.rootNavigatorKey.currentState
-        ?.push(AppPageRoute(builder: (context) => ImagePage(url)));
+        ?.push(AppPageRoute(
+        builder: (context) => ImagePage(urls, initialPage: initialPage)));
   }
 
   @override
@@ -56,70 +61,25 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-      color: FluentTheme.of(context).micaBackgroundColor,
-      child: Stack(
-        children: [
-          Positioned.fill(
-              child: PhotoView(
-            backgroundDecoration: BoxDecoration(
-                color: FluentTheme.of(context).micaBackgroundColor),
-            filterQuality: FilterQuality.medium,
-            imageProvider: widget.url.startsWith("file://")
-                ? FileImage(File(widget.url.replaceFirst("file://", "")))
-                : CachedImageProvider(widget.url) as ImageProvider,
-          )),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: SizedBox(
-              height: 36,
-              child: Row(
-                children: [
-                  const SizedBox(
-                    width: 6,
-                  ),
-                  IconButton(
-                      icon: const Icon(FluentIcons.back).paddingAll(2),
-                      onPressed: () => context.pop()),
-                  const Expanded(
-                    child: DragToMoveArea(
-                      child: SizedBox.expand(),
-                    ),
-                  ),
-                  buildActions(),
-                  if (App.isDesktop)
-                    WindowButtons(
-                      key: ValueKey(windowButtonKey),
-                    ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+  late var controller = PageController(initialPage: widget.initialPage);
+
+  late int currentPage = widget.initialPage;
 
   var menuController = FlyoutController();
 
-  Future<File?> getFile() async{
-    if (widget.url.startsWith("file://")) {
-      return File(widget.url.replaceFirst("file://", ""));
+  Future<File?> getFile() async {
+    var image = widget.urls[currentPage];
+    if(image.startsWith("file://")){
+      return File(image.replaceFirst("file://", ""));
     }
-    var res = await CacheManager().findCache(widget.url);
-    if(res == null){
-      return null;
-    }
-    return File(res);
+    var file = await CacheManager().findCache(image);
+    return file == null
+        ? null
+        : File(file);
   }
 
   String getExtensionName() {
-    var fileName = widget.url.split('/').last;
+    var fileName = widget.urls[currentPage].split('/').last;
     if(fileName.contains('.')){
       return '.${fileName.split('.').last}';
     }
@@ -142,15 +102,12 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
         MenuFlyoutItem(text: Text("Share".tl), onPressed: () async{
           var file = await getFile();
           if(file != null){
+            var ext = getExtensionName();
             var fileName = file.path.split('/').last;
-            String ext;
             if(!fileName.contains('.')){
-              ext = getExtensionName();
-              fileName += getExtensionName();
-            } else {
-              ext = file.path.split('.').last;
+              fileName += ext;
             }
-            var mediaType = switch(ext.replaceFirst('.', "")){
+            var mediaType = switch(ext){
               'jpg' => 'image/jpeg',
               'jpeg' => 'image/jpeg',
               'png' => 'image/png',
@@ -158,15 +115,118 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
               'webp' => 'image/webp',
               _ => 'application/octet-stream'
             };
-            Share.shareXFiles([XFile.fromData(
-              await file.readAsBytes(),
-              mimeType: mediaType,
-              name: fileName)]
-            );
+            Share.shareXFiles([XFile(file.path, mimeType: mediaType, name: fileName)]);
           }
         }),
       ],
     ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+      color: FluentTheme.of(context).micaBackgroundColor,
+      child: Listener(
+        onPointerSignal: (event) {
+          if(event is PointerScrollEvent &&
+              !HardwareKeyboard.instance.isControlPressed) {
+            if(event.scrollDelta.dy > 0
+                && controller.page!.toInt() < widget.urls.length - 1) {
+              controller.jumpToPage(controller.page!.toInt() + 1);
+            } else if(event.scrollDelta.dy < 0 && controller.page!.toInt() > 0){
+              controller.jumpToPage(controller.page!.toInt() - 1);
+            }
+          }
+        },
+        child: LayoutBuilder(
+          builder: (context, constrains) {
+            var height = constrains.maxHeight;
+            return Stack(
+              children: [
+                Positioned.fill(child: PhotoViewGallery.builder(
+                  pageController: controller,
+                  backgroundDecoration: const BoxDecoration(
+                      color: Colors.transparent
+                  ),
+                  itemCount: widget.urls.length,
+                  builder: (context, index) {
+                    var image = widget.urls[index];
+
+                    return PhotoViewGalleryPageOptions(
+                      imageProvider: image.startsWith("file://")
+                          ? FileImage(File(image.replaceFirst("file://", "")))
+                          : CachedImageProvider(image) as ImageProvider,
+                    );
+                  },
+                  onPageChanged: (index) {
+                    setState(() {
+                      currentPage = index;
+                    });
+                  },
+                )),
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: SizedBox(
+                    height: 36,
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 6,),
+                        IconButton(
+                            icon: const Icon(FluentIcons.back).paddingAll(2),
+                            onPressed: () => context.pop()
+                        ),
+                        const Expanded(
+                          child: DragToMoveArea(child: SizedBox.expand(),),
+                        ),
+                        buildActions(),
+                        if(App.isDesktop)
+                          WindowButtons(key: ValueKey(windowButtonKey),),
+                      ],
+                    ),
+                  ),
+                ),
+                Positioned(
+                  left: 0,
+                  top: height / 2 - 9,
+                  child: IconButton(
+                    icon: const Icon(FluentIcons.chevron_left, size: 18,),
+                    onPressed: () {
+                      controller.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                  ).paddingAll(8),
+                ),
+                Positioned(
+                  right: 0,
+                  top: height / 2 - 9,
+                  child: IconButton(
+                    icon: const Icon(FluentIcons.chevron_right, size: 18),
+                    onPressed: () {
+                      controller.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.easeInOut,
+                      );
+                    },
+                  ).paddingAll(8),
+                ),
+                Positioned(
+                  left: 12,
+                  bottom: 8,
+                  child: Text(
+                    "${currentPage + 1}/${widget.urls.length}",
+                  ),
+                )
+              ],
+            );
+          },
+        ),
+      ),
+    );
   }
 
   Widget buildActions() {
