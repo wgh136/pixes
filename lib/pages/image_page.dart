@@ -108,14 +108,18 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
               fileName += ext;
             }
             var mediaType = switch(ext){
-              'jpg' => 'image/jpeg',
-              'jpeg' => 'image/jpeg',
-              'png' => 'image/png',
-              'gif' => 'image/gif',
-              'webp' => 'image/webp',
+              '.jpg' => 'image/jpeg',
+              '.jpeg' => 'image/jpeg',
+              '.png' => 'image/png',
+              '.gif' => 'image/gif',
+              '.webp' => 'image/webp',
               _ => 'application/octet-stream'
             };
-            Share.shareXFiles([XFile(file.path, mimeType: mediaType, name: fileName)]);
+            Share.shareXFiles([XFile.fromData(
+              await file.readAsBytes(),
+              mimeType: mediaType,
+              name: fileName)]
+            );
           }
         }),
       ],
