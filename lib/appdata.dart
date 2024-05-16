@@ -18,6 +18,8 @@ class _Appdata {
     "downloadSubPath": r"/${id}-p${index}.${ext}",
     "maxParallels": 3,
     "proxy": "",
+    "darkMode": "System",
+    "language": "System",
   };
 
   bool lock = false;

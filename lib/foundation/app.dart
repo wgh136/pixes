@@ -4,6 +4,8 @@ import 'dart:ui';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:path_provider/path_provider.dart';
 
+import '../appdata.dart';
+
 export "widget_utils.dart";
 export "state_controller.dart";
 export "navigation.dart";
@@ -21,6 +23,14 @@ class _App {
   bool get isMobile => Platform.isAndroid || Platform.isIOS;
 
   Locale get locale {
+    if(appdata.settings["language"] != "System"){
+      return switch(appdata.settings["language"]){
+        "English" => const Locale("en"),
+        "简体中文" => const Locale("zh"),
+        "繁體中文" => const Locale("zh", "Hant"),
+        _ => const Locale("en"),
+      };
+    }
     Locale deviceLocale = PlatformDispatcher.instance.locale;
     if (deviceLocale.languageCode == "zh" && deviceLocale.scriptCode == "Hant") {
       deviceLocale = const Locale("zh", "TW");

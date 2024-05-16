@@ -118,7 +118,10 @@
         "Back" : "返回",
         "Logging in" : "登录中",
         "Browse": "浏览",
-        "Proxy": "代理"
+        "Proxy": "代理",
+        "Appearance": "外观",
+        "Language": "语言",
+        "Theme": "主题"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -239,6 +242,9 @@
         "Back" : "返回",
         "Logging in" : "登錄中",
         "Browse": "瀏覽",
-        "Proxy": "代理"
+        "Proxy": "代理",
+        "Appearance": "外觀",
+        "Language": "語言",
+        "Theme": "主題"
     }
 }

@@ -55,12 +55,20 @@ class MyApp extends StatelessWidget {
           init: SimpleController(),
           tag: "MyApp",
           builder: (controller) {
+            Brightness? brightness;
+
+            if(appdata.settings["theme"] == "Dark") {
+              brightness = Brightness.dark;
+            } else if(appdata.settings["theme"] == "Light") {
+              brightness = Brightness.light;
+            }
+
             return FluentApp(
                 navigatorKey: App.rootNavigatorKey,
                 debugShowCheckedModeBanner: false,
                 title: 'pixes',
                 theme: FluentThemeData(
-                    brightness: Brightness.light,
+                    brightness: brightness ?? Brightness.light,
                     fontFamily: App.isWindows ? 'font' : null,
                     accentColor: AccentColor.swatch({
                       'darkest': SystemTheme.accentColor.darkest,
@@ -72,7 +80,7 @@ class MyApp extends StatelessWidget {
                       'lightest': SystemTheme.accentColor.lightest,
                     })),
                 darkTheme: FluentThemeData(
-                    brightness: Brightness.dark,
+                    brightness: brightness ?? Brightness.dark,
                     fontFamily: App.isWindows ? 'font' : null,
                     accentColor: AccentColor.swatch({
                       'darkest': SystemTheme.accentColor.darkest,

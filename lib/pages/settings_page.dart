@@ -35,6 +35,8 @@ class _SettingsPageState extends State<SettingsPage> {
           buildBrowse(),
           buildHeader("Download".tl),
           buildDownload(),
+          buildHeader("Appearance".tl),
+          buildAppearance(),
           buildHeader("About".tl),
           buildAbout(),
           SliverPadding(
@@ -217,6 +219,76 @@ class _SettingsPageState extends State<SettingsPage> {
                   ));
                 },
               )),
+        ],
+      ),
+    );
+  }
+
+  Widget buildAppearance() {
+    return SliverToBoxAdapter(
+      child: Column(
+        children: [
+          buildItem(
+              title: "Theme".tl,
+              action: DropDownButton(
+                title: Text(appdata.settings["theme"] ?? "System".tl),
+                items: [
+                  MenuFlyoutItem(text: Text("System".tl), onPressed: () {
+                    setState(() {
+                      appdata.settings["theme"] = "System";
+                    });
+                    appdata.writeData();
+                    StateController.findOrNull(tag: "MyApp")?.update();
+                  }),
+                  MenuFlyoutItem(text: Text("light".tl), onPressed: () {
+                    setState(() {
+                      appdata.settings["theme"] = "Light";
+                    });
+                    appdata.writeData();
+                    StateController.findOrNull(tag: "MyApp")?.update();
+                  }),
+                  MenuFlyoutItem(text: Text("dark".tl), onPressed: () {
+                    setState(() {
+                      appdata.settings["theme"] = "Dark";
+                    });
+                    appdata.writeData();
+                    StateController.findOrNull(tag: "MyApp")?.update();
+                  }),
+              ])),
+          buildItem(
+              title: "Language".tl,
+              action: DropDownButton(
+                  title: Text(appdata.settings["language"] ?? "System"),
+                  items: [
+                    MenuFlyoutItem(text: const Text("System"), onPressed: () {
+                      setState(() {
+                        appdata.settings["language"] = "System";
+                      });
+                      appdata.writeData();
+                      StateController.findOrNull(tag: "MyApp")?.update();
+                    }),
+                    MenuFlyoutItem(text: const Text("English"), onPressed: () {
+                      setState(() {
+                        appdata.settings["language"] = "English";
+                      });
+                      appdata.writeData();
+                      StateController.findOrNull(tag: "MyApp")?.update();
+                    }),
+                    MenuFlyoutItem(text: const Text("简体中文"), onPressed: () {
+                      setState(() {
+                        appdata.settings["language"] = "简体中文";
+                      });
+                      appdata.writeData();
+                      StateController.findOrNull(tag: "MyApp")?.update();
+                    }),
+                    MenuFlyoutItem(text: const Text("繁體中文"), onPressed: () {
+                      setState(() {
+                        appdata.settings["language"] = "繁體中文";
+                      });
+                      appdata.writeData();
+                      StateController.findOrNull(tag: "MyApp")?.update();
+                    }),
+                  ])),
         ],
       ),
     );

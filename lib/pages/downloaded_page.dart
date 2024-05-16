@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:pixes/components/grid.dart';
 import 'package:pixes/components/md.dart';
@@ -266,11 +267,13 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
 
   @override
   Widget build(BuildContext context) {
-    return ScaffoldPage(
+    return Container(
       padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-      content: Listener(
+      color: FluentTheme.of(context).micaBackgroundColor,
+      child: Listener(
         onPointerSignal: (event) {
-          if(event is PointerScrollEvent) {
+          if(event is PointerScrollEvent &&
+              !HardwareKeyboard.instance.isControlPressed) {
             if(event.scrollDelta.dy > 0
                 && controller.page!.toInt() < widget.imagePaths.length - 1) {
               controller.jumpToPage(controller.page!.toInt() + 1);
@@ -286,8 +289,8 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
               children: [
                 Positioned.fill(child: PhotoViewGallery.builder(
                   pageController: controller,
-                  backgroundDecoration: BoxDecoration(
-                      color: FluentTheme.of(context).micaBackgroundColor
+                  backgroundDecoration: const BoxDecoration(
+                      color: Colors.transparent
                   ),
                   itemCount: widget.imagePaths.length,
                   builder: (context, index) {
