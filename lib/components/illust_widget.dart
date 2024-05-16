@@ -65,6 +65,74 @@ class _IllustWidgetState extends State<IllustWidget> {
                   ),
                 ),
               )),
+              if(widget.illust.images.length > 1)
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    width: 28,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: FluentTheme.of(context).cardColor,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6),
+                    ),
+                    child: Center(
+                      child: Text("${widget.illust.images.length}P",
+                        style: const TextStyle(fontSize: 12),),
+                    )),
+                ),
+              if(widget.illust.isAi)
+                Positioned(
+                  bottom: 12,
+                  left: 12,
+                  child: Container(
+                      width: 28,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).errorContainer.withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6),
+                      ),
+                      child: const Center(
+                        child: Text("AI",
+                          style: TextStyle(fontSize: 12),),
+                      )),
+                ),
+              if(widget.illust.isR18)
+                Positioned(
+                  bottom: 12,
+                  right: 12,
+                  child: Container(
+                      width: 28,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).errorContainer,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6),
+                      ),
+                      child: const Center(
+                        child: Text("R18",
+                          style: TextStyle(fontSize: 12),),
+                      )),
+                ),
+              if(widget.illust.isR18G)
+                Positioned(
+                  bottom: 12,
+                  right: 12,
+                  child: Container(
+                      width: 28,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).errorContainer,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6),
+                      ),
+                      child: const Center(
+                        child: Text("R18G",
+                          style: TextStyle(fontSize: 12),),
+                      )),
+                ),
               Positioned(
                 top: 16,
                 right: 16,

@@ -142,6 +142,17 @@ class Tag {
   String toString() {
     return "$name${translatedName == null ? "" : "($translatedName)"}";
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (other is Tag) {
+      return name == other.name;
+    }
+    return false;
+  }
+
+  @override
+  int get hashCode => name.hashCode;
 }
 
 class IllustImage {
@@ -170,6 +181,10 @@ class Illust {
   final int totalBookmarks;
   bool isBookmarked;
   final bool isAi;
+
+  bool get isR18 => tags.contains(const Tag("R-18", null));
+
+  bool get isR18G => tags.contains(const Tag("R-18G", null));
 
   Illust.fromJson(Map<String, dynamic> json)
       : id = json['id'],
@@ -211,7 +226,7 @@ class Illust {
         totalView = json['total_view'],
         totalBookmarks = json['total_bookmarks'],
         isBookmarked = json['is_bookmarked'],
-        isAi = json['is_ai'] != 1;
+        isAi = json['illust_ai_type'] == 2;
 }
 
 class TrendingTag {
