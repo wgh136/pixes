@@ -125,23 +125,22 @@ class AppDio extends DioForNative {
 }
 
 void setSystemProxy() {
-  HttpOverrides.global = _ProxyHttpOverrides()
-    ..findProxy(Uri());
+  HttpOverrides.global = _ProxyHttpOverrides()..findProxy(Uri());
 }
 
 class _ProxyHttpOverrides extends HttpOverrides {
   String proxy = "DIRECT";
 
   String findProxy(Uri uri) {
-    var haveUserProxy = appdata.settings["proxy"] != null
-        && appdata.settings["proxy"].toString().isNotEmpty;
-    if(!App.isLinux && !haveUserProxy){
+    var haveUserProxy = appdata.settings["proxy"] != null &&
+        appdata.settings["proxy"].toString().removeAllBlank.isNotEmpty;
+    if (!App.isLinux && !haveUserProxy) {
       var channel = const MethodChannel("pixes/proxy");
       channel.invokeMethod("getProxy").then((value) {
-        if(value.toString().toLowerCase() == "no proxy"){
+        if (value.toString().toLowerCase() == "no proxy") {
           proxy = "DIRECT";
         } else {
-          if(proxy.contains("https")){
+          if (proxy.contains("https")) {
             var proxies = value.split(";");
             for (String proxy in proxies) {
               proxy = proxy.removeAllBlank;
@@ -154,8 +153,18 @@ class _ProxyHttpOverrides extends HttpOverrides {
         }
       });
     } else {
-      if(haveUserProxy){
+      if (haveUserProxy) {
         proxy = "PROXY ${appdata.settings["proxy"]}";
+      }
+    }
+    // check validation
+    if (proxy.startsWith("PROXY")) {
+      var uri = proxy.replaceFirst("PROXY", "").removeAllBlank;
+      if (!uri.startsWith("http")) {
+        uri += "http://";
+      }
+      if (!uri.isURL) {
+        return "DIRECT";
       }
     }
     return proxy;

@@ -17,7 +17,7 @@ import Flutter
             let proxyConfig = "\(host):\(port)"
             result(proxyConfig)
         } else {
-            result("")
+            result("no proxy")
         }
     }
 
