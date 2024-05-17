@@ -13,6 +13,34 @@ abstract class LoadingState<T extends StatefulWidget, S extends Object> extends 
 
   Widget buildContent(BuildContext context, S data);
 
+  Widget? buildFrame(BuildContext context, Widget child) => null;
+
+  Widget buildLoading() {
+    return const Center(
+      child: ProgressRing(),
+    );
+  }
+
+  void retry() {
+    setState(() {
+      isLoading = true;
+      error = null;
+    });
+    loadData().then((value) {
+      if(value.success) {
+        setState(() {
+          isLoading = false;
+          data = value.data;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          error = value.errorMessage!;
+        });
+      }
+    });
+  }
+
   Widget buildError() {
     return Center(
       child: Column(
@@ -21,25 +49,7 @@ abstract class LoadingState<T extends StatefulWidget, S extends Object> extends 
           Text(error!),
           const SizedBox(height: 12),
           Button(
-            onPressed: () {
-              setState(() {
-                isLoading = true;
-                error = null;
-              });
-              loadData().then((value) {
-                if(value.success) {
-                  setState(() {
-                    isLoading = false;
-                    data = value.data;
-                  });
-                } else {
-                  setState(() {
-                    isLoading = false;
-                    error = value.errorMessage!;
-                  });
-                }
-              });
-            },
+            onPressed: retry,
             child: const Text("Retry"),
           )
         ],
@@ -69,15 +79,17 @@ abstract class LoadingState<T extends StatefulWidget, S extends Object> extends 
 
   @override
   Widget build(BuildContext context) {
+    Widget child;
+
     if(isLoading){
-      return const Center(
-        child: ProgressRing(),
-      );
+      child = buildLoading();
     } else if (error != null){
-      return buildError();
+      child = buildError();
     } else {
-      return buildContent(context, data!);
+      child = buildContent(context, data!);
     }
+
+    return buildFrame(context, child) ?? child;
   }
 }
 
@@ -93,6 +105,8 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
   int _page = 1;
 
   Future<Res<List<S>>> loadData(int page);
+
+  Widget? buildFrame(BuildContext context, Widget child) => null;
 
   Widget buildContent(BuildContext context, final List<S> data);
 
@@ -181,12 +195,16 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
 
   @override
   Widget build(BuildContext context) {
+    Widget child;
+
     if(_isFirstLoading){
-      return buildLoading(context);
+      child = buildLoading(context);
     } else if (_error != null){
-      return buildError(context, _error!);
+      child = buildError(context, _error!);
     } else {
-      return buildContent(context, _data!);
+      child = buildContent(context, _data!);
     }
+
+    return buildFrame(context, child) ?? child;
   }
 }

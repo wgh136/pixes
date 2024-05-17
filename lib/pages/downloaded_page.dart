@@ -4,6 +4,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/components/grid.dart';
 import 'package:pixes/components/md.dart';
 import 'package:pixes/components/message.dart';
@@ -73,9 +74,11 @@ class _DownloadedPageState extends State<DownloadedPage> {
                   color: ColorScheme.of(context).secondaryContainer
                 ),
                 clipBehavior: Clip.antiAlias,
-                child: image == null ? null : Image(
+                child: image == null ? null : AnimatedImage(
                   image: FileImage(image),
                   fit: BoxFit.cover,
+                  width: 96,
+                  height: double.infinity,
                   filterQuality: FilterQuality.medium,
                 ),
               ),

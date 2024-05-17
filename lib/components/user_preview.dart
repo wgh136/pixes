@@ -65,8 +65,9 @@ class _UserPreviewWidgetState extends State<UserPreviewWidget> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.user.name, maxLines: 1, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                 const Spacer(),
+                Text(widget.user.name, maxLines: 1, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 12,),
                 Row(
                   children: [
                     Button(
@@ -97,9 +98,10 @@ class _UserPreviewWidgetState extends State<UserPreviewWidget> {
                         child: Text("Unfollow".tl, style: TextStyle(color: ColorScheme.of(context).error),),
                       ),
                   ],
-                )
+                ),
+                const Spacer(),
               ],
-            ).paddingVertical(8),
+            ),
           )
         ],
       ),

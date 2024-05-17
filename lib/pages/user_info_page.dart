@@ -6,6 +6,7 @@ import 'package:pixes/components/batch_download.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/md.dart';
 import 'package:pixes/components/segmented_button.dart';
+import 'package:pixes/components/user_preview.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/network/network.dart';
@@ -35,6 +36,10 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
       content: CustomScrollView(
         slivers: [
           buildUser(),
+          SliverToBoxAdapter(
+            child: buildHeader("Related users".tl),
+          ),
+          _RelatedUsers(widget.id),
           buildInformation(),
           buildArtworkHeader(),
           _UserArtworks(data.id.toString(), page, key: ValueKey(data.id + page),),
@@ -330,6 +335,51 @@ class _UserArtworksState extends MultiPageLoadingState<_UserArtworks, Illust> {
       nextUrl ??= "end";
     }
     return res;
+  }
+}
+
+class _RelatedUsers extends StatefulWidget {
+  const _RelatedUsers(this.uid);
+
+  final String uid;
+
+  @override
+  State<_RelatedUsers> createState() => _RelatedUsersState();
+}
+
+class _RelatedUsersState extends LoadingState<_RelatedUsers, List<UserPreview>> {
+  @override
+  Widget buildFrame(BuildContext context, Widget child) {
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        height: 108,
+        width: double.infinity,
+        child: child,
+      ),
+    );
+  }
+
+  final ScrollController _controller = ScrollController();
+
+  @override
+  Widget buildContent(BuildContext context, List<UserPreview> data) {
+    return Scrollbar(
+      controller: _controller,
+      child: ListView.builder(
+        controller: _controller,
+        padding: const EdgeInsets.only(bottom: 8, left: 8),
+        primary: false,
+        scrollDirection: Axis.horizontal,
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          return UserPreviewWidget(data[index]).fixWidth(264);
+        },
+    ));
+  }
+
+  @override
+  Future<Res<List<UserPreview>>> loadData() {
+    return Network().relatedUsers(widget.uid);
   }
 }
 

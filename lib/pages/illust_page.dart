@@ -4,10 +4,12 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/services.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/message.dart';
 import 'package:pixes/components/page_route.dart';
+import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/network/download.dart';
@@ -18,11 +20,28 @@ import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/translation.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../components/illust_widget.dart';
 import '../components/md.dart';
 import '../components/ugoira.dart';
 
 
 const _kBottomBarHeight = 64.0;
+
+class IllustGalleryPage extends StatefulWidget {
+  const IllustGalleryPage({super.key});
+
+  @override
+  State<IllustGalleryPage> createState() => _IllustGalleryPageState();
+}
+
+class _IllustGalleryPageState extends State<IllustGalleryPage> {
+  @override
+  Widget build(BuildContext context) {
+    // TODO
+    return const Placeholder();
+  }
+}
+
 
 class IllustPage extends StatefulWidget {
   const IllustPage(this.illust, {this.favoriteCallback, super.key});
@@ -709,7 +728,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
             ),
           ),
         ),
-        const SizedBox(width: 8,),
+        const SizedBox(width: 6,),
         Button(
           onPressed: () {
             Share.share("${widget.illust.title}\nhttps://pixiv.net/artworks/${widget.illust.id}");
@@ -718,18 +737,14 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
             height: 28,
             child: Row(
               children: [
-                Icon(
-                  Icons.share,
-                  color: ColorScheme.of(context).error,
-                  size: 18,
-                ),
+                const Icon(Icons.share, size: 18,),
                 const SizedBox(width: 8,),
                 Text("Share".tl)
               ],
             ),
           ),
         ),
-        const SizedBox(width: 8,),
+        const SizedBox(width: 6,),
         Button(
           onPressed: () {
             var text = "https://pixiv.net/artworks/${widget.illust.id}";
@@ -740,19 +755,31 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
             height: 28,
             child: Row(
               children: [
-                Icon(
-                  Icons.copy,
-                  color: ColorScheme.of(context).error,
-                  size: 18,
-                ),
+                const Icon(Icons.copy, size: 18),
                 const SizedBox(width: 8,),
                 Text("Link".tl)
               ],
             ),
           ),
         ),
+        const SizedBox(width: 6,),
+        Button(
+          onPressed: () {
+            context.to(() => _RelatedIllustsPage(widget.illust.id.toString()));
+          },
+          child: SizedBox(
+            height: 28,
+            child: Row(
+              children: [
+                const Icon(Icons.stars, size: 18),
+                const SizedBox(width: 8,),
+                Text("Related".tl)
+              ],
+            ),
+          ),
+        ),
       ],
-    ).paddingHorizontal(4).paddingBottom(4);
+    ).paddingHorizontal(2).paddingBottom(4);
   }
 }
 
@@ -935,3 +962,64 @@ class _IllustPageWithIdState extends LoadingState<IllustPageWithId, Illust> {
     return Network().getIllustByID(widget.id);
   }
 }
+
+class _RelatedIllustsPage extends StatefulWidget {
+  const _RelatedIllustsPage(this.id, {super.key});
+
+  final String id;
+
+  @override
+  State<_RelatedIllustsPage> createState() => _RelatedIllustsPageState();
+}
+
+class _RelatedIllustsPageState extends MultiPageLoadingState<_RelatedIllustsPage, Illust> {
+  @override
+  Widget? buildFrame(BuildContext context, Widget child) {
+    return Column(
+      children: [
+        TitleBar(title: "Related artworks".tl),
+        Expanded(
+          child: child,
+        )
+      ],
+    );
+  }
+
+  @override
+  Widget buildContent(BuildContext context, final List<Illust> data) {
+    return LayoutBuilder(builder: (context, constrains){
+      return MasonryGridView.builder(
+        padding: const EdgeInsets.symmetric(horizontal: 8)
+            + EdgeInsets.only(bottom: context.padding.bottom),
+        gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
+          maxCrossAxisExtent: 240,
+        ),
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          if(index == data.length - 1){
+            nextPage();
+          }
+          return IllustWidget(data[index]);
+        },
+      );
+    });
+  }
+
+  String? nextUrl;
+
+  @override
+  Future<Res<List<Illust>>> loadData(page) async{
+    if(nextUrl == "end") {
+      return Res.error("No more data");
+    }
+    var res = nextUrl == null
+        ? await Network().relatedIllusts(widget.id)
+        : await Network().getIllustsWithNextUrl(nextUrl!);
+    if(!res.error) {
+      nextUrl = res.subData;
+      nextUrl ??= "end";
+    }
+    return res;
+  }
+}
+

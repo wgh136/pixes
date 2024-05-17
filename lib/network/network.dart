@@ -467,4 +467,24 @@ class Network {
       return Res.fromErrorRes(res);
     }
   }
+
+  Future<Res<List<UserPreview>>> relatedUsers(String id) async {
+    var res = await apiGet("/v1/user/related?filter=for_android&seed_user_id=$id");
+    if (res.success) {
+      return Res(
+          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e["user"])).toList());
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
+
+  Future<Res<List<Illust>>> relatedIllusts(String id) async {
+    var res = await apiGet("/v2/illust/related?filter=for_android&illust_id=$id");
+    if (res.success) {
+      return Res(
+          (res.data["illusts"] as List).map((e) => Illust.fromJson(e)).toList());
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
 }

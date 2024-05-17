@@ -125,7 +125,10 @@
         "Pause": "暂停",
         "Resume": "继续",
         "Paused": "已暂停",
-        "Delete all": "删除全部"
+        "Delete all": "删除全部",
+        "Related": "相关",
+        "Related artworks": "相关作品",
+        "Related users": "相关用户"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -253,6 +256,9 @@
         "Pause": "暫停",
         "Resume": "繼續",
         "Paused": "已暫停",
-        "Delete all": "刪除全部"
+        "Delete all": "刪除全部",
+        "Related": "相關",
+        "Related artworks": "相關作品",
+        "Related users": "相關用戶"
     }
 }
