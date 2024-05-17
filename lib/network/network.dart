@@ -208,13 +208,14 @@ class Network {
     }
   }
 
+  static const recommendationUrl = "/v1/illust/recommended?include_privacy_policy=true&filter=for_android&include_ranking_illusts=true";
+
   Future<Res<List<Illust>>> getRecommendedIllusts() async {
-    var res = await apiGet(
-        "/v1/illust/recommended?include_privacy_policy=true&filter=for_android&include_ranking_illusts=true");
+    var res = await apiGet(recommendationUrl);
     if (res.success) {
       return Res((res.data["illusts"] as List)
           .map((e) => Illust.fromJson(e))
-          .toList());
+          .toList(), subData: recommendationUrl);
     } else {
       return Res.error(res.errorMessage);
     }

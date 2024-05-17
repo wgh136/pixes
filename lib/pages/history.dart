@@ -4,11 +4,11 @@ import 'package:pixes/appdata.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
-import 'package:pixes/network/models.dart';
 import 'package:pixes/network/network.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../components/illust_widget.dart';
+import 'illust_page.dart';
 
 class HistoryPage extends StatefulWidget {
   const HistoryPage({super.key});
@@ -36,7 +36,12 @@ class _HistoryPageState extends MultiPageLoadingState<HistoryPage, Illust> {
                 if(index == data.length - 1){
                   nextPage();
                 }
-                return IllustWidget(data[index]);
+                return IllustWidget(data[index], onTap: () {
+                  context.to(() => IllustGalleryPage(
+                      illusts: data,
+                      initialPage: index,
+                  ));
+                });
               },
             );
           }),

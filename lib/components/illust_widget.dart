@@ -10,9 +10,11 @@ import '../pages/illust_page.dart';
 import 'md.dart';
 
 class IllustWidget extends StatefulWidget {
-  const IllustWidget(this.illust, {super.key});
+  const IllustWidget(this.illust, {this.onTap, super.key});
 
   final Illust illust;
+
+  final void Function()? onTap;
 
   @override
   State<IllustWidget> createState() => _IllustWidgetState();
@@ -45,7 +47,7 @@ class _IllustWidgetState extends State<IllustWidget> {
                   padding: EdgeInsets.zero,
                   margin: EdgeInsets.zero,
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: widget.onTap ?? (){
                       context.to(() => IllustPage(widget.illust, favoriteCallback: (v) {
                         setState(() {
                           widget.illust.isBookmarked = v;

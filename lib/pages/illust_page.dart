@@ -28,17 +28,100 @@ import '../components/ugoira.dart';
 const _kBottomBarHeight = 64.0;
 
 class IllustGalleryPage extends StatefulWidget {
-  const IllustGalleryPage({super.key});
+  const IllustGalleryPage({required this.illusts, required this.initialPage,
+    this.nextUrl, super.key});
+
+  final List<Illust> illusts;
+
+  final int initialPage;
+
+  final String? nextUrl;
 
   @override
   State<IllustGalleryPage> createState() => _IllustGalleryPageState();
 }
 
 class _IllustGalleryPageState extends State<IllustGalleryPage> {
+  late List<Illust> illusts;
+
+  late final PageController controller;
+
+  String? nextUrl;
+
+  bool loading = false;
+
+  @override
+  void initState() {
+    illusts = List.from(widget.illusts);
+    controller = PageController(initialPage: widget.initialPage);
+    nextUrl = widget.nextUrl;
+    if(nextUrl == "end") {
+      nextUrl = null;
+    }
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
-    // TODO
-    return const Placeholder();
+    var length = illusts.length;
+    if(nextUrl != null) {
+      length++;
+    }
+
+    return CallbackShortcuts(
+      bindings: {
+        LogicalKeySet(LogicalKeyboardKey.arrowLeft): () {
+          if(controller.page == 0) return;
+          controller.previousPage(
+              duration: const Duration(milliseconds: 200), curve: Curves.ease);
+        },
+        LogicalKeySet(LogicalKeyboardKey.arrowRight): () {
+          if(controller.page == length-1) return;
+          controller.nextPage(
+              duration: const Duration(milliseconds: 200), curve: Curves.ease);
+        }
+      },
+      child: Focus(
+        autofocus: true,
+        child: PageView.builder(
+          controller: controller,
+          itemCount: length,
+          itemBuilder: (context, index) {
+            if(index == illusts.length) {
+              return buildLast();
+            }
+            return IllustPage(illusts[index]);
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget buildLast(){
+    if(nextUrl == null) {
+      return const SizedBox();
+    }
+    load();
+    return const Center(
+      child: ProgressRing(),
+    );
+  }
+
+  void load() async {
+    if(loading) return;
+    loading = true;
+
+    var res = await Network().getIllustsWithNextUrl(nextUrl!);
+    loading = false;
+    if(res.error) {
+      if(mounted) {
+        context.showToast(message: "Network Error");
+      }
+    } else {
+      nextUrl = res.subData;
+      illusts.addAll(res.data);
+      setState(() {});
+    }
   }
 }
 
@@ -964,7 +1047,7 @@ class _IllustPageWithIdState extends LoadingState<IllustPageWithId, Illust> {
 }
 
 class _RelatedIllustsPage extends StatefulWidget {
-  const _RelatedIllustsPage(this.id, {super.key});
+  const _RelatedIllustsPage(this.id);
 
   final String id;
 

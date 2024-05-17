@@ -5,6 +5,7 @@ import 'package:pixes/components/segmented_button.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/network.dart';
+import 'package:pixes/pages/illust_page.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../components/illust_widget.dart';
@@ -83,7 +84,13 @@ class _OneBookmarkedPageState extends MultiPageLoadingState<_OneBookmarkedPage, 
           if(index == data.length - 1){
             nextPage();
           }
-          return IllustWidget(data[index]);
+          return IllustWidget(data[index], onTap: () {
+            context.to(() => IllustGalleryPage(
+              illusts: data,
+              initialPage: index,
+              nextUrl: nextUrl
+            ));
+          },);
         },
       );
     });

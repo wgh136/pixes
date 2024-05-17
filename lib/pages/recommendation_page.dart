@@ -5,6 +5,7 @@ import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/network.dart';
+import 'package:pixes/pages/illust_page.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../components/grid.dart';
@@ -82,7 +83,10 @@ class _RecommendationArtworksPageState extends MultiPageLoadingState<_Recommenda
           if(index == data.length - 1){
             nextPage();
           }
-          return IllustWidget(data[index]);
+          return IllustWidget(data[index], onTap: () {
+            context.to(() => IllustGalleryPage(illusts: data,
+              initialPage: index, nextUrl: Network.recommendationUrl,));
+          },);
         },
       );
     });

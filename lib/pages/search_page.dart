@@ -426,7 +426,13 @@ class _SearchResultPageState extends MultiPageLoadingState<SearchResultPage, Ill
               if(index == data.length - 1){
                 nextPage();
               }
-              return IllustWidget(data[index]);
+              return IllustWidget(data[index], onTap: () {
+                context.to(() => IllustGalleryPage(
+                    illusts: data,
+                    initialPage: index,
+                    nextUrl: nextUrl
+                ));
+              },);
             },
             childCount: data.length,
           ),

@@ -15,6 +15,7 @@ import 'package:pixes/utils/translation.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import '../components/illust_widget.dart';
+import 'illust_page.dart';
 
 class UserInfoPage extends StatefulWidget {
   const UserInfoPage(this.id, {this.followCallback, super.key});
@@ -311,7 +312,13 @@ class _UserArtworksState extends MultiPageLoadingState<_UserArtworks, Illust> {
           if(index == data.length - 1){
             nextPage();
           }
-          return IllustWidget(data[index]);
+          return IllustWidget(data[index], onTap: () {
+            context.to(() => IllustGalleryPage(
+                illusts: data,
+                initialPage: index,
+                nextUrl: nextUrl
+            ));
+          });
         },
         childCount: data.length,
       ),

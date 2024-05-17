@@ -9,6 +9,7 @@ import '../components/illust_widget.dart';
 import '../components/loading.dart';
 import '../components/segmented_button.dart';
 import '../network/network.dart';
+import 'illust_page.dart';
 
 class FollowingArtworksPage extends StatefulWidget {
   const FollowingArtworksPage({super.key});
@@ -84,7 +85,13 @@ class _OneFollowingPageState extends MultiPageLoadingState<_OneFollowingPage, Il
           if(index == data.length - 1){
             nextPage();
           }
-          return IllustWidget(data[index]);
+          return IllustWidget(data[index], onTap: () {
+            context.to(() => IllustGalleryPage(
+                illusts: data,
+                initialPage: index,
+                nextUrl: nextUrl
+            ));
+          });
         },
       );
     });

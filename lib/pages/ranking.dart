@@ -8,6 +8,7 @@ import '../components/illust_widget.dart';
 import '../components/loading.dart';
 import '../components/title_bar.dart';
 import '../network/network.dart';
+import 'illust_page.dart';
 
 class RankingPage extends StatefulWidget {
   const RankingPage({super.key});
@@ -97,7 +98,13 @@ class _OneRankingPageState extends MultiPageLoadingState<_OneRankingPage, Illust
           if(index == data.length - 1){
             nextPage();
           }
-          return IllustWidget(data[index]);
+          return IllustWidget(data[index], onTap: () {
+            context.to(() => IllustGalleryPage(
+                illusts: data,
+                initialPage: index,
+                nextUrl: nextUrl
+            ));
+          });
         },
       );
     });
