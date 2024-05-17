@@ -2,7 +2,6 @@ import "dart:async";
 
 import "package:fluent_ui/fluent_ui.dart";
 import "package:flutter/foundation.dart";
-import "package:flutter/material.dart" as md;
 import "package:pixes/appdata.dart";
 import "package:pixes/components/md.dart";
 import "package:pixes/foundation/app.dart";
@@ -79,91 +78,84 @@ class _MainPageState extends State<MainPage> with WindowListener {
         content: LoginPage(() => setState(() {})),
       );
     }
-    return md.Theme(
-        data: md.ThemeData.from(
-          useMaterial3: true,
-            colorScheme: md.ColorScheme.fromSeed(
-              seedColor: FluentTheme.of(context).accentColor.withOpacity(1),
-              brightness: FluentTheme.of(context).brightness,
-            )),
-        child: DefaultSelectionStyle.merge(
-          selectionColor: FluentTheme.of(context).selectionColor.withOpacity(0.4),
-          child: NavigationView(
-              appBar: buildAppBar(context, navigatorKey),
-              pane: NavigationPane(
-                selected: index,
-                onChanged: (value) {
-                  setState(() {
-                    index = value;
-                  });
-                  navigate(value);
-                },
-                items: [
-                  UserPane(),
-                  PaneItem(
-                    icon: const Icon(MdIcons.search, size: 20,),
-                    title: Text('Search'.tl),
-                    body: const SizedBox.shrink(),
-                  ),
-                  PaneItem(
-                    icon: const Icon(MdIcons.downloading, size: 20,),
-                    title: Text('Downloading'.tl),
-                    body: const SizedBox.shrink(),
-                  ),
-                  PaneItem(
-                    icon: const Icon(MdIcons.download, size: 20,),
-                    title: Text('Downloaded'.tl),
-                    body: const SizedBox.shrink(),
-                  ),
-                  PaneItemSeparator(),
-                  PaneItemHeader(header: Text("Artwork".tl).paddingBottom(4).paddingLeft(8)),
-                  PaneItem(
-                    icon: const Icon(MdIcons.explore_outlined, size: 20,),
-                    title: Text('Explore'.tl),
-                    body: const SizedBox.shrink(),
-                  ),
-                  PaneItem(
-                    icon: const Icon(MdIcons.bookmark_outline, size: 20),
-                    title: Text('Bookmarks'.tl),
-                    body: const SizedBox.shrink(),
-                  ),
-                  PaneItem(
-                    icon: const Icon(MdIcons.interests_outlined, size: 20),
-                    title: Text('Following'.tl),
-                    body: const SizedBox.shrink(),
-                  ),
-                  PaneItem(
-                    icon: const Icon(MdIcons.history, size: 20),
-                    title: Text('History'.tl),
-                    body: const SizedBox.shrink(),
-                  ),
-                  PaneItem(
-                    icon: const Icon(MdIcons.leaderboard_outlined, size: 20),
-                    title: Text('Ranking'.tl),
-                    body: const SizedBox.shrink(),
-                  ),
-                ],
-                footerItems: [
-                  PaneItem(
-                    icon: const Icon(MdIcons.settings_outlined, size: 20),
-                    title: Text('Settings'.tl),
-                    body: const SizedBox.shrink(),
-                  ),
-                ],
+    return DefaultSelectionStyle.merge(
+      selectionColor: FluentTheme.of(context).selectionColor.withOpacity(0.4),
+      child: NavigationView(
+          appBar: buildAppBar(context, navigatorKey),
+          pane: NavigationPane(
+            selected: index,
+            onChanged: (value) {
+              setState(() {
+                index = value;
+              });
+              navigate(value);
+            },
+            items: [
+              UserPane(),
+              PaneItem(
+                icon: const Icon(MdIcons.search, size: 20,),
+                title: Text('Search'.tl),
+                body: const SizedBox.shrink(),
               ),
-              paneBodyBuilder: (pane, child) => NavigatorPopHandler(
-                key: const Key("navigator"),
-                onPop: () => navigatorKey.currentState?.pop(),
-                child: MediaQuery.removePadding(
-                  context: context,
-                  removeTop: true,
-                  child: Navigator(
-                    key: navigatorKey,
-                    onGenerateRoute: (settings) => AppPageRoute(
-                        builder: (context) => const RecommendationPage()),
-                  ),
-                ))),
-        ));
+              PaneItem(
+                icon: const Icon(MdIcons.downloading, size: 20,),
+                title: Text('Downloading'.tl),
+                body: const SizedBox.shrink(),
+              ),
+              PaneItem(
+                icon: const Icon(MdIcons.download, size: 20,),
+                title: Text('Downloaded'.tl),
+                body: const SizedBox.shrink(),
+              ),
+              PaneItemSeparator(),
+              PaneItemHeader(header: Text("Artwork".tl).paddingBottom(4).paddingLeft(8)),
+              PaneItem(
+                icon: const Icon(MdIcons.explore_outlined, size: 20,),
+                title: Text('Explore'.tl),
+                body: const SizedBox.shrink(),
+              ),
+              PaneItem(
+                icon: const Icon(MdIcons.bookmark_outline, size: 20),
+                title: Text('Bookmarks'.tl),
+                body: const SizedBox.shrink(),
+              ),
+              PaneItem(
+                icon: const Icon(MdIcons.interests_outlined, size: 20),
+                title: Text('Following'.tl),
+                body: const SizedBox.shrink(),
+              ),
+              PaneItem(
+                icon: const Icon(MdIcons.history, size: 20),
+                title: Text('History'.tl),
+                body: const SizedBox.shrink(),
+              ),
+              PaneItem(
+                icon: const Icon(MdIcons.leaderboard_outlined, size: 20),
+                title: Text('Ranking'.tl),
+                body: const SizedBox.shrink(),
+              ),
+            ],
+            footerItems: [
+              PaneItem(
+                icon: const Icon(MdIcons.settings_outlined, size: 20),
+                title: Text('Settings'.tl),
+                body: const SizedBox.shrink(),
+              ),
+            ],
+          ),
+          paneBodyBuilder: (pane, child) => NavigatorPopHandler(
+              key: const Key("navigator"),
+              onPop: () => navigatorKey.currentState?.pop(),
+              child: MediaQuery.removePadding(
+                context: context,
+                removeTop: true,
+                child: Navigator(
+                  key: navigatorKey,
+                  onGenerateRoute: (settings) => AppPageRoute(
+                      builder: (context) => const RecommendationPage()),
+                ),
+              ))),
+    );
   }
 
   static final pageBuilders = <Widget Function()>[

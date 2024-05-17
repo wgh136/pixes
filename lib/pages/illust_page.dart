@@ -314,7 +314,12 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin{
                     buildStats(),
                     buildTags(),
                     buildMoreActions(),
-                    SelectableText("${"Artwork ID".tl}: ${widget.illust.id}\n${"Artist ID".tl}: ${widget.illust.author.id}", style: TextStyle(color: ColorScheme.of(context).outline),).paddingLeft(4),
+                    SelectableText(
+                      "${"Artwork ID".tl}: ${widget.illust.id}\n"
+                      "${"Artist ID".tl}: ${widget.illust.author.id}\n"
+                      "${widget.illust.createDate.toString().split('.').first}",
+                      style: TextStyle(color: ColorScheme.of(context).outline),)
+                        .paddingLeft(4),
                     SizedBox(height: 8 + context.padding.bottom,)
                   ],
                 ),

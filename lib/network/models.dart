@@ -173,7 +173,7 @@ class Illust {
   final int restrict;
   final IllustAuthor author;
   final List<Tag> tags;
-  final String createDate;
+  final DateTime createDate;
   final int pageCount;
   final int width;
   final int height;
@@ -220,7 +220,7 @@ class Illust {
         tags = (json['tags'] as List)
             .map((e) => Tag(e['name'], e['translated_name']))
             .toList(),
-        createDate = json['create_date'],
+        createDate = DateTime.parse(json['create_date']),
         pageCount = json['page_count'],
         width = json['width'],
         height = json['height'],

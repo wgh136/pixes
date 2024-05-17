@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart' as md;
 
 typedef MdIcons = md.Icons;
+typedef MdTheme = md.Theme;
+typedef MdThemeData = md.ThemeData;
+typedef MdColorScheme = md.ColorScheme;
 
 class ColorScheme {
   static md.ColorScheme of(md.BuildContext context) {

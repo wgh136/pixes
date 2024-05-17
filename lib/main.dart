@@ -3,6 +3,7 @@ import "dart:ui";
 import "package:fluent_ui/fluent_ui.dart";
 import "package:flutter/services.dart";
 import "package:pixes/appdata.dart";
+import "package:pixes/components/md.dart";
 import "package:pixes/components/message.dart";
 import "package:pixes/foundation/app.dart";
 import "package:pixes/foundation/log.dart";
@@ -99,7 +100,21 @@ class MyApp extends StatelessWidget {
                     throw "widget is null";
                   }
 
-                  return OverlayWidget(child);
+                  return MdTheme(
+                    data: MdThemeData.from(
+                      colorScheme: MdColorScheme.fromSeed(
+                        seedColor: FluentTheme.of(context).accentColor,
+                        brightness: FluentTheme.of(context).brightness,
+                      ),
+                      useMaterial3: true
+                    ),
+                    child: DefaultTextStyle.merge(
+                      style: TextStyle(
+                        fontFamily: App.isWindows ? 'font' : null,
+                      ),
+                      child: OverlayWidget(child),
+                    ),
+                  );
                 }),
           );
         });
