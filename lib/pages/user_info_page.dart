@@ -5,6 +5,7 @@ import 'package:pixes/appdata.dart';
 import 'package:pixes/components/batch_download.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/md.dart';
+import 'package:pixes/components/segmented_button.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/network/network.dart';
@@ -26,6 +27,8 @@ class UserInfoPage extends StatefulWidget {
 }
 
 class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
+  int page = 0;
+
   @override
   Widget buildContent(BuildContext context, UserDetails data) {
     return ScaffoldPage(
@@ -33,13 +36,8 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
         slivers: [
           buildUser(),
           buildInformation(),
-          SliverToBoxAdapter(
-            child: buildHeader(
-              "Artworks",
-              action: BatchDownloadButton(
-                  request: () => Network().getUserIllusts(widget.id))
-            ),),
-          _UserArtworks(data.id.toString(), key: ValueKey(data.id),),
+          buildArtworkHeader(),
+          _UserArtworks(data.id.toString(), page, key: ValueKey(data.id + page),),
           SliverPadding(padding: EdgeInsets.only(bottom: context.padding.bottom)),
         ],
       ),
@@ -169,6 +167,38 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
         ).paddingHorizontal(16)).paddingTop(8);
   }
 
+  Widget buildArtworkHeader() {
+    return SliverToBoxAdapter(
+      child: SizedBox(
+          width: double.infinity,
+          height: 38,
+          child: Row(
+            children: [
+              SegmentedButton<int>(
+                options: [
+                  SegmentedButtonOption(0, "Artworks".tl),
+                  SegmentedButtonOption(1, "Bookmarks".tl),
+                ],
+                value: page,
+                onPressed: (value) {
+                  setState(() {
+                    page = value;
+                  });
+                },
+              ),
+              const Spacer(),
+              BatchDownloadButton(request: () {
+                if(page == 0) {
+                  return Network().getUserIllusts(data!.id.toString());
+                } else {
+                  return Network().getUserBookmarks(data!.id.toString());
+                }
+              },),
+            ],
+          ).paddingHorizontal(16)).paddingTop(12),
+    );
+  }
+
   Widget buildInformation() {
     Widget buildItem({IconData? icon, required String title, required String? content, Widget? trailing}) {
       if(content == null || content.isEmpty) {
@@ -226,9 +256,11 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
 }
 
 class _UserArtworks extends StatefulWidget {
-  const _UserArtworks(this.uid, {super.key});
+  const _UserArtworks(this.uid, this.type, {super.key});
 
   final String uid;
+
+  final int type;
 
   @override
   State<_UserArtworks> createState() => _UserArtworksState();
@@ -289,7 +321,9 @@ class _UserArtworksState extends MultiPageLoadingState<_UserArtworks, Illust> {
       return Res.error("No more data");
     }
     var res = nextUrl == null
-        ? await Network().getUserIllusts(widget.uid)
+        ? (widget.type == 0
+          ? await Network().getUserIllusts(widget.uid)
+          : await Network().getUserBookmarks(widget.uid))
         : await Network().getIllustsWithNextUrl(nextUrl!);
     if(!res.error) {
       nextUrl = res.subData;
