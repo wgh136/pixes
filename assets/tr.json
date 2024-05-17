@@ -128,7 +128,8 @@
         "Delete all": "删除全部",
         "Related": "相关",
         "Related artworks": "相关作品",
-        "Related users": "相关用户"
+        "Related users": "相关用户",
+        "Replace with '-p${index}' if the work have more than one images, otherwise replace with blank.": "替换为'-p${index}'如果作品有多张图片, 否则替换为空白"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -259,6 +260,7 @@
         "Delete all": "刪除全部",
         "Related": "相關",
         "Related artworks": "相關作品",
-        "Related users": "相關用戶"
+        "Related users": "相關用戶",
+        "Replace with '-p${index}' if the work have more than one images, otherwise replace with blank.": "替換為'-p${index}'如果作品有多張圖片, 否則替換為空白"
     }
 }

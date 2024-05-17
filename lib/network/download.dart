@@ -131,6 +131,8 @@ class DownloadingTask {
     subPathPatten = subPathPatten.replaceAll(r"${title}", illust.title);
     subPathPatten = subPathPatten.replaceAll(r"${author}", illust.author.name);
     subPathPatten = subPathPatten.replaceAll(r"${index}", index.toString());
+    subPathPatten = subPathPatten.replaceAll(r"${page}",
+        illust.images.length == 1 ? "" : "-p$index");
     subPathPatten = subPathPatten.replaceAll(r"${ext}", ext);
     subPathPatten = subPathPatten.replaceAll(r"${AI}", illust.isAi ? "AI" : "");
     List<String> extractTags(String input) {
