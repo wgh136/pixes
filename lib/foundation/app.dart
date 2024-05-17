@@ -26,8 +26,8 @@ class _App {
     if(appdata.settings["language"] != "System"){
       return switch(appdata.settings["language"]){
         "English" => const Locale("en"),
-        "简体中文" => const Locale("zh"),
-        "繁體中文" => const Locale("zh", "Hant"),
+        "简体中文" => const Locale("zh", "CN"),
+        "繁體中文" => const Locale("zh", "TW"),
         _ => const Locale("en"),
       };
     }
