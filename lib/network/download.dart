@@ -163,6 +163,10 @@ class DownloadingTask {
     _stop = false;
     _download();
   }
+
+  void pause() {
+    _stop = true;
+  }
 }
 
 class DownloadManager {
@@ -276,8 +280,20 @@ class DownloadManager {
 
   int get maxConcurrentTasks => appdata.settings["maxParallels"];
 
+  bool _paused = false;
+
+  bool get paused => _paused;
+
+  void pause() {
+    _paused = true;
+    for(var task in tasks) {
+      task.pause();
+    }
+  }
+
   void run() {
     _loop ??= Timer.periodic(const Duration(seconds: 1), (timer) {
+      if(_paused) return;
       _bytesPerSecond = _currentBytes;
       _currentBytes = 0;
       uiUpdateCallback?.call();
@@ -348,5 +364,9 @@ class DownloadManager {
       addDownloadingTask(illust);
       i++;
     }
+  }
+
+  void resume() {
+    _paused = false;
   }
 }

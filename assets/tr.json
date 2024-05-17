@@ -121,7 +121,11 @@
         "Proxy": "代理",
         "Appearance": "外观",
         "Language": "语言",
-        "Theme": "主题"
+        "Theme": "主题",
+        "Pause": "暂停",
+        "Resume": "继续",
+        "Paused": "已暂停",
+        "Delete all": "删除全部"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -245,6 +249,10 @@
         "Proxy": "代理",
         "Appearance": "外觀",
         "Language": "語言",
-        "Theme": "主題"
+        "Theme": "主題",
+        "Pause": "暫停",
+        "Resume": "繼續",
+        "Paused": "已暫停",
+        "Delete all": "刪除全部"
     }
 }

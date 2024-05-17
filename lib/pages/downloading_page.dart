@@ -47,7 +47,38 @@ class _DownloadingPageState extends State<DownloadingPage> {
   Widget buildTop() {
     int bytesPerSecond = DownloadManager().bytesPerSecond;
 
-    return SliverTitleBar(title: "${"Speed".tl}: ${bytesToText(bytesPerSecond)}/s");
+    bool paused = DownloadManager().paused;
+
+    return SliverTitleBar(
+      title: paused
+        ? "Paused".tl
+        :"${"Speed".tl}: ${bytesToText(bytesPerSecond)}/s",
+      action: SplitButton(
+        onInvoked: (){
+          if(!paused) {
+            DownloadManager().pause();
+            setState(() {});
+          } else {
+            DownloadManager().resume();
+            setState(() {});
+          }
+        },
+        flyout: MenuFlyout(
+          items: [
+            MenuFlyoutItem(text: Text("Cancel All".tl), onPressed: (){
+              var tasks = List.from(DownloadManager().tasks);
+              DownloadManager().tasks.clear();
+              for(var task in tasks) {
+                task.cancel();
+              }
+              setState(() {});
+            })
+          ],
+        ),
+        child: Text(paused ? "Resume".tl : "Pause".tl)
+            .toCenter().fixWidth(56).fixHeight(32),
+      ),
+    );
   }
 
   Widget buildContent() {
