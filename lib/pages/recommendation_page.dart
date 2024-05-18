@@ -29,8 +29,11 @@ class _RecommendationPageState extends State<RecommendationPage> {
         buildTab(),
         Expanded(
           child: type != 2
-            ? _RecommendationArtworksPage(type, key: Key(type.toString()),)
-            : const _RecommendationUsersPage(),
+              ? _RecommendationArtworksPage(
+                  type,
+                  key: Key(type.toString()),
+                )
+              : const _RecommendationUsersPage(),
         )
       ],
     );
@@ -46,7 +49,7 @@ class _RecommendationPageState extends State<RecommendationPage> {
           SegmentedButtonOption(2, "Users".tl),
         ],
         onPressed: (key) {
-          if(key != type) {
+          if (key != type) {
             setState(() {
               type = key;
             });
@@ -58,35 +61,42 @@ class _RecommendationPageState extends State<RecommendationPage> {
   }
 }
 
-
 class _RecommendationArtworksPage extends StatefulWidget {
   const _RecommendationArtworksPage(this.type, {super.key});
 
   final int type;
 
   @override
-  State<_RecommendationArtworksPage> createState() => _RecommendationArtworksPageState();
+  State<_RecommendationArtworksPage> createState() =>
+      _RecommendationArtworksPageState();
 }
 
-class _RecommendationArtworksPageState extends MultiPageLoadingState<_RecommendationArtworksPage, Illust> {
+class _RecommendationArtworksPageState
+    extends MultiPageLoadingState<_RecommendationArtworksPage, Illust> {
   @override
   Widget buildContent(BuildContext context, final List<Illust> data) {
-    return LayoutBuilder(builder: (context, constrains){
+    return LayoutBuilder(builder: (context, constrains) {
       return MasonryGridView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 8)
-            + EdgeInsets.only(bottom: context.padding.bottom),
+        padding: const EdgeInsets.symmetric(horizontal: 8) +
+            EdgeInsets.only(bottom: context.padding.bottom),
         gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 240,
         ),
         itemCount: data.length,
         itemBuilder: (context, index) {
-          if(index == data.length - 1){
+          if (index == data.length - 1) {
             nextPage();
           }
-          return IllustWidget(data[index], onTap: () {
-            context.to(() => IllustGalleryPage(illusts: data,
-              initialPage: index, nextUrl: Network.recommendationUrl,));
-          },);
+          return IllustWidget(
+            data[index],
+            onTap: () {
+              context.to(() => IllustGalleryPage(
+                    illusts: data,
+                    initialPage: index,
+                    nextUrl: Network.recommendationUrl,
+                  ));
+            },
+          );
         },
       );
     });
@@ -104,33 +114,32 @@ class _RecommendationUsersPage extends StatefulWidget {
   const _RecommendationUsersPage();
 
   @override
-  State<_RecommendationUsersPage> createState() => _RecommendationUsersPageState();
+  State<_RecommendationUsersPage> createState() =>
+      _RecommendationUsersPageState();
 }
 
-class _RecommendationUsersPageState extends MultiPageLoadingState<_RecommendationUsersPage, UserPreview> {
+class _RecommendationUsersPageState
+    extends MultiPageLoadingState<_RecommendationUsersPage, UserPreview> {
   @override
   Widget buildContent(BuildContext context, List<UserPreview> data) {
     return CustomScrollView(
       slivers: [
         SliverGridViewWithFixedItemHeight(
-          delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                if(index == data.length - 1){
-                  nextPage();
-                }
-                return UserPreviewWidget(data[index]);
-              },
-              childCount: data.length
-          ),
-          maxCrossAxisExtent: 520,
-          itemHeight: 114,
+          delegate: SliverChildBuilderDelegate((context, index) {
+            if (index == data.length - 1) {
+              nextPage();
+            }
+            return UserPreviewWidget(data[index]);
+          }, childCount: data.length),
+          minCrossAxisExtent: 440,
+          itemHeight: 136,
         ).sliverPaddingHorizontal(8)
       ],
     );
   }
 
   @override
-  Future<Res<List<UserPreview>>> loadData(page) async{
+  Future<Res<List<UserPreview>>> loadData(page) async {
     var res = await Network().getRecommendationUsers();
     return res;
   }

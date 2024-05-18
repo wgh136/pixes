@@ -128,8 +128,7 @@ class IllustAuthor {
   final String avatar;
   bool isFollowed;
 
-  IllustAuthor(
-      this.id, this.name, this.account, this.avatar, this.isFollowed);
+  IllustAuthor(this.id, this.name, this.account, this.avatar, this.isFollowed);
 }
 
 class Tag {
@@ -250,11 +249,11 @@ enum KeywordMatchType {
   @override
   toString() => text;
 
-  String toParam() => switch(this) {
-    KeywordMatchType.tagsPartialMatches => "partial_match_for_tags",
-    KeywordMatchType.tagsExactMatch => "exact_match_for_tags",
-    KeywordMatchType.titleOrDescriptionSearch => "title_and_caption"
-  };
+  String toParam() => switch (this) {
+        KeywordMatchType.tagsPartialMatches => "partial_match_for_tags",
+        KeywordMatchType.tagsExactMatch => "exact_match_for_tags",
+        KeywordMatchType.titleOrDescriptionSearch => "title_and_caption"
+      };
 }
 
 enum FavoriteNumber {
@@ -273,9 +272,11 @@ enum FavoriteNumber {
   const FavoriteNumber(this.number);
 
   @override
-  toString() => this == FavoriteNumber.unlimited ? "Unlimited" : "$number Bookmarks";
+  toString() =>
+      this == FavoriteNumber.unlimited ? "Unlimited" : "$number Bookmarks";
 
-  String toParam() => this == FavoriteNumber.unlimited ? "" : " ${number}users入り";
+  String toParam() =>
+      this == FavoriteNumber.unlimited ? "" : " ${number}users入り";
 }
 
 enum SearchSort {
@@ -288,37 +289,35 @@ enum SearchSort {
   bool get isPremium => appdata.account?.user.isPremium == true;
 
   static List<SearchSort> get availableValues => [
-    SearchSort.newToOld,
-    SearchSort.oldToNew,
-    SearchSort.popular,
-    if(appdata.account?.user.isPremium == true)
-      SearchSort.popularMale,
-    if(appdata.account?.user.isPremium == true)
-      SearchSort.popularFemale
-  ];
+        SearchSort.newToOld,
+        SearchSort.oldToNew,
+        SearchSort.popular,
+        if (appdata.account?.user.isPremium == true) SearchSort.popularMale,
+        if (appdata.account?.user.isPremium == true) SearchSort.popularFemale
+      ];
 
   @override
   toString() {
-    if(this == SearchSort.popular) {
+    if (this == SearchSort.popular) {
       return isPremium ? "Popular" : "Popular(limited)";
-    } else if(this == SearchSort.newToOld) {
+    } else if (this == SearchSort.newToOld) {
       return "New to old";
-    } else if(this == SearchSort.oldToNew){
+    } else if (this == SearchSort.oldToNew) {
       return "Old to new";
-    } else if(this == SearchSort.popularMale){
+    } else if (this == SearchSort.popularMale) {
       return "Popular(Male)";
     } else {
       return "Popular(Female)";
     }
   }
 
-  String toParam() => switch(this) {
-    SearchSort.newToOld => "date_desc",
-    SearchSort.oldToNew => "date_asc",
-    SearchSort.popular => "popular_desc",
-    SearchSort.popularMale => "popular_male_desc",
-    SearchSort.popularFemale => "popular_female_desc",
-  };
+  String toParam() => switch (this) {
+        SearchSort.newToOld => "date_desc",
+        SearchSort.oldToNew => "date_asc",
+        SearchSort.popular => "popular_desc",
+        SearchSort.popularMale => "popular_male_desc",
+        SearchSort.popularFemale => "popular_female_desc",
+      };
 }
 
 enum AgeLimit {
@@ -333,11 +332,11 @@ enum AgeLimit {
   @override
   toString() => text;
 
-  String toParam() => switch(this) {
-    AgeLimit.unlimited => "",
-    AgeLimit.allAges => " -R-18",
-    AgeLimit.r18 => "R-18",
-  };
+  String toParam() => switch (this) {
+        AgeLimit.unlimited => "",
+        AgeLimit.allAges => " -R-18",
+        AgeLimit.r18 => "R-18",
+      };
 }
 
 class SearchOptions {
@@ -369,17 +368,19 @@ class UserPreview {
   final String avatar;
   bool isFollowed;
   final bool isBlocking;
+  final List<Illust> artworks;
 
   UserPreview(this.id, this.name, this.account, this.avatar, this.isFollowed,
-      this.isBlocking);
+      this.isBlocking, this.artworks);
 
   UserPreview.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
-        name = json['name'],
-        account = json['account'],
-        avatar = json['profile_image_urls']['medium'],
-        isFollowed = json['is_followed'],
-        isBlocking = json['is_access_blocking_user'] ?? false;
+      : id = json['user']['id'],
+        name = json['user']['name'],
+        account = json['user']['account'],
+        avatar = json['user']['profile_image_urls']['medium'],
+        isFollowed = json['user']['is_followed'],
+        isBlocking = json['user']['is_access_blocking_user'] ?? false,
+        artworks = (json['illusts'] as List).map((e) => Illust.fromJson(e)).toList();
 }
 
 /*
@@ -402,7 +403,7 @@ class UserPreview {
       }
     }
  */
-class Comment{
+class Comment {
   final String id;
   final String comment;
   final DateTime date;

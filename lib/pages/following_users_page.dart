@@ -18,7 +18,8 @@ class FollowingUsersPage extends StatefulWidget {
   State<FollowingUsersPage> createState() => _FollowingUsersPageState();
 }
 
-class _FollowingUsersPageState extends MultiPageLoadingState<FollowingUsersPage, UserPreview> {
+class _FollowingUsersPageState
+    extends MultiPageLoadingState<FollowingUsersPage, UserPreview> {
   String type = "public";
 
   @override
@@ -28,11 +29,13 @@ class _FollowingUsersPageState extends MultiPageLoadingState<FollowingUsersPage,
         SliverToBoxAdapter(
           child: Row(
             children: [
-              Text("Following".tl,
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),)
-                  .paddingVertical(12).paddingLeft(16),
+              Text(
+                "Following".tl,
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+              ).paddingVertical(12).paddingLeft(16),
               const Spacer(),
-              if(widget.uid == appdata.account?.user.id)
+              if (widget.uid == appdata.account?.user.id)
                 SegmentedButton(
                   value: type,
                   options: [
@@ -44,22 +47,21 @@ class _FollowingUsersPageState extends MultiPageLoadingState<FollowingUsersPage,
                     reset();
                   },
                 ),
-              const SizedBox(width: 16,)
+              const SizedBox(
+                width: 16,
+              )
             ],
           ),
         ),
         SliverGridViewWithFixedItemHeight(
-          delegate: SliverChildBuilderDelegate(
-                  (context, index) {
-                if(index == data.length - 1){
-                  nextPage();
-                }
-                return UserPreviewWidget(data[index]);
-              },
-              childCount: data.length
-          ),
-          maxCrossAxisExtent: 520,
-          itemHeight: 114,
+          delegate: SliverChildBuilderDelegate((context, index) {
+            if (index == data.length - 1) {
+              nextPage();
+            }
+            return UserPreviewWidget(data[index]);
+          }, childCount: data.length),
+          minCrossAxisExtent: 440,
+          itemHeight: 136,
         ).sliverPaddingHorizontal(8)
       ],
     );
@@ -68,12 +70,12 @@ class _FollowingUsersPageState extends MultiPageLoadingState<FollowingUsersPage,
   String? nextUrl;
 
   @override
-  Future<Res<List<UserPreview>>> loadData(page) async{
-    if(nextUrl == "end") {
+  Future<Res<List<UserPreview>>> loadData(page) async {
+    if (nextUrl == "end") {
       return Res.error("No more data");
     }
     var res = await Network().getFollowing(widget.uid, type, nextUrl);
-    if(!res.error) {
+    if (!res.error) {
       nextUrl = res.subData;
       nextUrl ??= "end";
     }

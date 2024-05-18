@@ -557,8 +557,8 @@ class _SearchUserResultPageState extends MultiPageLoadingState<SearchUserResultP
               },
               childCount: data.length
           ),
-          maxCrossAxisExtent: 520,
-          itemHeight: 114,
+          minCrossAxisExtent: 440,
+          itemHeight: 136,
         ).sliverPaddingHorizontal(8),
         SliverPadding(padding: EdgeInsets.only(bottom: context.padding.bottom),)
       ],

@@ -1,16 +1,20 @@
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:pixes/foundation/app.dart';
 
 class SliverGridViewWithFixedItemHeight extends StatelessWidget {
   const SliverGridViewWithFixedItemHeight(
       {required this.delegate,
-        required this.maxCrossAxisExtent,
-        required this.itemHeight,
-        super.key});
+      this.maxCrossAxisExtent = double.infinity,
+      this.minCrossAxisExtent = 0,
+      required this.itemHeight,
+      super.key});
 
   final SliverChildDelegate delegate;
 
   final double maxCrossAxisExtent;
+
+  final double minCrossAxisExtent;
 
   final double itemHeight;
 
@@ -18,31 +22,23 @@ class SliverGridViewWithFixedItemHeight extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverLayoutBuilder(
         builder: ((context, constraints) => SliverGrid(
-          delegate: delegate,
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: maxCrossAxisExtent,
-              childAspectRatio:
-              calcChildAspectRatio(constraints.crossAxisExtent)),
-        ).sliverPadding(EdgeInsets.only(bottom: context.padding.bottom))));
-  }
-
-  double calcChildAspectRatio(double width) {
-    var crossItems = width ~/ maxCrossAxisExtent;
-    if (width % maxCrossAxisExtent != 0) {
-      crossItems += 1;
-    }
-    final itemWidth = width / crossItems;
-    return itemWidth / itemHeight;
+              delegate: delegate,
+              gridDelegate: SliverGridDelegateWithFixedHeight(
+                  itemHeight: itemHeight,
+                  maxCrossAxisExtent: maxCrossAxisExtent,
+                  minCrossAxisExtent: minCrossAxisExtent),
+            ).sliverPadding(EdgeInsets.only(bottom: context.padding.bottom))));
   }
 }
 
 class GridViewWithFixedItemHeight extends StatelessWidget {
   const GridViewWithFixedItemHeight(
-      { required this.builder,
-        required this.itemCount,
-        required this.maxCrossAxisExtent,
-        required this.itemHeight,
-        super.key});
+      {required this.builder,
+      required this.itemCount,
+      this.maxCrossAxisExtent = double.infinity,
+      this.minCrossAxisExtent = 0,
+      required this.itemHeight,
+      super.key});
 
   final Widget Function(BuildContext, int) builder;
 
@@ -50,28 +46,69 @@ class GridViewWithFixedItemHeight extends StatelessWidget {
 
   final double maxCrossAxisExtent;
 
+  final double minCrossAxisExtent;
+
   final double itemHeight;
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
         builder: ((context, constraints) => GridView.builder(
-          gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-              maxCrossAxisExtent: maxCrossAxisExtent,
-              childAspectRatio:
-              calcChildAspectRatio(constraints.maxWidth)),
-          itemBuilder: builder,
-          itemCount: itemCount,
-          padding: EdgeInsets.only(bottom: context.padding.bottom),
-        )));
+              gridDelegate: SliverGridDelegateWithFixedHeight(
+                  itemHeight: itemHeight,
+                  maxCrossAxisExtent: maxCrossAxisExtent,
+                  minCrossAxisExtent: minCrossAxisExtent),
+              itemBuilder: builder,
+              itemCount: itemCount,
+              padding: EdgeInsets.only(bottom: context.padding.bottom),
+            )));
+  }
+}
+
+class SliverGridDelegateWithFixedHeight extends SliverGridDelegate {
+  const SliverGridDelegateWithFixedHeight({
+    this.maxCrossAxisExtent = double.infinity,
+    this.minCrossAxisExtent = 0,
+    required this.itemHeight,
+  });
+
+  final double maxCrossAxisExtent;
+
+  final double minCrossAxisExtent;
+
+  final double itemHeight;
+
+  @override
+  SliverGridLayout getLayout(SliverConstraints constraints) {
+    var crossItemsCount = calcCrossItemsCount(constraints.crossAxisExtent);
+    return SliverGridRegularTileLayout(
+        crossAxisCount: crossItemsCount,
+        mainAxisStride: itemHeight,
+        childMainAxisExtent: itemHeight,
+        crossAxisStride: constraints.crossAxisExtent / crossItemsCount,
+        childCrossAxisExtent: constraints.crossAxisExtent / crossItemsCount,
+        reverseCrossAxis: false);
   }
 
-  double calcChildAspectRatio(double width) {
-    var crossItems = width ~/ maxCrossAxisExtent;
-    if (width % maxCrossAxisExtent != 0) {
-      crossItems += 1;
+  int calcCrossItemsCount(double width) {
+    int count = 20;
+    var itemWidth = width / 20;
+    while (
+        !(itemWidth > minCrossAxisExtent && itemWidth < maxCrossAxisExtent)) {
+      count--;
+      itemWidth = width / count;
+      if (count == 1) {
+        return 1;
+      }
     }
-    final itemWidth = width / crossItems;
-    return itemWidth / itemHeight;
+    return count;
+  }
+
+  @override
+  bool shouldRelayout(covariant SliverGridDelegate oldDelegate) {
+    return oldDelegate is! SliverGridDelegateWithFixedHeight ||
+        oldDelegate.maxCrossAxisExtent != maxCrossAxisExtent ||
+        oldDelegate.minCrossAxisExtent != minCrossAxisExtent ||
+        oldDelegate.itemHeight != itemHeight;
   }
 }

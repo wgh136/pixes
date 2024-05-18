@@ -43,8 +43,13 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
           _RelatedUsers(widget.id),
           buildInformation(),
           buildArtworkHeader(),
-          _UserArtworks(data.id.toString(), page, key: ValueKey(data.id + page),),
-          SliverPadding(padding: EdgeInsets.only(bottom: context.padding.bottom)),
+          _UserArtworks(
+            data.id.toString(),
+            page,
+            key: ValueKey(data.id + page),
+          ),
+          SliverPadding(
+              padding: EdgeInsets.only(bottom: context.padding.bottom)),
         ],
       ),
     );
@@ -52,23 +57,24 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
 
   bool isFollowing = false;
 
-  void follow() async{
-    if(isFollowing) return;
+  void follow() async {
+    if (isFollowing) return;
     String type = "";
-    if(!data!.isFollowed) {
+    if (!data!.isFollowed) {
       await flyoutController.showFlyout(
           navigatorKey: App.rootNavigatorKey.currentState,
-          builder: (context) =>
-              MenuFlyout(
+          builder: (context) => MenuFlyout(
                 items: [
-                  MenuFlyoutItem(text: Text("Public".tl),
+                  MenuFlyoutItem(
+                      text: Text("Public".tl),
                       onPressed: () => type = "public"),
-                  MenuFlyoutItem(text: Text("Private".tl),
+                  MenuFlyoutItem(
+                      text: Text("Private".tl),
                       onPressed: () => type = "private"),
                 ],
               ));
     }
-    if(type.isEmpty && !data!.isFollowed) {
+    if (type.isEmpty && !data!.isFollowed) {
       return;
     }
     setState(() {
@@ -76,8 +82,8 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
     });
     var method = data!.isFollowed ? "delete" : "add";
     var res = await Network().follow(data!.id.toString(), method, type);
-    if(res.error) {
-      if(mounted) {
+    if (res.error) {
+      if (mounted) {
         context.showToast(message: "Network Error");
       }
     } else {
@@ -100,7 +106,8 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
             height: 64,
             decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(64),
-                border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6)),
+                border: Border.all(
+                    color: ColorScheme.of(context).outlineVariant, width: 0.6)),
             child: ClipRRect(
               borderRadius: BorderRadius.circular(64),
               child: Image(
@@ -109,47 +116,60 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
                 height: 64,
                 fit: BoxFit.cover,
               ),
-            ),),
+            ),
+          ),
           const SizedBox(height: 8),
-          Text(data!.name, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(data!.name,
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 4),
           Text.rich(
             TextSpan(
               children: [
                 TextSpan(text: 'Follows: '.tl),
                 TextSpan(
-                  text: '${data!.totalFollowUsers}',
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = (() => context.to(() => FollowingUsersPage(widget.id))),
-                  style: TextStyle(fontWeight: FontWeight.bold, color: FluentTheme.of(context).accentColor)
-                ),
+                    text: '${data!.totalFollowUsers}',
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = (() =>
+                          context.to(() => FollowingUsersPage(widget.id))),
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: FluentTheme.of(context).accentColor)),
               ],
             ),
             style: const TextStyle(fontSize: 14),
           ),
-          if(widget.id != appdata.account?.user.id)
-            const SizedBox(height: 8,),
-          if(widget.id != appdata.account?.user.id)
-            if(isFollowing)
-              Button(onPressed: follow, child: const SizedBox(
-                width: 42,
-                height: 24,
-                child: Center(
-                  child: SizedBox.square(
-                    dimension: 18,
-                    child: ProgressRing(strokeWidth: 2,),
-                  ),
-                ),
-              ))
+          if (widget.id != appdata.account?.user.id)
+            const SizedBox(
+              height: 8,
+            ),
+          if (widget.id != appdata.account?.user.id)
+            if (isFollowing)
+              Button(
+                  onPressed: follow,
+                  child: const SizedBox(
+                    width: 42,
+                    height: 24,
+                    child: Center(
+                      child: SizedBox.square(
+                        dimension: 18,
+                        child: ProgressRing(
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
+                  ))
             else if (!data!.isFollowed)
               FlyoutTarget(
-                controller: flyoutController,
-                child: Button(onPressed: follow, child: Text("Follow".tl))
-              )
+                  controller: flyoutController,
+                  child: Button(onPressed: follow, child: Text("Follow".tl)))
             else
               Button(
                 onPressed: follow,
-                child: Text("Unfollow".tl, style: TextStyle(color: ColorScheme.of(context).error),),
+                child: Text(
+                  "Unfollow".tl,
+                  style: TextStyle(color: ColorScheme.of(context).error),
+                ),
               ),
         ],
       ),
@@ -158,63 +178,75 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
 
   Widget buildHeader(String title, {Widget? action}) {
     return SizedBox(
-        width: double.infinity,
-        height: 38,
-        child: Row(
-          children: [
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.w600),
-            ).toAlign(Alignment.centerLeft),
-            const Spacer(),
-            if(action != null)
-              action.toAlign(Alignment.centerRight)
-          ],
-        ).paddingHorizontal(16)).paddingTop(8);
+            width: double.infinity,
+            height: 38,
+            child: Row(
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(fontWeight: FontWeight.w600),
+                ).toAlign(Alignment.centerLeft),
+                const Spacer(),
+                if (action != null) action.toAlign(Alignment.centerRight)
+              ],
+            ).paddingHorizontal(16))
+        .paddingTop(8);
   }
 
   Widget buildArtworkHeader() {
     return SliverToBoxAdapter(
       child: SizedBox(
-          width: double.infinity,
-          height: 38,
-          child: Row(
-            children: [
-              SegmentedButton<int>(
-                options: [
-                  SegmentedButtonOption(0, "Artworks".tl),
-                  SegmentedButtonOption(1, "Bookmarks".tl),
+              width: double.infinity,
+              height: 38,
+              child: Row(
+                children: [
+                  SegmentedButton<int>(
+                    options: [
+                      SegmentedButtonOption(0, "Artworks".tl),
+                      SegmentedButtonOption(1, "Bookmarks".tl),
+                    ],
+                    value: page,
+                    onPressed: (value) {
+                      setState(() {
+                        page = value;
+                      });
+                    },
+                  ),
+                  const Spacer(),
+                  BatchDownloadButton(
+                    request: () {
+                      if (page == 0) {
+                        return Network().getUserIllusts(data!.id.toString());
+                      } else {
+                        return Network().getUserBookmarks(data!.id.toString());
+                      }
+                    },
+                  ),
                 ],
-                value: page,
-                onPressed: (value) {
-                  setState(() {
-                    page = value;
-                  });
-                },
-              ),
-              const Spacer(),
-              BatchDownloadButton(request: () {
-                if(page == 0) {
-                  return Network().getUserIllusts(data!.id.toString());
-                } else {
-                  return Network().getUserBookmarks(data!.id.toString());
-                }
-              },),
-            ],
-          ).paddingHorizontal(16)).paddingTop(12),
+              ).paddingHorizontal(16))
+          .paddingTop(12),
     );
   }
 
   Widget buildInformation() {
-    Widget buildItem({IconData? icon, required String title, required String? content, Widget? trailing}) {
-      if(content == null || content.isEmpty) {
+    Widget buildItem(
+        {IconData? icon,
+        required String title,
+        required String? content,
+        Widget? trailing}) {
+      if (content == null || content.isEmpty) {
         return const SizedBox.shrink();
       }
       return Card(
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
         padding: EdgeInsets.zero,
         child: ListTile(
-          leading: icon == null ? null : Icon(icon, size: 20,),
+          leading: icon == null
+              ? null
+              : Icon(
+                  icon,
+                  size: 20,
+                ),
           title: Text(title),
           subtitle: SelectableText(content),
           trailing: trailing,
@@ -226,30 +258,46 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
       child: Column(
         children: [
           buildHeader("Information".tl),
-          buildItem(icon: MdIcons.comment_outlined, title: "Introduction".tl, content: data!.comment),
-          buildItem(icon: MdIcons.cake_outlined, title: "Birthday".tl, content: data!.birth),
-          buildItem(icon: MdIcons.location_city_outlined, title: "Region", content: data!.region),
-          buildItem(icon: MdIcons.work_outline, title: "Job".tl, content: data!.job),
-          buildItem(icon: MdIcons.person_2_outlined, title: "Gender".tl, content: data!.gender),
+          buildItem(
+              icon: MdIcons.comment_outlined,
+              title: "Introduction".tl,
+              content: data!.comment),
+          buildItem(
+              icon: MdIcons.cake_outlined,
+              title: "Birthday".tl,
+              content: data!.birth),
+          buildItem(
+              icon: MdIcons.location_city_outlined,
+              title: "Region",
+              content: data!.region),
+          buildItem(
+              icon: MdIcons.work_outline, title: "Job".tl, content: data!.job),
+          buildItem(
+              icon: MdIcons.person_2_outlined,
+              title: "Gender".tl,
+              content: data!.gender),
           buildHeader("Social Network".tl),
-          buildItem(title: "Webpage",
+          buildItem(
+              title: "Webpage",
               content: data!.webpage,
               trailing: IconButton(
                   icon: const Icon(MdIcons.open_in_new, size: 18),
-                  onPressed: () => launchUrlString(data!.twitterUrl!)
-              )),
-          buildItem(title: "Twitter",
+                  onPressed: () => launchUrlString(data!.twitterUrl!))),
+          buildItem(
+              title: "Twitter",
               content: data!.twitterUrl,
               trailing: IconButton(
                   icon: const Icon(MdIcons.open_in_new, size: 18),
-                  onPressed: () => launchUrlString(data!.twitterUrl!)
-              )),
-          buildItem(title: "pawoo",
+                  onPressed: () => launchUrlString(data!.twitterUrl!))),
+          buildItem(
+              title: "pawoo",
               content: data!.pawooUrl,
               trailing: IconButton(
-                  icon: const Icon(MdIcons.open_in_new, size: 18,),
-                  onPressed: () => launchUrlString(data!.pawooUrl!)
-              )),
+                  icon: const Icon(
+                    MdIcons.open_in_new,
+                    size: 18,
+                  ),
+                  onPressed: () => launchUrlString(data!.pawooUrl!))),
         ],
       ),
     );
@@ -292,7 +340,9 @@ class _UserArtworksState extends MultiPageLoadingState<_UserArtworks, Illust> {
           child: Row(
             children: [
               const Icon(FluentIcons.info),
-              const SizedBox(width: 4,),
+              const SizedBox(
+                width: 4,
+              ),
               Text(error)
             ],
           ),
@@ -308,16 +358,13 @@ class _UserArtworksState extends MultiPageLoadingState<_UserArtworks, Illust> {
         maxCrossAxisExtent: 240,
       ),
       delegate: SliverChildBuilderDelegate(
-            (context, index) {
-          if(index == data.length - 1){
+        (context, index) {
+          if (index == data.length - 1) {
             nextPage();
           }
           return IllustWidget(data[index], onTap: () {
             context.to(() => IllustGalleryPage(
-                illusts: data,
-                initialPage: index,
-                nextUrl: nextUrl
-            ));
+                illusts: data, initialPage: index, nextUrl: nextUrl));
           });
         },
         childCount: data.length,
@@ -328,16 +375,16 @@ class _UserArtworksState extends MultiPageLoadingState<_UserArtworks, Illust> {
   String? nextUrl;
 
   @override
-  Future<Res<List<Illust>>> loadData(page) async{
-    if(nextUrl == "end") {
+  Future<Res<List<Illust>>> loadData(page) async {
+    if (nextUrl == "end") {
       return Res.error("No more data");
     }
     var res = nextUrl == null
         ? (widget.type == 0
-          ? await Network().getUserIllusts(widget.uid)
-          : await Network().getUserBookmarks(widget.uid))
+            ? await Network().getUserIllusts(widget.uid)
+            : await Network().getUserBookmarks(widget.uid))
         : await Network().getIllustsWithNextUrl(nextUrl!);
-    if(!res.error) {
+    if (!res.error) {
       nextUrl = res.subData;
       nextUrl ??= "end";
     }
@@ -354,12 +401,13 @@ class _RelatedUsers extends StatefulWidget {
   State<_RelatedUsers> createState() => _RelatedUsersState();
 }
 
-class _RelatedUsersState extends LoadingState<_RelatedUsers, List<UserPreview>> {
+class _RelatedUsersState
+    extends LoadingState<_RelatedUsers, List<UserPreview>> {
   @override
   Widget buildFrame(BuildContext context, Widget child) {
     return SliverToBoxAdapter(
       child: SizedBox(
-        height: 108,
+        height: 146,
         width: double.infinity,
         child: child,
       ),
@@ -370,18 +418,30 @@ class _RelatedUsersState extends LoadingState<_RelatedUsers, List<UserPreview>> 
 
   @override
   Widget buildContent(BuildContext context, List<UserPreview> data) {
-    return Scrollbar(
-      controller: _controller,
-      child: ListView.builder(
+    Widget content = Scrollbar(
         controller: _controller,
-        padding: const EdgeInsets.only(bottom: 8, left: 8),
-        primary: false,
-        scrollDirection: Axis.horizontal,
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          return UserPreviewWidget(data[index]).fixWidth(264);
-        },
-    ));
+        child: ListView.builder(
+          controller: _controller,
+          padding: const EdgeInsets.only(bottom: 8, left: 8),
+          primary: false,
+          scrollDirection: Axis.horizontal,
+          itemCount: data.length,
+          itemBuilder: (context, index) {
+            return UserPreviewWidget(data[index]).fixWidth(342);
+          },
+        ));
+    if (MediaQuery.of(context).size.width > 500) {
+      content = ScrollbarTheme.merge(
+          data: const ScrollbarThemeData(
+              thickness: 6,
+              hoveringThickness: 6,
+              mainAxisMargin: 4,
+              hoveringPadding: EdgeInsets.zero,
+              padding: EdgeInsets.zero,
+              hoveringMainAxisMargin: 4),
+          child: content);
+    }
+    return content;
   }
 
   @override
@@ -389,4 +449,3 @@ class _RelatedUsersState extends LoadingState<_RelatedUsers, List<UserPreview>> 
     return Network().relatedUsers(widget.uid);
   }
 }
-

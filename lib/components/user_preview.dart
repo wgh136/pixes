@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/foundation/app.dart';
@@ -20,15 +22,15 @@ class UserPreviewWidget extends StatefulWidget {
 class _UserPreviewWidgetState extends State<UserPreviewWidget> {
   bool isFollowing = false;
 
-  void follow() async{
-    if(isFollowing) return;
+  void follow() async {
+    if (isFollowing) return;
     setState(() {
       isFollowing = true;
     });
     var method = widget.user.isFollowed ? "delete" : "add";
     var res = await Network().follow(widget.user.id.toString(), method);
-    if(res.error) {
-      if(mounted) {
+    if (res.error) {
+      if (mounted) {
         context.showToast(message: "Network Error");
       }
     } else {
@@ -43,67 +45,120 @@ class _UserPreviewWidgetState extends State<UserPreviewWidget> {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 64,
-            height: 64,
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(64),
-              child: ColoredBox(
-                color: ColorScheme.of(context).secondaryContainer,
-                child: AnimatedImage(
-                  image: CachedImageProvider(widget.user.avatar),
-                  fit: BoxFit.cover,
-                  filterQuality: FilterQuality.medium,
+      child: GestureDetector(
+        onTap: () => context.to(() => UserInfoPage(widget.user.id.toString())),
+        behavior: HitTestBehavior.translucent,
+        child: SizedBox.expand(
+          child: Row(
+            children: [
+              SizedBox(
+                width: 64,
+                height: 64,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(64),
+                  child: ColoredBox(
+                    color: ColorScheme.of(context).secondaryContainer,
+                    child: AnimatedImage(
+                      image: CachedImageProvider(widget.user.avatar),
+                      fit: BoxFit.cover,
+                      filterQuality: FilterQuality.medium,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          const SizedBox(width: 12,),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Spacer(),
-                Text(widget.user.name, maxLines: 1, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 12,),
-                Row(
+              const SizedBox(
+                width: 12,
+              ),
+              SizedBox(
+                width: 96,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Button(
-                      onPressed: () => context.to(() => UserInfoPage(widget.user.id.toString(), followCallback: (v){
-                        setState(() {
-                          widget.user.isFollowed = v;
-                        });
-                      },)),
-                      child: Text("View".tl,),
+                    const Spacer(),
+                    Text(widget.user.name,
+                        maxLines: 1,
+                        style: const TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold)),
+                    const SizedBox(
+                      height: 12,
                     ),
-                    const SizedBox(width: 8,),
-                    if(isFollowing)
-                      Button(onPressed: follow, child: const SizedBox(
-                        width: 42,
-                        height: 24,
-                        child: Center(
-                          child: SizedBox.square(
-                            dimension: 18,
-                            child: ProgressRing(strokeWidth: 2,),
+                    Row(
+                      children: [
+                        if (isFollowing)
+                          Button(
+                              onPressed: follow,
+                              child: const SizedBox(
+                                width: 42,
+                                height: 24,
+                                child: Center(
+                                  child: SizedBox.square(
+                                    dimension: 18,
+                                    child: ProgressRing(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                ),
+                              ))
+                        else if (!widget.user.isFollowed)
+                          Button(onPressed: follow, child: Text("Follow".tl))
+                        else
+                          Button(
+                            onPressed: follow,
+                            child: Text(
+                              "Unfollow".tl,
+                              style: TextStyle(
+                                  color: ColorScheme.of(context).error),
+                            ),
                           ),
-                        ),
-                      ))
-                    else if (!widget.user.isFollowed)
-                      Button(onPressed: follow, child: Text("Follow".tl))
-                    else
-                      Button(
-                        onPressed: follow,
-                        child: Text("Unfollow".tl, style: TextStyle(color: ColorScheme.of(context).error),),
-                      ),
+                      ],
+                    ),
+                    const Spacer(),
                   ],
                 ),
-                const Spacer(),
-              ],
+              ),
+              Expanded(
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    var count = constraints.maxWidth.toInt() ~/ 96;
+                    var images = List.generate(
+                        min(count, widget.user.artworks.length),
+                        (index) => buildIllust(widget.user.artworks[index]));
+                    return Row(
+                      children: images,
+                    );
+                  },
+                ),
+              ),
+              const Icon(
+                FluentIcons.chevron_right,
+                size: 14,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildIllust(Illust illust) {
+    return SizedBox(
+      width: 96,
+      height: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(4),
+          child: ColoredBox(
+            color: ColorScheme.of(context).secondaryContainer,
+            child: AnimatedImage(
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+              filterQuality: FilterQuality.medium,
+              image: CachedImageProvider(illust.images.first.medium),
             ),
-          )
-        ],
+          ),
+        ),
       ),
     );
   }

@@ -327,7 +327,7 @@ class Network {
     var res = await apiGet(path);
     if (res.success) {
       return Res(
-          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e["user"])).toList(),
+          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e)).toList(),
           subData: res.data["next_url"]);
     } else {
       return Res.error(res.errorMessage);
@@ -350,7 +350,7 @@ class Network {
     var res = await apiGet(path);
     if (res.success) {
       return Res(
-          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e["user"])).toList(),
+          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e)).toList(),
           subData: res.data["next_url"]);
     } else {
       return Res.error(res.errorMessage);
@@ -372,7 +372,7 @@ class Network {
     var res = await apiGet("/v1/user/recommended?filter=for_android");
     if (res.success) {
       return Res(
-          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e["user"])).toList(),
+          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e)).toList(),
           subData: res.data["next_url"]);
     } else {
       return Res.error(res.errorMessage);
@@ -473,7 +473,7 @@ class Network {
     var res = await apiGet("/v1/user/related?filter=for_android&seed_user_id=$id");
     if (res.success) {
       return Res(
-          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e["user"])).toList());
+          (res.data["user_previews"] as List).map((e) => UserPreview.fromJson(e)).toList());
     } else {
       return Res.error(res.errorMessage);
     }
