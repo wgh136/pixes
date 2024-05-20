@@ -9,6 +9,7 @@ import 'package:pixes/components/user_preview.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/network.dart';
 import 'package:pixes/pages/illust_page.dart';
+import 'package:pixes/pages/novel_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/translation.dart';
 
@@ -52,7 +53,7 @@ class _SearchPageState extends State<SearchPage> {
       case 4:
         context.to(() => UserInfoPage(text));
       case 5:
-        showToast(context, message: "Not implemented");
+        context.to(() => NovelPageWithId(text));
     }
   }
 
