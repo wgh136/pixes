@@ -53,7 +53,10 @@ class _NovelPageState extends State<NovelPage> {
               ),
               if (widget.novel.seriesId != null)
                 NovelSeriesWidget(
-                    widget.novel.seriesId!, widget.novel.seriesTitle!)
+                    widget.novel.seriesId!, widget.novel.seriesTitle!),
+              SliverPadding(
+                  padding: EdgeInsets.only(
+                      top: 16 + MediaQuery.of(context).padding.bottom)),
             ],
           ),
         ).padding(const EdgeInsets.symmetric(horizontal: 16)));
@@ -240,6 +243,7 @@ class _NovelPageState extends State<NovelPage> {
                 const SizedBox(width: 12),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(widget.novel.author.name,
                         style: const TextStyle(
@@ -248,9 +252,9 @@ class _NovelPageState extends State<NovelPage> {
                         )),
                     Text(
                       widget.novel.createDate.toString().substring(0, 10),
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 12,
-                        color: Colors.grey,
+                        color: ColorScheme.of(context).outline,
                       ),
                     ),
                   ],
@@ -336,6 +340,9 @@ class _NovelPageState extends State<NovelPage> {
                     Button(
                       onPressed: favorite,
                       child: Row(
+                        mainAxisAlignment: constrains.maxWidth > 420
+                            ? MainAxisAlignment.start
+                            : MainAxisAlignment.center,
                         children: [
                           if (isAddingFavorite)
                             const SizedBox(
@@ -353,8 +360,9 @@ class _NovelPageState extends State<NovelPage> {
                             )
                           else
                             const Icon(MdIcons.favorite_outline, size: 18),
-                          const SizedBox(width: 12),
-                          Text("Favorite".tl)
+                          if (constrains.maxWidth > 420)
+                            const SizedBox(width: 12),
+                          if (constrains.maxWidth > 420) Text("Favorite".tl)
                         ],
                       )
                           .fixWidth(shouldFillSpace
@@ -365,10 +373,14 @@ class _NovelPageState extends State<NovelPage> {
                     const SizedBox(width: 8),
                     Button(
                         child: Row(
+                          mainAxisAlignment: constrains.maxWidth > 420
+                              ? MainAxisAlignment.start
+                              : MainAxisAlignment.center,
                           children: [
                             const Icon(MdIcons.comment, size: 18),
-                            const SizedBox(width: 12),
-                            Text("Comments".tl)
+                            if (constrains.maxWidth > 420)
+                              const SizedBox(width: 12),
+                            if (constrains.maxWidth > 420) Text("Comments".tl)
                           ],
                         )
                             .fixWidth(shouldFillSpace

@@ -30,6 +30,32 @@ import "downloading_page.dart";
 
 double get _appBarHeight => App.isDesktop ? 36.0 : 48.0;
 
+class TitleBarAction {
+  final IconData icon;
+  final String title;
+  final void Function() onPressed;
+
+  TitleBarAction(this.icon, this.title, this.onPressed);
+}
+
+class TitleBarController extends StateController {
+  TitleBarController();
+
+  final List<TitleBarAction> actions = [
+    if (kDebugMode) TitleBarAction(MdIcons.bug_report, "Debug", debug)
+  ];
+
+  void addAction(TitleBarAction action) {
+    actions.add(action);
+    update();
+  }
+
+  void removeAction(TitleBarAction action) {
+    actions.remove(action);
+    update();
+  }
+}
+
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
 
@@ -46,6 +72,7 @@ class _MainPageState extends State<MainPage> with WindowListener {
 
   @override
   void initState() {
+    StateController.put<TitleBarController>(TitleBarController());
     windowManager.addListener(this);
     listenMouseSideButtonToBack(navigatorKey);
     App.mainNavigatorKey = navigatorKey;
@@ -54,6 +81,7 @@ class _MainPageState extends State<MainPage> with WindowListener {
 
   @override
   void dispose() {
+    StateController.remove<TitleBarController>();
     windowManager.removeListener(this);
     super.dispose();
   }
@@ -224,33 +252,50 @@ class _MainPageState extends State<MainPage> with WindowListener {
       automaticallyImplyLeading: false,
       height: _appBarHeight,
       title: () {
-        if (!App.isDesktop) {
-          return const Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text("pixes"),
-          );
-        }
-        return const DragToMoveArea(
-          child: Padding(
-            padding: EdgeInsets.only(bottom: 4),
-            child: Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: Row(
-                children: [
-                  Text(
-                    "Pixes",
-                    style: TextStyle(fontSize: 13),
-                  ),
-                  Spacer(),
-                  if (kDebugMode)
-                    Padding(
-                      padding: EdgeInsets.only(right: 138),
-                      child: Button(onPressed: debug, child: Text("Debug")),
-                    )
-                ],
+        return StateBuilder<TitleBarController>(
+          builder: (controller) {
+            Widget content = Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Row(
+                  children: [
+                    if (!App.isDesktop)
+                      const Text(
+                        "Pixes",
+                        style: TextStyle(fontSize: 13),
+                      ),
+                    if (!App.isDesktop) const Spacer(),
+                    if (App.isDesktop)
+                      const Expanded(
+                        child: DragToMoveArea(
+                            child: Text(
+                          "Pixes",
+                          style: TextStyle(fontSize: 13),
+                        )),
+                      ),
+                    for (var action in controller.actions)
+                      Button(
+                        onPressed: action.onPressed,
+                        child: Row(
+                          children: [
+                            Icon(
+                              action.icon,
+                              size: 18,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(action.title),
+                          ],
+                        ),
+                      ).paddingTop(4).paddingLeft(4),
+                    if (App.isDesktop) const SizedBox(width: 128),
+                  ],
+                ),
               ),
-            ),
-          ),
+            );
+
+            return content;
+          },
         );
       }(),
       leading: _BackButton(navigatorKey),

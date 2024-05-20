@@ -8,7 +8,6 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/message.dart';
-import 'package:pixes/components/page_route.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';

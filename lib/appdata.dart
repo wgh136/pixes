@@ -20,6 +20,9 @@ class _Appdata {
     "proxy": "",
     "darkMode": "System",
     "language": "System",
+    "readingFontSize": 16.0,
+    "readingLineHeight": 1.5,
+    "readingParagraphSpacing": 8.0,
   };
 
   bool lock = false;
