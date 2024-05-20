@@ -16,15 +16,14 @@ import 'package:share_plus/share_plus.dart';
 import 'package:window_manager/window_manager.dart';
 
 class ImagePage extends StatefulWidget {
-  const ImagePage(this.urls, {this.initialPage = 1, super.key});
+  const ImagePage(this.urls, {this.initialPage = 0, super.key});
 
   final List<String> urls;
 
   final int initialPage;
 
-  static show(List<String> urls, {int initialPage = 1}) {
-    App.rootNavigatorKey.currentState
-        ?.push(AppPageRoute(
+  static show(List<String> urls, {int initialPage = 0}) {
+    App.rootNavigatorKey.currentState?.push(AppPageRoute(
         builder: (context) => ImagePage(urls, initialPage: initialPage)));
   }
 
@@ -69,61 +68,67 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
 
   Future<File?> getFile() async {
     var image = widget.urls[currentPage];
-    if(image.startsWith("file://")){
+    if (image.startsWith("file://")) {
       return File(image.replaceFirst("file://", ""));
     }
-    var file = await CacheManager().findCache(image);
-    return file == null
-        ? null
-        : File(file);
+    var key = image;
+    if (key.startsWith("novel:")) {
+      key = key.split(':').last;
+    }
+    var file = await CacheManager().findCache(key);
+    return file == null ? null : File(file);
   }
 
   String getExtensionName() {
     var fileName = widget.urls[currentPage].split('/').last;
-    if(fileName.contains('.')){
+    if (fileName.contains('.')) {
       return '.${fileName.split('.').last}';
     }
     return '.jpg';
   }
 
   void showMenu() {
-    menuController.showFlyout(builder: (context) => MenuFlyout(
-      items: [
-        MenuFlyoutItem(text: Text("Save to".tl), onPressed: () async{
-          var file = await getFile();
-          if(file != null){
-            var fileName = file.path.split('/').last;
-            if(!fileName.contains('.')){
-              fileName += getExtensionName();
-            }
-            saveFile(file, fileName);
-          }
-        }),
-        MenuFlyoutItem(text: Text("Share".tl), onPressed: () async{
-          var file = await getFile();
-          if(file != null){
-            var ext = getExtensionName();
-            var fileName = file.path.split('/').last;
-            if(!fileName.contains('.')){
-              fileName += ext;
-            }
-            var mediaType = switch(ext){
-              '.jpg' => 'image/jpeg',
-              '.jpeg' => 'image/jpeg',
-              '.png' => 'image/png',
-              '.gif' => 'image/gif',
-              '.webp' => 'image/webp',
-              _ => 'application/octet-stream'
-            };
-            Share.shareXFiles([XFile.fromData(
-              await file.readAsBytes(),
-              mimeType: mediaType,
-              name: fileName)]
-            );
-          }
-        }),
-      ],
-    ));
+    menuController.showFlyout(
+        builder: (context) => MenuFlyout(
+              items: [
+                MenuFlyoutItem(
+                    text: Text("Save to".tl),
+                    onPressed: () async {
+                      var file = await getFile();
+                      if (file != null) {
+                        var fileName = file.path.split('/').last;
+                        if (!fileName.contains('.')) {
+                          fileName += getExtensionName();
+                        }
+                        saveFile(file, fileName);
+                      }
+                    }),
+                MenuFlyoutItem(
+                    text: Text("Share".tl),
+                    onPressed: () async {
+                      var file = await getFile();
+                      if (file != null) {
+                        var ext = getExtensionName();
+                        var fileName = file.path.split('/').last;
+                        if (!fileName.contains('.')) {
+                          fileName += ext;
+                        }
+                        var mediaType = switch (ext) {
+                          '.jpg' => 'image/jpeg',
+                          '.jpeg' => 'image/jpeg',
+                          '.png' => 'image/png',
+                          '.gif' => 'image/gif',
+                          '.webp' => 'image/webp',
+                          _ => 'application/octet-stream'
+                        };
+                        Share.shareXFiles([
+                          XFile.fromData(await file.readAsBytes(),
+                              mimeType: mediaType, name: fileName)
+                        ]);
+                      }
+                    }),
+              ],
+            ));
   }
 
   @override
@@ -133,12 +138,13 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
       color: FluentTheme.of(context).micaBackgroundColor,
       child: Listener(
         onPointerSignal: (event) {
-          if(event is PointerScrollEvent &&
+          if (event is PointerScrollEvent &&
               !HardwareKeyboard.instance.isControlPressed) {
-            if(event.scrollDelta.dy > 0
-                && controller.page!.toInt() < widget.urls.length - 1) {
+            if (event.scrollDelta.dy > 0 &&
+                controller.page!.toInt() < widget.urls.length - 1) {
               controller.jumpToPage(controller.page!.toInt() + 1);
-            } else if(event.scrollDelta.dy < 0 && controller.page!.toInt() > 0){
+            } else if (event.scrollDelta.dy < 0 &&
+                controller.page!.toInt() > 0) {
               controller.jumpToPage(controller.page!.toInt() - 1);
             }
           }
@@ -148,19 +154,17 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
             var height = constrains.maxHeight;
             return Stack(
               children: [
-                Positioned.fill(child: PhotoViewGallery.builder(
+                Positioned.fill(
+                    child: PhotoViewGallery.builder(
                   pageController: controller,
-                  backgroundDecoration: const BoxDecoration(
-                      color: Colors.transparent
-                  ),
+                  backgroundDecoration:
+                      const BoxDecoration(color: Colors.transparent),
                   itemCount: widget.urls.length,
                   builder: (context, index) {
                     var image = widget.urls[index];
 
                     return PhotoViewGalleryPageOptions(
-                      imageProvider: image.startsWith("file://")
-                          ? FileImage(File(image.replaceFirst("file://", "")))
-                          : CachedImageProvider(image) as ImageProvider,
+                      imageProvider: getImageProvider(image),
                     );
                   },
                   onPageChanged: (index) {
@@ -177,17 +181,22 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                     height: 36,
                     child: Row(
                       children: [
-                        const SizedBox(width: 6,),
+                        const SizedBox(
+                          width: 6,
+                        ),
                         IconButton(
                             icon: const Icon(FluentIcons.back).paddingAll(2),
-                            onPressed: () => context.pop()
-                        ),
+                            onPressed: () => context.pop()),
                         const Expanded(
-                          child: DragToMoveArea(child: SizedBox.expand(),),
+                          child: DragToMoveArea(
+                            child: SizedBox.expand(),
+                          ),
                         ),
                         buildActions(),
-                        if(App.isDesktop)
-                          WindowButtons(key: ValueKey(windowButtonKey),),
+                        if (App.isDesktop)
+                          WindowButtons(
+                            key: ValueKey(windowButtonKey),
+                          ),
                       ],
                     ),
                   ),
@@ -196,7 +205,10 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                   left: 0,
                   top: height / 2 - 9,
                   child: IconButton(
-                    icon: const Icon(FluentIcons.chevron_left, size: 18,),
+                    icon: const Icon(
+                      FluentIcons.chevron_left,
+                      size: 18,
+                    ),
                     onPressed: () {
                       controller.previousPage(
                         duration: const Duration(milliseconds: 300),
@@ -239,25 +251,35 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
       controller: menuController,
       child: width > 600
           ? Button(
-          onPressed: showMenu,
-          child: const Row(
-            children: [
-              Icon(
-                MdIcons.menu,
-                size: 18,
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Text('Actions'),
-            ],
-          ))
+              onPressed: showMenu,
+              child: const Row(
+                children: [
+                  Icon(
+                    MdIcons.menu,
+                    size: 18,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text('Actions'),
+                ],
+              ))
           : IconButton(
-          icon: const Icon(
-            MdIcons.more_horiz,
-            size: 20,
-          ),
-          onPressed: showMenu),
+              icon: const Icon(
+                MdIcons.more_horiz,
+                size: 20,
+              ),
+              onPressed: showMenu),
     );
+  }
+
+  ImageProvider getImageProvider(String url) {
+    if (url.startsWith("file://")) {
+      return FileImage(File(url.replaceFirst("file://", "")));
+    } else if (url.startsWith("novel:")) {
+      var ids = url.split(':').last.split('/');
+      return CachedNovelImageProvider(ids[0], ids[1]);
+    }
+    return CachedImageProvider(url) as ImageProvider;
   }
 }

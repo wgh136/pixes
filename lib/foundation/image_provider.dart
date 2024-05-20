@@ -45,10 +45,10 @@ abstract class BaseImageProvider<T extends BaseImageProvider<T>>
   }
 
   Future<ui.Codec> _loadBufferAsync(
-      T key,
-      StreamController<ImageChunkEvent> chunkEvents,
-      ImageDecoderCallback decode,
-      ) async {
+    T key,
+    StreamController<ImageChunkEvent> chunkEvents,
+    ImageDecoderCallback decode,
+  ) async {
     try {
       int retryTime = 1;
 
@@ -83,11 +83,11 @@ abstract class BaseImageProvider<T extends BaseImageProvider<T>>
         }
       }
 
-      if(stop) {
+      if (stop) {
         throw Exception("Image loading is stopped");
       }
 
-      if(data!.isEmpty) {
+      if (data!.isEmpty) {
         throw Exception("Empty image data");
       }
 
@@ -147,13 +147,13 @@ class CachedImageProvider extends BaseImageProvider<CachedImageProvider> {
   String get key => url;
 
   @override
-  Future<Uint8List> load(StreamController<ImageChunkEvent> chunkEvents) async{
+  Future<Uint8List> load(StreamController<ImageChunkEvent> chunkEvents) async {
     chunkEvents.add(const ImageChunkEvent(
       cumulativeBytesLoaded: 0,
       expectedTotalBytes: 1,
     ));
     var cached = await CacheManager().findCache(key);
-    if(cached != null) {
+    if (cached != null) {
       chunkEvents.add(const ImageChunkEvent(
         cumulativeBytesLoaded: 1,
         expectedTotalBytes: 1,
@@ -161,30 +161,28 @@ class CachedImageProvider extends BaseImageProvider<CachedImageProvider> {
       return await File(cached).readAsBytes();
     }
     var dio = AppDio();
-    final time = DateFormat("yyyy-MM-dd'T'HH:mm:ss'+00:00'").format(DateTime.now());
+    final time =
+        DateFormat("yyyy-MM-dd'T'HH:mm:ss'+00:00'").format(DateTime.now());
     final hash = md5.convert(utf8.encode(time + Network.hashSalt)).toString();
-    var res = await dio.get<ResponseBody>(
-      url,
-      options: Options(
-        responseType: ResponseType.stream,
-        validateStatus: (status) => status != null && status < 500,
-        headers: {
-          "referer": "https://app-api.pixiv.net/",
-          "user-agent": "PixivAndroidApp/5.0.234 (Android 14; Pixes)",
-          "x-client-time": time,
-          "x-client-hash": hash,
-          "accept-enconding": "gzip",
-        }
-      )
-    );
-    if(res.statusCode != 200) {
+    var res = await dio.get<ResponseBody>(url,
+        options: Options(
+            responseType: ResponseType.stream,
+            validateStatus: (status) => status != null && status < 500,
+            headers: {
+              "referer": "https://app-api.pixiv.net/",
+              "user-agent": "PixivAndroidApp/5.0.234 (Android 14; Pixes)",
+              "x-client-time": time,
+              "x-client-hash": hash,
+              "accept-enconding": "gzip",
+            }));
+    if (res.statusCode != 200) {
       throw BadRequestException("Failed to load image: ${res.statusCode}");
     }
     var data = <int>[];
     var cachingFile = await CacheManager().openWrite(key);
     await for (var chunk in res.data!.stream) {
-      var length = res.data!.contentLength+1;
-      if(length < data.length) {
+      var length = res.data!.contentLength + 1;
+      if (length < data.length) {
         length = data.length + 1;
       }
       data.addAll(chunk);
@@ -201,5 +199,73 @@ class CachedImageProvider extends BaseImageProvider<CachedImageProvider> {
   @override
   Future<CachedImageProvider> obtainKey(ImageConfiguration configuration) {
     return SynchronousFuture<CachedImageProvider>(this);
+  }
+}
+
+class CachedNovelImageProvider
+    extends BaseImageProvider<CachedNovelImageProvider> {
+  final String novelId;
+  final String imageId;
+
+  CachedNovelImageProvider(this.novelId, this.imageId);
+
+  @override
+  String get key => "$novelId/$imageId";
+
+  @override
+  Future<Uint8List> load(StreamController<ImageChunkEvent> chunkEvents) async {
+    chunkEvents.add(const ImageChunkEvent(
+      cumulativeBytesLoaded: 0,
+      expectedTotalBytes: 1,
+    ));
+    var cached = await CacheManager().findCache(key);
+    if (cached != null) {
+      chunkEvents.add(const ImageChunkEvent(
+        cumulativeBytesLoaded: 1,
+        expectedTotalBytes: 1,
+      ));
+      return await File(cached).readAsBytes();
+    }
+    var urlRes = await Network().getNovelImage(novelId, imageId);
+    var url = urlRes.data;
+    var dio = AppDio();
+    final time =
+        DateFormat("yyyy-MM-dd'T'HH:mm:ss'+00:00'").format(DateTime.now());
+    final hash = md5.convert(utf8.encode(time + Network.hashSalt)).toString();
+    var res = await dio.get<ResponseBody>(url,
+        options: Options(
+            responseType: ResponseType.stream,
+            validateStatus: (status) => status != null && status < 500,
+            headers: {
+              "referer": "https://app-api.pixiv.net/",
+              "user-agent": "PixivAndroidApp/5.0.234 (Android 14; Pixes)",
+              "x-client-time": time,
+              "x-client-hash": hash,
+              "accept-enconding": "gzip",
+            }));
+    if (res.statusCode != 200) {
+      throw BadRequestException("Failed to load image: ${res.statusCode}");
+    }
+    var data = <int>[];
+    var cachingFile = await CacheManager().openWrite(key);
+    await for (var chunk in res.data!.stream) {
+      var length = res.data!.contentLength + 1;
+      if (length < data.length) {
+        length = data.length + 1;
+      }
+      data.addAll(chunk);
+      await cachingFile.writeBytes(chunk);
+      chunkEvents.add(ImageChunkEvent(
+        cumulativeBytesLoaded: data.length,
+        expectedTotalBytes: length,
+      ));
+    }
+    await cachingFile.close();
+    return Uint8List.fromList(data);
+  }
+
+  @override
+  Future<CachedNovelImageProvider> obtainKey(ImageConfiguration configuration) {
+    return SynchronousFuture<CachedNovelImageProvider>(this);
   }
 }
