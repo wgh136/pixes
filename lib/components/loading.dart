@@ -112,6 +112,8 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
 
   bool get isLoading => _isLoading || _isFirstLoading;
 
+  bool get isFirstLoading => _isFirstLoading;
+
   void nextPage() {
     if(_isLoading) return;
     _isLoading = true;

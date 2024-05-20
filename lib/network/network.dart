@@ -14,6 +14,8 @@ import 'models.dart';
 export 'models.dart';
 export 'res.dart';
 
+part 'novel.dart';
+
 class Network {
   static const hashSalt =
       "28c1fdd170a5204386cb1313c7077b34f83e4aaf4aa829ce78c231e05b0bae2c";
@@ -150,6 +152,38 @@ class Network {
       } else if ((res.statusCode ?? 500) < 500) {
         return Res.error(res.data?["error"]?["message"] ??
             "Invalid Status code ${res.statusCode}");
+      } else {
+        return Res.error("Invalid Status Code: ${res.statusCode}");
+      }
+    } catch (e, s) {
+      Log.error("Network", "$e\n$s");
+      return Res.error(e);
+    }
+  }
+
+    Future<Res<String>> apiGetPlain(String path,
+      {Map<String, dynamic>? query}) async {
+    try {
+      if (!path.startsWith("http")) {
+        path = "$baseUrl$path";
+      }
+      final res = await dio.get<String>(path,
+          queryParameters: query,
+          options:
+              Options(headers: headers, validateStatus: (status) => true));
+      if (res.statusCode == 200) {
+        return Res(res.data!);
+      } else if (res.statusCode == 400) {
+        if (res.data.toString().contains("Access Token")) {
+          var refresh = await refreshToken();
+          if (refresh.success) {
+            return apiGetPlain(path, query: query);
+          } else {
+            return Res.error(refresh.errorMessage);
+          }
+        } else {
+          return Res.error("Invalid Status Code: ${res.statusCode}");
+        }
       } else {
         return Res.error("Invalid Status Code: ${res.statusCode}");
       }

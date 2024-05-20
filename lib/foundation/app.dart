@@ -47,6 +47,8 @@ class _App {
   }
 
   final rootNavigatorKey = GlobalKey<NavigatorState>();
+
+  GlobalKey<NavigatorState>? mainNavigatorKey;
 }
 
 // ignore: non_constant_identifier_names

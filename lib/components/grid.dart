@@ -20,14 +20,13 @@ class SliverGridViewWithFixedItemHeight extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverLayoutBuilder(
-        builder: ((context, constraints) => SliverGrid(
-              delegate: delegate,
-              gridDelegate: SliverGridDelegateWithFixedHeight(
-                  itemHeight: itemHeight,
-                  maxCrossAxisExtent: maxCrossAxisExtent,
-                  minCrossAxisExtent: minCrossAxisExtent),
-            ).sliverPadding(EdgeInsets.only(bottom: context.padding.bottom))));
+    return SliverGrid(
+      delegate: delegate,
+      gridDelegate: SliverGridDelegateWithFixedHeight(
+          itemHeight: itemHeight,
+          maxCrossAxisExtent: maxCrossAxisExtent,
+          minCrossAxisExtent: minCrossAxisExtent),
+    ).sliverPadding(EdgeInsets.only(bottom: context.padding.bottom));
   }
 }
 

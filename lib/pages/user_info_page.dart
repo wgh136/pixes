@@ -3,8 +3,10 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/appdata.dart';
 import 'package:pixes/components/batch_download.dart';
+import 'package:pixes/components/grid.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/md.dart';
+import 'package:pixes/components/novel.dart';
 import 'package:pixes/components/segmented_button.dart';
 import 'package:pixes/components/user_preview.dart';
 import 'package:pixes/foundation/app.dart';
@@ -43,11 +45,14 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
           _RelatedUsers(widget.id),
           buildInformation(),
           buildArtworkHeader(),
-          _UserArtworks(
-            data.id.toString(),
-            page,
-            key: ValueKey(data.id + page),
-          ),
+          if (page == 2)
+            _UserNovels(widget.id)
+          else
+            _UserArtworks(
+              data.id.toString(),
+              page,
+              key: ValueKey(data.id + page),
+            ),
           SliverPadding(
               padding: EdgeInsets.only(bottom: context.padding.bottom)),
         ],
@@ -204,6 +209,7 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
                     options: [
                       SegmentedButtonOption(0, "Artworks".tl),
                       SegmentedButtonOption(1, "Bookmarks".tl),
+                      SegmentedButtonOption(2, "Novels".tl),
                     ],
                     value: page,
                     onPressed: (value) {
@@ -213,15 +219,17 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
                     },
                   ),
                   const Spacer(),
-                  BatchDownloadButton(
-                    request: () {
-                      if (page == 0) {
-                        return Network().getUserIllusts(data!.id.toString());
-                      } else {
-                        return Network().getUserBookmarks(data!.id.toString());
-                      }
-                    },
-                  ),
+                  if (page != 2)
+                    BatchDownloadButton(
+                      request: () {
+                        if (page == 0) {
+                          return Network().getUserIllusts(data!.id.toString());
+                        } else {
+                          return Network()
+                              .getUserBookmarks(data!.id.toString());
+                        }
+                      },
+                    ),
                 ],
               ).paddingHorizontal(16))
           .paddingTop(12),
@@ -384,6 +392,81 @@ class _UserArtworksState extends MultiPageLoadingState<_UserArtworks, Illust> {
             ? await Network().getUserIllusts(widget.uid)
             : await Network().getUserBookmarks(widget.uid))
         : await Network().getIllustsWithNextUrl(nextUrl!);
+    if (!res.error) {
+      nextUrl = res.subData;
+      nextUrl ??= "end";
+    }
+    return res;
+  }
+}
+
+class _UserNovels extends StatefulWidget {
+  const _UserNovels(this.uid, {super.key});
+
+  final String uid;
+
+  @override
+  State<_UserNovels> createState() => _UserNovelsState();
+}
+
+class _UserNovelsState extends MultiPageLoadingState<_UserNovels, Novel> {
+  @override
+  Widget buildLoading(BuildContext context) {
+    return const SliverToBoxAdapter(
+      child: SizedBox(
+        child: Center(
+          child: ProgressRing(),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget buildError(context, error) {
+    return SliverToBoxAdapter(
+      child: SizedBox(
+        child: Center(
+          child: Row(
+            children: [
+              const Icon(FluentIcons.info),
+              const SizedBox(
+                width: 4,
+              ),
+              Text(error)
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget buildContent(BuildContext context, List<Novel> data) {
+    return SliverGridViewWithFixedItemHeight(
+      itemHeight: 164,
+      minCrossAxisExtent: 400,
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          if (index == data.length - 1) {
+            nextPage();
+          }
+          return NovelWidget(data[index]);
+        },
+        childCount: data.length,
+      ),
+    ).sliverPaddingHorizontal(8);
+  }
+
+  String? nextUrl;
+
+  @override
+  Future<Res<List<Novel>>> loadData(page) async {
+    if (nextUrl == "end") {
+      return Res.error("No more data");
+    }
+    var res = nextUrl == null
+        ? await Network().getUserNovels(widget.uid)
+        : await Network().getNovelsWithNextUrl(nextUrl!);
     if (!res.error) {
       nextUrl = res.subData;
       nextUrl ??= "end";

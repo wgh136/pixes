@@ -11,6 +11,9 @@ import "package:pixes/pages/bookmarks.dart";
 import "package:pixes/pages/downloaded_page.dart";
 import "package:pixes/pages/following_artworks.dart";
 import "package:pixes/pages/history.dart";
+import "package:pixes/pages/novel_bookmarks_page.dart";
+import "package:pixes/pages/novel_ranking_page.dart";
+import "package:pixes/pages/novel_recommendation_page.dart";
 import "package:pixes/pages/ranking.dart";
 import "package:pixes/pages/recommendation_page.dart";
 import "package:pixes/pages/login_page.dart";
@@ -45,6 +48,7 @@ class _MainPageState extends State<MainPage> with WindowListener {
   void initState() {
     windowManager.addListener(this);
     listenMouseSideButtonToBack(navigatorKey);
+    App.mainNavigatorKey = navigatorKey;
     super.initState();
   }
 
@@ -93,24 +97,37 @@ class _MainPageState extends State<MainPage> with WindowListener {
             items: [
               UserPane(),
               PaneItem(
-                icon: const Icon(MdIcons.search, size: 20,),
+                icon: const Icon(
+                  MdIcons.search,
+                  size: 20,
+                ),
                 title: Text('Search'.tl),
                 body: const SizedBox.shrink(),
               ),
               PaneItem(
-                icon: const Icon(MdIcons.downloading, size: 20,),
+                icon: const Icon(
+                  MdIcons.downloading,
+                  size: 20,
+                ),
                 title: Text('Downloading'.tl),
                 body: const SizedBox.shrink(),
               ),
               PaneItem(
-                icon: const Icon(MdIcons.download, size: 20,),
+                icon: const Icon(
+                  MdIcons.download,
+                  size: 20,
+                ),
                 title: Text('Downloaded'.tl),
                 body: const SizedBox.shrink(),
               ),
               PaneItemSeparator(),
-              PaneItemHeader(header: Text("Artwork".tl).paddingBottom(4).paddingLeft(8)),
+              PaneItemHeader(
+                  header: Text("Artwork".tl).paddingBottom(4).paddingLeft(8)),
               PaneItem(
-                icon: const Icon(MdIcons.explore_outlined, size: 20,),
+                icon: const Icon(
+                  MdIcons.explore_outlined,
+                  size: 20,
+                ),
                 title: Text('Explore'.tl),
                 body: const SizedBox.shrink(),
               ),
@@ -134,8 +151,26 @@ class _MainPageState extends State<MainPage> with WindowListener {
                 title: Text('Ranking'.tl),
                 body: const SizedBox.shrink(),
               ),
-            ],
-            footerItems: [
+              PaneItemSeparator(),
+              PaneItemHeader(
+                  header: Text("Novel".tl).paddingBottom(4).paddingLeft(8)),
+              PaneItem(
+                icon: const Icon(MdIcons.featured_play_list_outlined, size: 20),
+                title: Text('Recommendation'.tl),
+                body: const SizedBox.shrink(),
+              ),
+              PaneItem(
+                icon:
+                    const Icon(MdIcons.collections_bookmark_outlined, size: 20),
+                title: Text('Bookmarks'.tl),
+                body: const SizedBox.shrink(),
+              ),
+              PaneItem(
+                icon: const Icon(MdIcons.leaderboard_outlined, size: 20),
+                title: Text('Ranking'.tl),
+                body: const SizedBox.shrink(),
+              ),
+              PaneItemSeparator(),
               PaneItem(
                 icon: const Icon(MdIcons.settings_outlined, size: 20),
                 title: Text('Settings'.tl),
@@ -168,6 +203,9 @@ class _MainPageState extends State<MainPage> with WindowListener {
     () => const FollowingArtworksPage(),
     () => const HistoryPage(),
     () => const RankingPage(),
+    () => const NovelRecommendationPage(),
+    () => const NovelBookmarksPage(),
+    () => const NovelRankingPage(),
     () => const SettingsPage(),
   ];
 
@@ -204,7 +242,7 @@ class _MainPageState extends State<MainPage> with WindowListener {
                     style: TextStyle(fontSize: 13),
                   ),
                   Spacer(),
-                  if(kDebugMode)
+                  if (kDebugMode)
                     Padding(
                       padding: EdgeInsets.only(right: 138),
                       child: Button(onPressed: debug, child: Text("Debug")),
@@ -216,9 +254,11 @@ class _MainPageState extends State<MainPage> with WindowListener {
         );
       }(),
       leading: _BackButton(navigatorKey),
-      actions: App.isDesktop ? WindowButtons(
-        key: ValueKey(windowButtonKey),
-      ) : null,
+      actions: App.isDesktop
+          ? WindowButtons(
+              key: ValueKey(windowButtonKey),
+            )
+          : null,
     );
   }
 }
@@ -248,11 +288,11 @@ class _BackButtonState extends State<_BackButton> {
 
   void loop() {
     timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      if(!mounted) {
+      if (!mounted) {
         timer.cancel();
       } else {
         bool enabled = navigatorKey.currentState?.canPop() == true;
-        if(enabled != this.enabled) {
+        if (enabled != this.enabled) {
           setState(() {
             this.enabled = enabled;
           });
@@ -293,17 +333,18 @@ class _BackButtonState extends State<_BackButton> {
           title: const Text("Back"),
           body: const SizedBox.shrink(),
           enabled: enabled,
-        ).build(
-          context,
-          false,
-          onPressed,
-          displayMode: PaneDisplayMode.compact,
-        ).paddingTop(2),
+        )
+            .build(
+              context,
+              false,
+              onPressed,
+              displayMode: PaneDisplayMode.compact,
+            )
+            .paddingTop(2),
       ),
     );
   }
 }
-
 
 class WindowButtons extends StatelessWidget {
   const WindowButtons({super.key});
@@ -458,7 +499,8 @@ class UserPane extends PaneItem {
                       child: Image(
                         height: 48,
                         width: 48,
-                        image: CachedImageProvider(appdata.account!.user.profile),
+                        image:
+                            CachedImageProvider(appdata.account!.user.profile),
                         fit: BoxFit.fill,
                       ),
                     ),
@@ -481,7 +523,9 @@ class UserPane extends PaneItem {
                                     fontSize: 16, fontWeight: FontWeight.w500),
                               ),
                               Text(
-                                kDebugMode ? "<hide due to debug>" : appdata.account!.user.email,
+                                kDebugMode
+                                    ? "<hide due to debug>"
+                                    : appdata.account!.user.email,
                                 style: const TextStyle(fontSize: 12),
                               )
                             ],

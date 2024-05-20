@@ -121,14 +121,14 @@ class UserDetails {
         pawooUrl = json['profile']['pawoo_url'];
 }
 
-class IllustAuthor {
+class Author {
   final int id;
   final String name;
   final String account;
   final String avatar;
   bool isFollowed;
 
-  IllustAuthor(this.id, this.name, this.account, this.avatar, this.isFollowed);
+  Author(this.id, this.name, this.account, this.avatar, this.isFollowed);
 }
 
 class Tag {
@@ -170,7 +170,7 @@ class Illust {
   final List<IllustImage> images;
   final String caption;
   final int restrict;
-  final IllustAuthor author;
+  final Author author;
   final List<Tag> tags;
   final DateTime createDate;
   final int pageCount;
@@ -210,7 +210,7 @@ class Illust {
         }()),
         caption = json['caption'],
         restrict = json['restrict'],
-        author = IllustAuthor(
+        author = Author(
             json['user']['id'],
             json['user']['name'],
             json['user']['account'],
@@ -380,7 +380,8 @@ class UserPreview {
         avatar = json['user']['profile_image_urls']['medium'],
         isFollowed = json['user']['is_followed'],
         isBlocking = json['user']['is_access_blocking_user'] ?? false,
-        artworks = (json['illusts'] as List).map((e) => Illust.fromJson(e)).toList();
+        artworks =
+            (json['illusts'] as List).map((e) => Illust.fromJson(e)).toList();
 }
 
 /*
@@ -420,6 +421,107 @@ class Comment {
         uid = json['user']['id'].toString(),
         name = json['user']['name'],
         avatar = json['user']['profile_image_urls']['medium'],
-        hasReplies = json['has_replies'],
+        hasReplies = json['has_replies'] ?? false,
         stampUrl = json['stamp']?['stamp_url'];
+}
+
+/*
+{
+      "id": 20741342,
+      "title": "中身が一般人のやつがれくん",
+      "caption": "なんか思いついたので書いてみた。<br />よくある芥川成り代わり。<br />３年くらい前の書きかけのやつをサルベージ。<br />じっくりは書いてないので抜け抜け。<br /><br />デイリー１位ありがとうございます✨<br /><br />※※※※※※※※<br />※※※※※※※※<br /><br />以下読了後推奨の蛇足<br /><br />「芥川くん」<br />「なんですかボス」<br />「君は将来的にどんな地位につきたいとかある？」<br />「僕はしがない一構成員ゆえ」<br />「ほら幹部とか隊長とか人事部とかさ。君あれこれオールマイティにできるから希望を聞いておこうと思って」<br />「ございます」<br />「なにかな？」<br />「僕は将来的にポートマフィア直営のいちじく農家になりたいと思います」<br />「なんて？」<br />「さらに、ゆくゆくはいちじく農家兼、いちじくの素晴らしさを世に知らしめるポートマフィア直営いちじくレストランを開きたいと」<br />「なんて？？？」",
+      "restrict": 0,
+      "x_restrict": 0,
+      "is_original": false,
+      "image_urls": {
+        "square_medium": "https://i.pximg.net/c/128x128/novel-cover-master/img/2023/09/27/16/14/45/ci20741342_db401e9b27afbf96f772d30759e1d104_square1200.jpg",
+        "medium": "https://i.pximg.net/c/176x352/novel-cover-master/img/2023/09/27/16/14/45/ci20741342_db401e9b27afbf96f772d30759e1d104_master1200.jpg",
+        "large": "https://i.pximg.net/c/240x480_80/novel-cover-master/img/2023/09/27/16/14/45/ci20741342_db401e9b27afbf96f772d30759e1d104_master1200.jpg"
+      },
+      "create_date": "2023-09-27T16:14:45+09:00",
+      "tags": [
+        {
+          "name": "文スト夢",
+          "translated_name": "Bungo Stray Dogs original/self-insert",
+          "added_by_uploaded_user": true
+        },
+        {
+          "name": "成り代わり",
+          "translated_name": "取代即有角色",
+          "added_by_uploaded_user": true
+        },
+      ],
+      "page_count": 6,
+      "text_length": 12550,
+      "user": {
+        "id": 9275134,
+        "name": "もろろ",
+        "account": "sleepinglife",
+        "profile_image_urls": {
+          "medium": "https://s.pximg.net/common/images/no_profile.png"
+        },
+        "is_followed": false
+      },
+      "series": {
+        "id": 11897059,
+        "title": "文スト夢"
+      },
+      "is_bookmarked": false,
+      "total_bookmarks": 8099,
+      "total_view": 76112,
+      "visible": true,
+      "total_comments": 146,
+      "is_muted": false,
+      "is_mypixiv_only": false,
+      "is_x_restricted": false,
+      "novel_ai_type": 1
+    }
+*/
+class Novel {
+  final int id;
+  final String title;
+  final String caption;
+  final bool isOriginal;
+  final String image;
+  final DateTime createDate;
+  final List<Tag> tags;
+  final int pages;
+  final int length;
+  final Author author;
+  final int? seriesId;
+  final String? seriesTitle;
+  bool isBookmarked;
+  final int totalBookmarks;
+  final int totalViews;
+  final int commentsCount;
+  final bool isAi;
+
+  Novel.fromJson(Map<String, dynamic> json)
+      : id = json["id"],
+        title = json["title"],
+        caption = json["caption"],
+        isOriginal = json["is_original"],
+        image = json["image_urls"]["large"] ??
+            json["image_urls"]["medium"] ??
+            json["image_urls"]["square_medium"] ??
+            "",
+        createDate = DateTime.parse(json["create_date"]),
+        tags = (json['tags'] as List)
+            .map((e) => Tag(e['name'], e['translated_name']))
+            .toList(),
+        pages = json["page_count"],
+        length = json["text_length"],
+        author = Author(
+            json['user']['id'],
+            json['user']['name'],
+            json['user']['account'],
+            json['user']['profile_image_urls']['medium'],
+            json['user']['is_followed'] ?? false),
+        seriesId = json["series"]?["id"],
+        seriesTitle = json["series"]?["title"],
+        isBookmarked = json["is_bookmarked"],
+        totalBookmarks = json["total_bookmarks"],
+        totalViews = json["total_view"],
+        commentsCount = json["total_comments"],
+        isAi = json["novel_ai_type"] == 2;
 }
