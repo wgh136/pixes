@@ -368,6 +368,26 @@ class DownloadManager {
     }
   }
 
+  Future<void> checkAndClearInvalidItems() async{
+    var illusts = listAll();
+    var shouldDelete = <DownloadedIllust>[];
+    for(var item in illusts) {
+      var paths = getImagePaths(item.illustId);
+      var validPaths = <String>[];
+      for(var path in paths) {
+        if(await File(path).exists()) {
+          validPaths.add(path);
+        }
+      }
+      if(validPaths.isEmpty) {
+        shouldDelete.add(item);
+      }
+    }
+    for(var item in shouldDelete) {
+      delete(item);
+    }
+  }
+
   void resume() {
     _paused = false;
   }

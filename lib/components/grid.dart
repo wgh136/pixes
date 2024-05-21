@@ -92,6 +92,17 @@ class SliverGridDelegateWithFixedHeight extends SliverGridDelegate {
   int calcCrossItemsCount(double width) {
     int count = 20;
     var itemWidth = width / 20;
+
+    if(minCrossAxisExtent == 0) {
+      count = 1;
+      itemWidth = width;
+      while(itemWidth > maxCrossAxisExtent) {
+        count++;
+        itemWidth = width / count;
+      }
+      return count;
+    }
+
     while (
         !(itemWidth > minCrossAxisExtent && itemWidth < maxCrossAxisExtent)) {
       count--;

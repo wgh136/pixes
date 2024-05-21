@@ -7,8 +7,6 @@ import 'package:photo_view/photo_view_gallery.dart';
 import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/components/grid.dart';
 import 'package:pixes/components/md.dart';
-import 'package:pixes/components/message.dart';
-import 'package:pixes/components/page_route.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/download.dart';
@@ -33,7 +31,8 @@ class _DownloadedPageState extends State<DownloadedPage> {
 
   void loadData() {
     illusts = DownloadManager().listAll();
-    flyoutControllers = List.generate(illusts.length, (index) => FlyoutController());
+    flyoutControllers =
+        List.generate(illusts.length, (index) => FlyoutController());
   }
 
   @override
@@ -46,7 +45,18 @@ class _DownloadedPageState extends State<DownloadedPage> {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TitleBar(title: "Downloaded".tl),
+        TitleBar(
+          title: "Downloaded".tl,
+          action: Button(
+            child: Text("Delete Invalid Items".tl),
+            onPressed: () async {
+              await DownloadManager().checkAndClearInvalidItems();
+              setState(() {
+                loadData();
+              });
+            },
+          ),
+          ),
         Expanded(
           child: buildBody(),
         ),
@@ -56,135 +66,133 @@ class _DownloadedPageState extends State<DownloadedPage> {
 
   Widget buildBody() {
     return GridViewWithFixedItemHeight(
-      itemCount: illusts.length,
-      itemHeight: 152,
-      maxCrossAxisExtent: 742,
-      builder: (context, index) {
-        var image = DownloadManager().getImage(illusts[index].illustId, 0);
-        return Card(
-          margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-          child: Row(
-            children: [
-              Container(
-                width: 96,
-                height: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(4),
-                  color: ColorScheme.of(context).secondaryContainer
-                ),
-                clipBehavior: Clip.antiAlias,
-                child: image == null ? null : AnimatedImage(
-                  image: FileImage(image),
-                  fit: BoxFit.cover,
-                  width: 96,
-                  height: double.infinity,
-                  filterQuality: FilterQuality.medium,
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      illusts[index].title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      illusts[index].author,
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    Text(
-                      "${illusts[index].imageCount}P",
-                      style: const TextStyle(
-                        fontSize: 12,
-                      ),
-                    ),
-                    const Spacer(),
-                    Row(
-                      children: [
-                        const Spacer(),
-                        Button(
-                          child: Text("View".tl).fixWidth(42),
-                          onPressed: () {
-                            var images = DownloadManager().getImagePaths(
-                                illusts[index].illustId);
-                            if(images.isEmpty) {
-                              showToast(context, message: "No images found".tl);
-                              return;
-                            }
-                            App.rootNavigatorKey.currentState?.push(
-                                AppPageRoute(builder: (context) {
-                                  return _DownloadedIllustViewPage(images);
-                                }));
-                          },
-                        ),
-                        const SizedBox(width: 6),
-                        Button(
-                          child: Text("Info".tl).fixWidth(42),
-                          onPressed: () {
-                            context.to(() => IllustPageWithId(
-                                illusts[index].illustId.toString()));
-                          },
-                        ),
-                        const SizedBox(width: 6),
-                        FlyoutTarget(
-                          controller: flyoutControllers[index],
-                          child: Button(
-                            child: Text("Delete".tl).fixWidth(42),
-                            onPressed: () {
-                              flyoutControllers[index].showFlyout(
-                                navigatorKey: App.rootNavigatorKey.currentState,
-                                builder: (context) {
-                                  return FlyoutContent(
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          'Are you sure you want to delete?'.tl,
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
-                                        ),
-                                        const SizedBox(height: 12.0),
-                                        Button(
-                                          onPressed: () {
-                                            Flyout.of(context).close();
-                                            DownloadManager().delete(illusts[index]);
-                                            setState(() {
-                                              illusts.removeAt(index);
-                                              flyoutControllers.removeAt(index);
-                                            });
-                                          },
-                                          child: Text('Yes'.tl),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                              });
-                            },
+        itemCount: illusts.length,
+        itemHeight: 152,
+        maxCrossAxisExtent: 742,
+        builder: (context, index) {
+          var image = DownloadManager().getImage(illusts[index].illustId, 0);
+          return Card(
+            margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: () {
+                context.to(() => _DownloadedIllustViewPage(
+                    DownloadManager().getImagePaths(illusts[index].illustId)));
+              },
+              child: Row(
+                children: [
+                  Container(
+                    width: 96,
+                    height: double.infinity,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(4),
+                        color: ColorScheme.of(context).secondaryContainer),
+                    clipBehavior: Clip.antiAlias,
+                    child: image == null
+                        ? null
+                        : AnimatedImage(
+                            image: FileImage(image),
+                            fit: BoxFit.cover,
+                            width: 96,
+                            height: double.infinity,
+                            filterQuality: FilterQuality.medium,
                           ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          illusts[index].title,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          illusts[index].author,
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          "${illusts[index].imageCount}P",
+                          style: const TextStyle(
+                            fontSize: 12,
+                          ),
+                        ),
+                        const Spacer(),
+                        Row(
+                          children: [
+                            const Spacer(),
+                            Button(
+                              child: Text("Info".tl).fixWidth(42),
+                              onPressed: () {
+                                context.to(() => IllustPageWithId(
+                                    illusts[index].illustId.toString()));
+                              },
+                            ),
+                            const SizedBox(width: 6),
+                            FlyoutTarget(
+                              controller: flyoutControllers[index],
+                              child: Button(
+                                child: Text("Delete".tl).fixWidth(42),
+                                onPressed: () {
+                                  flyoutControllers[index].showFlyout(
+                                      navigatorKey:
+                                          App.rootNavigatorKey.currentState,
+                                      builder: (context) {
+                                        return FlyoutContent(
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.min,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                'Are you sure you want to delete?'
+                                                    .tl,
+                                                style: const TextStyle(
+                                                    fontWeight:
+                                                        FontWeight.bold),
+                                              ),
+                                              const SizedBox(height: 12.0),
+                                              Button(
+                                                onPressed: () {
+                                                  Flyout.of(context).close();
+                                                  DownloadManager()
+                                                      .delete(illusts[index]);
+                                                  setState(() {
+                                                    illusts.removeAt(index);
+                                                    flyoutControllers
+                                                        .removeAt(index);
+                                                  });
+                                                },
+                                                child: Text('Yes'.tl),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      });
+                                },
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        );
-      }
-    ).paddingHorizontal(8);
+            ),
+          );
+        }).paddingHorizontal(8);
   }
 }
 
@@ -194,10 +202,12 @@ class _DownloadedIllustViewPage extends StatefulWidget {
   final List<String> imagePaths;
 
   @override
-  State<_DownloadedIllustViewPage> createState() => _DownloadedIllustViewPageState();
+  State<_DownloadedIllustViewPage> createState() =>
+      _DownloadedIllustViewPageState();
 }
 
-class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> with WindowListener{
+class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage>
+    with WindowListener {
   int windowButtonKey = 0;
 
   @override
@@ -234,38 +244,47 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
 
   Future<File?> getFile() async {
     var file = File(widget.imagePaths[currentPage]);
-    if(file.existsSync()) {
+    if (file.existsSync()) {
       return file;
     }
     return null;
   }
 
   void showMenu() {
-    menuController.showFlyout(builder: (context) => MenuFlyout(
-      items: [
-        MenuFlyoutItem(text: Text("Save to".tl), onPressed: () async{
-          var file = await getFile();
-          if(file != null){
-            saveFile(file);
-          }
-        }),
-        MenuFlyoutItem(text: Text("Share".tl), onPressed: () async{
-          var file = await getFile();
-          if(file != null){
-            var ext = file.path.split('.').last;
-            var mediaType = switch(ext){
-              'jpg' => 'image/jpeg',
-              'jpeg' => 'image/jpeg',
-              'png' => 'image/png',
-              'gif' => 'image/gif',
-              'webp' => 'image/webp',
-              _ => 'application/octet-stream'
-            };
-            Share.shareXFiles([XFile(file.path, mimeType: mediaType, name: file.path.split('/').last)]);
-          }
-        }),
-      ],
-    ));
+    menuController.showFlyout(
+        builder: (context) => MenuFlyout(
+              items: [
+                MenuFlyoutItem(
+                    text: Text("Save to".tl),
+                    onPressed: () async {
+                      var file = await getFile();
+                      if (file != null) {
+                        saveFile(file);
+                      }
+                    }),
+                MenuFlyoutItem(
+                    text: Text("Share".tl),
+                    onPressed: () async {
+                      var file = await getFile();
+                      if (file != null) {
+                        var ext = file.path.split('.').last;
+                        var mediaType = switch (ext) {
+                          'jpg' => 'image/jpeg',
+                          'jpeg' => 'image/jpeg',
+                          'png' => 'image/png',
+                          'gif' => 'image/gif',
+                          'webp' => 'image/webp',
+                          _ => 'application/octet-stream'
+                        };
+                        Share.shareXFiles([
+                          XFile(file.path,
+                              mimeType: mediaType,
+                              name: file.path.split('/').last)
+                        ]);
+                      }
+                    }),
+              ],
+            ));
   }
 
   @override
@@ -275,12 +294,13 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
       color: FluentTheme.of(context).micaBackgroundColor,
       child: Listener(
         onPointerSignal: (event) {
-          if(event is PointerScrollEvent &&
+          if (event is PointerScrollEvent &&
               !HardwareKeyboard.instance.isControlPressed) {
-            if(event.scrollDelta.dy > 0
-                && controller.page!.toInt() < widget.imagePaths.length - 1) {
+            if (event.scrollDelta.dy > 0 &&
+                controller.page!.toInt() < widget.imagePaths.length - 1) {
               controller.jumpToPage(controller.page!.toInt() + 1);
-            } else if(event.scrollDelta.dy < 0 && controller.page!.toInt() > 0){
+            } else if (event.scrollDelta.dy < 0 &&
+                controller.page!.toInt() > 0) {
               controller.jumpToPage(controller.page!.toInt() - 1);
             }
           }
@@ -290,11 +310,11 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
             var height = constrains.maxHeight;
             return Stack(
               children: [
-                Positioned.fill(child: PhotoViewGallery.builder(
+                Positioned.fill(
+                    child: PhotoViewGallery.builder(
                   pageController: controller,
-                  backgroundDecoration: const BoxDecoration(
-                      color: Colors.transparent
-                  ),
+                  backgroundDecoration:
+                      const BoxDecoration(color: Colors.transparent),
                   itemCount: widget.imagePaths.length,
                   builder: (context, index) {
                     return PhotoViewGalleryPageOptions(
@@ -315,17 +335,22 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
                     height: 36,
                     child: Row(
                       children: [
-                        const SizedBox(width: 6,),
+                        const SizedBox(
+                          width: 6,
+                        ),
                         IconButton(
                             icon: const Icon(FluentIcons.back).paddingAll(2),
-                            onPressed: () => context.pop()
-                        ),
+                            onPressed: () => context.pop()),
                         const Expanded(
-                          child: DragToMoveArea(child: SizedBox.expand(),),
+                          child: DragToMoveArea(
+                            child: SizedBox.expand(),
+                          ),
                         ),
                         buildActions(),
-                        if(App.isDesktop)
-                          WindowButtons(key: ValueKey(windowButtonKey),),
+                        if (App.isDesktop)
+                          WindowButtons(
+                            key: ValueKey(windowButtonKey),
+                          ),
                       ],
                     ),
                   ),
@@ -334,7 +359,10 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
                   left: 0,
                   top: height / 2 - 9,
                   child: IconButton(
-                    icon: const Icon(FluentIcons.chevron_left, size: 18,),
+                    icon: const Icon(
+                      FluentIcons.chevron_left,
+                      size: 18,
+                    ),
                     onPressed: () {
                       controller.previousPage(
                         duration: const Duration(milliseconds: 300),
@@ -377,26 +405,25 @@ class _DownloadedIllustViewPageState extends State<_DownloadedIllustViewPage> wi
       controller: menuController,
       child: width > 600
           ? Button(
-          onPressed: showMenu,
-          child: const Row(
-            children: [
-              Icon(
-                MdIcons.menu,
-                size: 18,
-              ),
-              SizedBox(
-                width: 8,
-              ),
-              Text('Actions'),
-            ],
-          ))
+              onPressed: showMenu,
+              child: const Row(
+                children: [
+                  Icon(
+                    MdIcons.menu,
+                    size: 18,
+                  ),
+                  SizedBox(
+                    width: 8,
+                  ),
+                  Text('Actions'),
+                ],
+              ))
           : IconButton(
-          icon: const Icon(
-            MdIcons.more_horiz,
-            size: 20,
-          ),
-          onPressed: showMenu),
+              icon: const Icon(
+                MdIcons.more_horiz,
+                size: 20,
+              ),
+              onPressed: showMenu),
     );
   }
 }
-
