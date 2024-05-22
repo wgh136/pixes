@@ -11,6 +11,7 @@ import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/message.dart';
 import 'package:pixes/components/page_route.dart';
 import 'package:pixes/components/title_bar.dart';
+import 'package:pixes/components/user_preview.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/network/download.dart';
@@ -128,22 +129,47 @@ class _IllustGalleryPageState extends State<IllustGalleryPage> {
 }
 
 class IllustPage extends StatefulWidget {
-  const IllustPage(this.illust,
-      {this.favoriteCallback, this.nextPage, this.previousPage, super.key});
+  const IllustPage(this.illust, {this.nextPage, this.previousPage, super.key});
 
   final Illust illust;
-
-  final void Function(bool)? favoriteCallback;
 
   final void Function()? nextPage;
 
   final void Function()? previousPage;
+
+  static Map<String, UpdateFollowCallback> followCallbacks = {};
+
+  static void updateFollow(String uid, bool isFollowed) {
+    followCallbacks.forEach((key, value) {
+      if (key.startsWith("$uid#")) {
+        value(isFollowed);
+      }
+    });
+  }
 
   @override
   State<IllustPage> createState() => _IllustPageState();
 }
 
 class _IllustPageState extends State<IllustPage> {
+  String get id => "${widget.illust.author.id}#${widget.illust.id}";
+
+  @override
+  void initState() {
+    IllustPage.followCallbacks[id] = (v) {
+      setState(() {
+        widget.illust.author.isFollowed = v;
+      });
+    };
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    IllustPage.followCallbacks.remove(id);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     var isBlocked = checkIllusts([widget.illust]).isEmpty;
@@ -168,7 +194,6 @@ class _IllustPageState extends State<IllustPage> {
                     widget.illust,
                     constrains.maxHeight,
                     constrains.maxWidth,
-                    favoriteCallback: widget.favoriteCallback,
                     updateCallback: () => setState(() {}),
                   ),
                 if (isBlocked)
@@ -320,10 +345,7 @@ class _IllustPageState extends State<IllustPage> {
 }
 
 class _BottomBar extends StatefulWidget {
-  const _BottomBar(this.illust, this.height, this.width,
-      {this.favoriteCallback, this.updateCallback});
-
-  final void Function(bool)? favoriteCallback;
+  const _BottomBar(this.illust, this.height, this.width, {this.updateCallback});
 
   final void Function()? updateCallback;
 
@@ -538,6 +560,10 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
       setState(() {
         isFollowing = false;
       });
+      UserInfoPage.followCallbacks[widget.illust.author.id.toString()]
+          ?.call(widget.illust.author.isFollowed);
+      UserPreviewWidget.followCallbacks[widget.illust.author.id.toString()]
+          ?.call(widget.illust.author.isFollowed);
     }
 
     final bool showUserName = MediaQuery.of(context).size.width > 640;
@@ -561,9 +587,6 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
                   child: GestureDetector(
                     onTap: () => context.to(() => UserInfoPage(
                           widget.illust.author.id.toString(),
-                          followCallback: (b) => setState(() {
-                            widget.illust.author.isFollowed = b;
-                          }),
                         )),
                     child: AnimatedImage(
                       image: CachedImageProvider(widget.illust.author.avatar),
@@ -633,7 +656,8 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
       }
     } else {
       widget.illust.isBookmarked = !widget.illust.isBookmarked;
-      widget.favoriteCallback?.call(widget.illust.isBookmarked);
+      IllustWidget.favoriteCallbacks[widget.illust.id.toString()]
+          ?.call(widget.illust.isBookmarked);
     }
     setState(() {
       isBookmarking = false;

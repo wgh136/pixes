@@ -4,22 +4,43 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';
+import 'package:pixes/pages/illust_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../network/network.dart';
 import 'md.dart';
 
+typedef UpdateFollowCallback = void Function(bool isFollowed);
+
 class UserPreviewWidget extends StatefulWidget {
   const UserPreviewWidget(this.user, {super.key});
 
   final UserPreview user;
+
+  static Map<String, UpdateFollowCallback> followCallbacks = {};
 
   @override
   State<UserPreviewWidget> createState() => _UserPreviewWidgetState();
 }
 
 class _UserPreviewWidgetState extends State<UserPreviewWidget> {
+  @override
+  void initState() {
+    UserPreviewWidget.followCallbacks[widget.user.id.toString()] = (v) {
+      setState(() {
+        widget.user.isFollowed = v;
+      });
+    };
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    UserPreviewWidget.followCallbacks.remove(widget.user.id.toString());
+    super.dispose();
+  }
+
   bool isFollowing = false;
 
   void follow() async {
@@ -39,6 +60,9 @@ class _UserPreviewWidgetState extends State<UserPreviewWidget> {
     setState(() {
       isFollowing = false;
     });
+    UserInfoPage.followCallbacks[widget.user.id.toString()]
+        ?.call(widget.user.isFollowed);
+    IllustPage.updateFollow(widget.user.id.toString(), widget.user.isFollowed);
   }
 
   @override

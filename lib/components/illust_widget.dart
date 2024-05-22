@@ -9,12 +9,16 @@ import '../network/network.dart';
 import '../pages/illust_page.dart';
 import 'md.dart';
 
+typedef UpdateFavoriteFunc = void Function(bool v);
+
 class IllustWidget extends StatefulWidget {
   const IllustWidget(this.illust, {this.onTap, super.key});
 
   final Illust illust;
 
   final void Function()? onTap;
+
+  static Map<String, UpdateFavoriteFunc> favoriteCallbacks = {};
 
   @override
   State<IllustWidget> createState() => _IllustWidgetState();
@@ -25,6 +29,22 @@ class _IllustWidgetState extends State<IllustWidget> {
 
   final contextController = FlyoutController();
   final contextAttachKey = GlobalKey();
+
+  @override
+  void initState() {
+    IllustWidget.favoriteCallbacks[widget.illust.id.toString()] = (v) {
+      setState(() {
+        widget.illust.isBookmarked = v;
+      });
+    };
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    IllustWidget.favoriteCallbacks.remove(widget.illust.id.toString());
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +68,7 @@ class _IllustWidgetState extends State<IllustWidget> {
                   margin: EdgeInsets.zero,
                   child: GestureDetector(
                     onTap: widget.onTap ?? (){
-                      context.to(() => IllustPage(widget.illust, favoriteCallback: (v) {
-                        setState(() {
-                          widget.illust.isBookmarked = v;
-                        });
-                      },));
+                      context.to(() => IllustPage(widget.illust));
                     },
                     onSecondaryTapUp: showMenu,
                     child: ClipRRect(
@@ -181,11 +197,7 @@ class _IllustWidgetState extends State<IllustWidget> {
         return MenuFlyout(
           items: [
             MenuFlyoutItem(text: Text("View".tl), onPressed: (){
-              context.to(() => IllustPage(widget.illust, favoriteCallback: (v) {
-                setState(() {
-                  widget.illust.isBookmarked = v;
-                });
-              },));
+              context.to(() => IllustPage(widget.illust));
             }),
             MenuFlyoutItem(text: Text("Private Favorite".tl), onPressed: (){
               favorite("private");

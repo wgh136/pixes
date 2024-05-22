@@ -21,17 +21,34 @@ import '../components/illust_widget.dart';
 import 'illust_page.dart';
 
 class UserInfoPage extends StatefulWidget {
-  const UserInfoPage(this.id, {this.followCallback, super.key});
+  const UserInfoPage(this.id, {super.key});
 
   final String id;
 
-  final void Function(bool)? followCallback;
+  static Map<String, UpdateFollowCallback> followCallbacks = {};
 
   @override
   State<UserInfoPage> createState() => _UserInfoPageState();
 }
 
 class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
+  @override
+  void initState() {
+    UserInfoPage.followCallbacks[widget.id] = (v) {
+      if (data == null) return;
+      setState(() {
+        data!.isFollowed = v;
+      });
+    };
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    UserInfoPage.followCallbacks.remove(widget.id);
+    super.dispose();
+  }
+
   int page = 0;
 
   @override
@@ -94,7 +111,9 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
       }
     } else {
       data!.isFollowed = !data!.isFollowed;
-      widget.followCallback?.call(data!.isFollowed);
+      UserPreviewWidget.followCallbacks[data!.id.toString()]
+          ?.call(data!.isFollowed);
+      IllustPage.updateFollow(data!.id.toString(), data!.isFollowed);
     }
     setState(() {
       isFollowing = false;
