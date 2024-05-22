@@ -20,6 +20,7 @@ import "package:pixes/pages/login_page.dart";
 import "package:pixes/pages/search_page.dart";
 import "package:pixes/pages/settings_page.dart";
 import "package:pixes/pages/user_info_page.dart";
+import "package:pixes/utils/loop.dart";
 import "package:pixes/utils/mouse_listener.dart";
 import "package:pixes/utils/translation.dart";
 import "package:window_manager/window_manager.dart";
@@ -327,28 +328,22 @@ class _BackButtonState extends State<_BackButton> {
   @override
   void initState() {
     enabled = navigatorKey.currentState?.canPop() == true;
-    loop();
+    Loop.register(loop);
     super.initState();
   }
 
   void loop() {
-    timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      if (!mounted) {
-        timer.cancel();
-      } else {
-        bool enabled = navigatorKey.currentState?.canPop() == true;
-        if (enabled != this.enabled) {
-          setState(() {
-            this.enabled = enabled;
-          });
-        }
-      }
-    });
+    bool enabled = navigatorKey.currentState?.canPop() == true;
+    if (enabled != this.enabled) {
+      setState(() {
+        this.enabled = enabled;
+      });
+    }
   }
 
   @override
   void dispose() {
-    timer?.cancel();
+    Loop.remove(loop);
     super.dispose();
   }
 

@@ -12,7 +12,9 @@ import "package:pixes/foundation/log.dart";
 import "package:pixes/network/app_dio.dart";
 import "package:pixes/pages/main_page.dart";
 import "package:pixes/utils/app_links.dart";
+import "package:pixes/utils/loop.dart";
 import "package:pixes/utils/translation.dart";
+import "package:pixes/utils/window.dart";
 import "package:window_manager/window_manager.dart";
 
 void main() async {
@@ -33,10 +35,13 @@ void main() async {
         windowButtonVisibility: false,
       );
       await windowManager.setMinimumSize(const Size(500, 600));
+      var placement = await WindowPlacement.loadFromFile();
+      await placement.applyToWindow();
       await windowManager.show();
-      await windowManager.setSkipTaskbar(false);
+      Loop.register(WindowPlacement.loop);
     });
   }
+  Loop.start();
   runApp(const MyApp());
 }
 
