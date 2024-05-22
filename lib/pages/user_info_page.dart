@@ -13,6 +13,7 @@ import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/network/network.dart';
 import 'package:pixes/pages/following_users_page.dart';
+import 'package:pixes/utils/block.dart';
 import 'package:pixes/utils/translation.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -360,7 +361,8 @@ class _UserArtworksState extends MultiPageLoadingState<_UserArtworks, Illust> {
   }
 
   @override
-  Widget buildContent(BuildContext context, final List<Illust> data) {
+  Widget buildContent(BuildContext context, List<Illust> data) {
+    checkIllusts(data);
     return SliverMasonryGrid(
       gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
         maxCrossAxisExtent: 240,

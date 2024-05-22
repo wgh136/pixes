@@ -11,6 +11,7 @@ import 'package:pixes/network/network.dart';
 import 'package:pixes/pages/illust_page.dart';
 import 'package:pixes/pages/novel_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
+import 'package:pixes/utils/block.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../components/animated_image.dart';
@@ -456,6 +457,7 @@ class _SearchResultPageState
 
   @override
   Widget buildContent(BuildContext context, final List<Illust> data) {
+    checkIllusts(data);
     return CustomScrollView(
       slivers: [
         buildSearchBar(),

@@ -2,6 +2,7 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
+import 'package:pixes/utils/block.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../components/batch_download.dart';
@@ -27,7 +28,10 @@ class _FollowingArtworksPageState extends State<FollowingArtworksPage> {
       children: [
         buildTab(),
         Expanded(
-          child: _OneFollowingPage(restrict, key: Key(restrict),),
+          child: _OneFollowingPage(
+            restrict,
+            key: Key(restrict),
+          ),
         )
       ],
     );
@@ -38,8 +42,11 @@ class _FollowingArtworksPageState extends State<FollowingArtworksPage> {
       title: "Following".tl,
       action: Row(
         children: [
-          BatchDownloadButton(request: () => Network().getFollowingArtworks(restrict)),
-          const SizedBox(width: 8,),
+          BatchDownloadButton(
+              request: () => Network().getFollowingArtworks(restrict)),
+          const SizedBox(
+            width: 8,
+          ),
           SegmentedButton(
             options: [
               SegmentedButtonOption("all", "All".tl),
@@ -47,7 +54,7 @@ class _FollowingArtworksPageState extends State<FollowingArtworksPage> {
               SegmentedButtonOption("private", "Private".tl),
             ],
             onPressed: (key) {
-              if(key != restrict) {
+              if (key != restrict) {
                 setState(() {
                   restrict = key;
                 });
@@ -70,27 +77,26 @@ class _OneFollowingPage extends StatefulWidget {
   State<_OneFollowingPage> createState() => _OneFollowingPageState();
 }
 
-class _OneFollowingPageState extends MultiPageLoadingState<_OneFollowingPage, Illust> {
+class _OneFollowingPageState
+    extends MultiPageLoadingState<_OneFollowingPage, Illust> {
   @override
-  Widget buildContent(BuildContext context, final List<Illust> data) {
-    return LayoutBuilder(builder: (context, constrains){
+  Widget buildContent(BuildContext context, List<Illust> data) {
+    checkIllusts(data);
+    return LayoutBuilder(builder: (context, constrains) {
       return MasonryGridView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 8)
-            + EdgeInsets.only(bottom: context.padding.bottom),
+        padding: const EdgeInsets.symmetric(horizontal: 8) +
+            EdgeInsets.only(bottom: context.padding.bottom),
         gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 240,
         ),
         itemCount: data.length,
         itemBuilder: (context, index) {
-          if(index == data.length - 1){
+          if (index == data.length - 1) {
             nextPage();
           }
           return IllustWidget(data[index], onTap: () {
             context.to(() => IllustGalleryPage(
-                illusts: data,
-                initialPage: index,
-                nextUrl: nextUrl
-            ));
+                illusts: data, initialPage: index, nextUrl: nextUrl));
           });
         },
       );
@@ -100,16 +106,15 @@ class _OneFollowingPageState extends MultiPageLoadingState<_OneFollowingPage, Il
   String? nextUrl;
 
   @override
-  Future<Res<List<Illust>>> loadData(page) async{
-    if(nextUrl == "end") {
+  Future<Res<List<Illust>>> loadData(page) async {
+    if (nextUrl == "end") {
       return Res.error("No more data");
     }
     var res = await Network().getFollowingArtworks(widget.restrict, nextUrl);
-    if(!res.error) {
+    if (!res.error) {
       nextUrl = res.subData;
       nextUrl ??= "end";
     }
     return res;
   }
 }
-

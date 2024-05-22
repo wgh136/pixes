@@ -108,7 +108,7 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
 
   Widget? buildFrame(BuildContext context, Widget child) => null;
 
-  Widget buildContent(BuildContext context, final List<S> data);
+  Widget buildContent(BuildContext context, List<S> data);
 
   bool get isLoading => _isLoading || _isFirstLoading;
 

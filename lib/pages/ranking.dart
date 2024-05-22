@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/foundation/app.dart';
+import 'package:pixes/utils/block.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../components/batch_download.dart';
@@ -86,6 +87,7 @@ class _OneRankingPage extends StatefulWidget {
 class _OneRankingPageState extends MultiPageLoadingState<_OneRankingPage, Illust> {
   @override
   Widget buildContent(BuildContext context, final List<Illust> data) {
+    checkIllusts(data);
     return LayoutBuilder(builder: (context, constrains){
       return MasonryGridView.builder(
         padding: const EdgeInsets.symmetric(horizontal: 8)
