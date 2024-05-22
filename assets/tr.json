@@ -64,9 +64,9 @@
         "Weekly Manga": "每周漫画",
         "Monthly Manga": "每月漫画",
         "R18": "R18",
-        "Account": "账户",
+        "Account": "账号",
         "Logout": "登出",
-        "Account Settings": "账户设置",
+        "Account Settings": "账号设置",
         "Edit": "编辑",
         "Download": "下载",
         "Manage": "管理",
@@ -138,7 +138,16 @@
         "Line Height": "行高",
         "Paragraph Spacing": "段间距",
         "light": "浅色",
-        "dark": "深色"
+        "dark": "深色",
+        "block": "屏蔽",
+        "Block": "屏蔽",
+        "Block(Account)": "屏蔽(账号)",
+        "Block(Local)": "屏蔽(本地)",
+        "Add": "添加",
+        "Submit": "提交",
+        "Local": "本地",
+        "Both": "同时",
+        "This artwork is blocked": "此作品已被屏蔽"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -279,6 +288,15 @@
         "Line Height": "行高",
         "Paragraph Spacing": "段間距",
         "light": "淺色",
-        "dark": "深色"
+        "dark": "深色",
+        "block": "屏蔽",
+        "Block": "屏蔽",
+        "Block(Account)": "屏蔽(賬戶)",
+        "Block(Local)": "屏蔽(本地)",
+        "Add": "添加",
+        "Submit": "提交",
+        "Local": "本地",
+        "Both": "同時",
+        "This artwork is blocked": "此作品已被屏蔽"
     }
 }

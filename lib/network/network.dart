@@ -191,6 +191,21 @@ class Network {
     }
   }
 
+  String? encodeFormData(Map<String, dynamic>? data) {
+    if (data == null) return null;
+    StringBuffer buffer = StringBuffer();
+    data.forEach((key, value) {
+      if (value is List) {
+        for (var element in value) {
+          buffer.write("$key[]=$element&");
+        }
+      } else {
+        buffer.write("$key=$value&");
+      }
+    });
+    return buffer.toString();
+  }
+
   Future<Res<Map<String, dynamic>>> apiPost(String path,
       {Map<String, dynamic>? query, Map<String, dynamic>? data}) async {
     try {
@@ -199,7 +214,7 @@ class Network {
       }
       final res = await dio.post<Map<String, dynamic>>(path,
           queryParameters: query,
-          data: data,
+          data: encodeFormData(data),
           options: Options(
               headers: headers,
               validateStatus: (status) => true,
@@ -497,21 +512,24 @@ class Network {
     }
   }
 
-  Future<List<Tag>> getMutedTags() async {
+  Future<Res<MuteList>> getMuteList() async {
     var res = await apiGet("/v1/mute/list");
     if (res.success) {
-      return res.data["mute_tags"]
-          .map<Tag>((e) => Tag(e["tag"]["name"], e["tag"]["translated_name"]))
-          .toList();
+      return Res(MuteList.fromJson(res.data));
     } else {
-      return [];
+      return Res.error(res.errorMessage);
     }
   }
 
-  Future<Res<bool>> muteTags(
-      List<String> muteTags, List<String> unmuteTags) async {
+  Future<Res<bool>> editMute(List<String> addTags, List<String> addUsers,
+      List<String> deleteTags, List<String> deleteUsers) async {
     var res = await apiPost("/v1/mute/edit",
-        data: {"add_tags": muteTags, "delete_tags": unmuteTags});
+        data: {
+          "add_tags": addTags,
+          "add_user_ids": addUsers,
+          "delete_tags": deleteTags,
+          "delete_user_ids": deleteUsers
+        }..removeWhere((key, value) => value.isEmpty));
     if (res.success) {
       return const Res(true);
     } else {

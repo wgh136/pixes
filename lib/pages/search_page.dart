@@ -2,7 +2,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/appdata.dart';
 import 'package:pixes/components/loading.dart';
-import 'package:pixes/components/message.dart';
 import 'package:pixes/components/novel.dart';
 import 'package:pixes/components/page_route.dart';
 import 'package:pixes/components/user_preview.dart';
@@ -128,7 +127,6 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                       onPressed: () {
                         optionController.showFlyout(
-                          navigatorKey: App.rootNavigatorKey.currentState,
                           placementMode: FlyoutPlacementMode.bottomCenter,
                           builder: buildSearchOption,
                         );

@@ -5,9 +5,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
+import 'package:pixes/appdata.dart';
 import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/message.dart';
+import 'package:pixes/components/page_route.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';
@@ -17,6 +19,7 @@ import 'package:pixes/pages/comments_page.dart';
 import 'package:pixes/pages/image_page.dart';
 import 'package:pixes/pages/search_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
+import 'package:pixes/utils/block.dart';
 import 'package:pixes/utils/translation.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -143,6 +146,7 @@ class IllustPage extends StatefulWidget {
 class _IllustPageState extends State<IllustPage> {
   @override
   Widget build(BuildContext context) {
+    var isBlocked = checkIllusts([widget.illust]).isEmpty;
     return buildKeyboardListener(ColoredBox(
       color: FluentTheme.of(context).micaBackgroundColor,
       child: SizedBox.expand(
@@ -151,19 +155,30 @@ class _IllustPageState extends State<IllustPage> {
           child: LayoutBuilder(builder: (context, constrains) {
             return Stack(
               children: [
-                Positioned(
-                  bottom: 0,
-                  left: 0,
-                  right: 0,
-                  top: 0,
-                  child: buildBody(constrains.maxWidth, constrains.maxHeight),
-                ),
-                _BottomBar(
-                  widget.illust,
-                  constrains.maxHeight,
-                  constrains.maxWidth,
-                  favoriteCallback: widget.favoriteCallback,
-                ),
+                if (!isBlocked)
+                  Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    top: 0,
+                    child: buildBody(constrains.maxWidth, constrains.maxHeight),
+                  ),
+                if (!isBlocked)
+                  _BottomBar(
+                    widget.illust,
+                    constrains.maxHeight,
+                    constrains.maxWidth,
+                    favoriteCallback: widget.favoriteCallback,
+                    updateCallback: () => setState(() {}),
+                  ),
+                if (isBlocked)
+                  const Positioned.fill(
+                      child: Center(
+                    child: Center(
+                        child: Text(
+                      "This artwork is blocked",
+                    )),
+                  ))
               ],
             );
           }),
@@ -306,9 +321,11 @@ class _IllustPageState extends State<IllustPage> {
 
 class _BottomBar extends StatefulWidget {
   const _BottomBar(this.illust, this.height, this.width,
-      {this.favoriteCallback});
+      {this.favoriteCallback, this.updateCallback});
 
   final void Function(bool)? favoriteCallback;
+
+  final void Function()? updateCallback;
 
   final Illust illust;
 
@@ -378,8 +395,9 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
   }
 
   void _handlePointerCancel() {
-    if (animationController.value == 1 || animationController.value == 0)
+    if (animationController.value == 1 || animationController.value == 0) {
       return;
+    }
     if (animationController.value >= 0.5) {
       animationController.forward();
     } else {
@@ -876,7 +894,9 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
   }
 
   Widget buildMoreActions() {
-    return Row(
+    return Wrap(
+      runSpacing: 4,
+      spacing: 8,
       children: [
         Button(
           onPressed: () => favorite("private"),
@@ -913,10 +933,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
               ],
             ),
           ),
-        ),
-        const SizedBox(
-          width: 6,
-        ),
+        ).fixWidth(96),
         Button(
           onPressed: () {
             Share.share(
@@ -937,10 +954,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
               ],
             ),
           ),
-        ),
-        const SizedBox(
-          width: 6,
-        ),
+        ).fixWidth(96),
         Button(
           onPressed: () {
             var text = "https://pixiv.net/artworks/${widget.illust.id}";
@@ -959,10 +973,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
               ],
             ),
           ),
-        ),
-        const SizedBox(
-          width: 6,
-        ),
+        ).fixWidth(96),
         Button(
           onPressed: () {
             context.to(() => _RelatedIllustsPage(widget.illust.id.toString()));
@@ -979,9 +990,186 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
               ],
             ),
           ),
-        ),
+        ).fixWidth(96),
+        Button(
+          onPressed: () async {
+            await Navigator.of(context)
+                .push(SideBarRoute(_BlockingPage(widget.illust)));
+            if (mounted) {
+              widget.updateCallback?.call();
+            }
+          },
+          child: SizedBox(
+            height: 28,
+            child: Row(
+              children: [
+                const Icon(MdIcons.block, size: 18),
+                const SizedBox(
+                  width: 8,
+                ),
+                Text("Block".tl)
+              ],
+            ),
+          ),
+        ).fixWidth(96),
       ],
     ).paddingHorizontal(2).paddingBottom(4);
+  }
+}
+
+class _BlockingPage extends StatefulWidget {
+  const _BlockingPage(this.illust);
+
+  final Illust illust;
+
+  @override
+  State<_BlockingPage> createState() => __BlockingPageState();
+}
+
+class __BlockingPageState extends State<_BlockingPage> {
+  List<int> blockedTags = [];
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TitleBar(title: "Block".tl),
+        Expanded(
+          child: ListView.builder(
+            padding: EdgeInsets.only(bottom: context.padding.bottom),
+            itemCount: widget.illust.tags.length + 2,
+            itemBuilder: (context, index) {
+              if (index == widget.illust.tags.length + 1) {
+                return buildSubmit();
+              }
+
+              var text = index == 0
+                  ? widget.illust.author.name
+                  : widget.illust.tags[index - 1].name;
+
+              var subTitle = index == 0
+                  ? "author"
+                  : widget.illust.tags[index - 1].translatedName ?? "";
+
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                borderColor: blockedTags.contains(index)
+                    ? ColorScheme.of(context).outlineVariant
+                    : ColorScheme.of(context).outlineVariant.withOpacity(0.2),
+                padding: EdgeInsets.zero,
+                child: ListTile(
+                  title: Text(text),
+                  subtitle: Text(subTitle),
+                  trailing: Button(
+                          onPressed: () {
+                            if (blockedTags.contains(index)) {
+                              blockedTags.remove(index);
+                            } else {
+                              blockedTags.add(index);
+                            }
+                            setState(() {});
+                          },
+                          child: blockedTags.contains(index)
+                              ? Text("Cancel".tl)
+                              : Text("Block".tl))
+                      .fixWidth(72),
+                ),
+              );
+            },
+          ),
+        )
+      ],
+    );
+  }
+
+  var flyout = FlyoutController();
+
+  bool isSubmitting = false;
+
+  Widget buildSubmit() {
+    return FlyoutTarget(
+      controller: flyout,
+      child: FilledButton(
+        onPressed: () async {
+          if (this.blockedTags.isEmpty) {
+            return;
+          }
+          if (isSubmitting) return;
+          var blockedTags = <String>[];
+          var blockedUsers = <String>[];
+          for (var i in this.blockedTags) {
+            if (i == 0) {
+              blockedUsers.add(widget.illust.author.id.toString());
+            } else {
+              blockedTags.add(widget.illust.tags[i - 1].name);
+            }
+          }
+          bool addToAccount = false;
+          bool addToLocal = false;
+          if (appdata.account!.user.isPremium) {
+            await flyout.showFlyout(
+                navigatorKey: App.rootNavigatorKey.currentState,
+                builder: (context) {
+                  return MenuFlyout(
+                    items: [
+                      MenuFlyoutItem(
+                          text: Text("Local".tl),
+                          onPressed: () {
+                            addToLocal = true;
+                          }),
+                      MenuFlyoutItem(
+                          text: Text("Account".tl),
+                          onPressed: () {
+                            addToAccount = true;
+                          }),
+                      MenuFlyoutItem(
+                          text: Text("Both".tl),
+                          onPressed: () {
+                            addToLocal = true;
+                            addToAccount = true;
+                          }),
+                    ],
+                  );
+                });
+          } else {
+            addToLocal = true;
+          }
+          if (addToAccount) {
+            setState(() {
+              isSubmitting = true;
+            });
+            var res =
+                await Network().editMute(blockedTags, blockedUsers, [], []);
+            setState(() {
+              isSubmitting = false;
+            });
+            if (res.error) {
+              if (mounted) {
+                context.showToast(message: "Network Error");
+              }
+              return;
+            }
+          }
+          if (addToLocal) {
+            for (var tag in blockedTags) {
+              appdata.settings['blockTags'].add(tag);
+            }
+            for (var user in blockedUsers) {
+              appdata.settings['blockTags'].add('user:$user');
+            }
+            appdata.writeSettings();
+          }
+          if (mounted) {
+            context.pop();
+          }
+        },
+        child: isSubmitting
+            ? const ProgressRing(
+                strokeWidth: 1.6,
+              ).fixWidth(18).fixHeight(18).toAlign(Alignment.center)
+            : Text("Submit".tl),
+      ).fixWidth(96).fixHeight(28),
+    ).toAlign(Alignment.center).paddingTop(16);
   }
 }
 

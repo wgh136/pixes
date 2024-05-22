@@ -131,16 +131,16 @@ class _SettingsPageState extends State<SettingsPage> {
                     return;
                   }
                   context.to(() => _SetSingleFieldPage(
-                    "Download Path".tl,
-                    "downloadPath",
-                    check: (text) {
-                      if(!Directory(text).havePermission()) {
-                        return "No permission".tl;
-                      } else {
-                        return null;
-                      }
-                    },
-                  ));
+                        "Download Path".tl,
+                        "downloadPath",
+                        check: (text) {
+                          if (!Directory(text).havePermission()) {
+                            return "No permission".tl;
+                          } else {
+                            return null;
+                          }
+                        },
+                      ));
                 }),
           ),
           buildItem(
@@ -182,23 +182,30 @@ class _SettingsPageState extends State<SettingsPage> {
           buildItem(
               title: "Github",
               action: IconButton(
-                icon: const Icon(MdIcons.open_in_new, size: 18,),
+                icon: const Icon(
+                  MdIcons.open_in_new,
+                  size: 18,
+                ),
                 onPressed: () =>
                     launchUrlString("https://github.com/wgh136/pixes"),
               )),
           buildItem(
               title: "Telegram",
               action: IconButton(
-                icon: const Icon(MdIcons.open_in_new, size: 18,),
-                onPressed: () =>
-                    launchUrlString("https://t.me/pica_group"),
+                icon: const Icon(
+                  MdIcons.open_in_new,
+                  size: 18,
+                ),
+                onPressed: () => launchUrlString("https://t.me/pica_group"),
               )),
           buildItem(
               title: "Logs",
               action: IconButton(
-                icon: const Icon(MdIcons.open_in_new, size: 18,),
-                onPressed: () => context.to(() => const LogsPage())
-              )),
+                  icon: const Icon(
+                    MdIcons.open_in_new,
+                    size: 18,
+                  ),
+                  onPressed: () => context.to(() => const LogsPage()))),
         ],
       ),
     );
@@ -214,9 +221,25 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Text("Edit".tl).fixWidth(64),
                 onPressed: () {
                   context.to(() => _SetSingleFieldPage(
-                    "Http ${"Proxy".tl}",
-                    "proxy",
-                  ));
+                        "Http ${"Proxy".tl}",
+                        "proxy",
+                      ));
+                },
+              )),
+          buildItem(
+              title: "Block(Account)".tl,
+              action: Button(
+                child: Text("Edit".tl).fixWidth(64),
+                onPressed: () {
+                  launchUrlString("https://www.pixiv.net/setting_mute.php");
+                },
+              )),
+          buildItem(
+              title: "Block(Local)".tl,
+              action: Button(
+                child: Text("Edit".tl).fixWidth(64),
+                onPressed: () {
+                  context.to(() => const _BlockTagsPage());
                 },
               )),
         ],
@@ -231,63 +254,77 @@ class _SettingsPageState extends State<SettingsPage> {
           buildItem(
               title: "Theme".tl,
               action: DropDownButton(
-                title: Text(appdata.settings["theme"] ?? "System".tl),
-                items: [
-                  MenuFlyoutItem(text: Text("System".tl), onPressed: () {
-                    setState(() {
-                      appdata.settings["theme"] = "System";
-                    });
-                    appdata.writeData();
-                    StateController.findOrNull(tag: "MyApp")?.update();
-                  }),
-                  MenuFlyoutItem(text: Text("light".tl), onPressed: () {
-                    setState(() {
-                      appdata.settings["theme"] = "Light";
-                    });
-                    appdata.writeData();
-                    StateController.findOrNull(tag: "MyApp")?.update();
-                  }),
-                  MenuFlyoutItem(text: Text("dark".tl), onPressed: () {
-                    setState(() {
-                      appdata.settings["theme"] = "Dark";
-                    });
-                    appdata.writeData();
-                    StateController.findOrNull(tag: "MyApp")?.update();
-                  }),
-              ])),
+                  title: Text(appdata.settings["theme"] ?? "System".tl),
+                  items: [
+                    MenuFlyoutItem(
+                        text: Text("System".tl),
+                        onPressed: () {
+                          setState(() {
+                            appdata.settings["theme"] = "System";
+                          });
+                          appdata.writeData();
+                          StateController.findOrNull(tag: "MyApp")?.update();
+                        }),
+                    MenuFlyoutItem(
+                        text: Text("light".tl),
+                        onPressed: () {
+                          setState(() {
+                            appdata.settings["theme"] = "Light";
+                          });
+                          appdata.writeData();
+                          StateController.findOrNull(tag: "MyApp")?.update();
+                        }),
+                    MenuFlyoutItem(
+                        text: Text("dark".tl),
+                        onPressed: () {
+                          setState(() {
+                            appdata.settings["theme"] = "Dark";
+                          });
+                          appdata.writeData();
+                          StateController.findOrNull(tag: "MyApp")?.update();
+                        }),
+                  ])),
           buildItem(
               title: "Language".tl,
               action: DropDownButton(
                   title: Text(appdata.settings["language"] ?? "System"),
                   items: [
-                    MenuFlyoutItem(text: const Text("System"), onPressed: () {
-                      setState(() {
-                        appdata.settings["language"] = "System";
-                      });
-                      appdata.writeData();
-                      StateController.findOrNull(tag: "MyApp")?.update();
-                    }),
-                    MenuFlyoutItem(text: const Text("English"), onPressed: () {
-                      setState(() {
-                        appdata.settings["language"] = "English";
-                      });
-                      appdata.writeData();
-                      StateController.findOrNull(tag: "MyApp")?.update();
-                    }),
-                    MenuFlyoutItem(text: const Text("简体中文"), onPressed: () {
-                      setState(() {
-                        appdata.settings["language"] = "简体中文";
-                      });
-                      appdata.writeData();
-                      StateController.findOrNull(tag: "MyApp")?.update();
-                    }),
-                    MenuFlyoutItem(text: const Text("繁體中文"), onPressed: () {
-                      setState(() {
-                        appdata.settings["language"] = "繁體中文";
-                      });
-                      appdata.writeData();
-                      StateController.findOrNull(tag: "MyApp")?.update();
-                    }),
+                    MenuFlyoutItem(
+                        text: const Text("System"),
+                        onPressed: () {
+                          setState(() {
+                            appdata.settings["language"] = "System";
+                          });
+                          appdata.writeData();
+                          StateController.findOrNull(tag: "MyApp")?.update();
+                        }),
+                    MenuFlyoutItem(
+                        text: const Text("English"),
+                        onPressed: () {
+                          setState(() {
+                            appdata.settings["language"] = "English";
+                          });
+                          appdata.writeData();
+                          StateController.findOrNull(tag: "MyApp")?.update();
+                        }),
+                    MenuFlyoutItem(
+                        text: const Text("简体中文"),
+                        onPressed: () {
+                          setState(() {
+                            appdata.settings["language"] = "简体中文";
+                          });
+                          appdata.writeData();
+                          StateController.findOrNull(tag: "MyApp")?.update();
+                        }),
+                    MenuFlyoutItem(
+                        text: const Text("繁體中文"),
+                        onPressed: () {
+                          setState(() {
+                            appdata.settings["language"] = "繁體中文";
+                          });
+                          appdata.writeData();
+                          StateController.findOrNull(tag: "MyApp")?.update();
+                        }),
                   ])),
         ],
       ),
@@ -415,4 +452,89 @@ ${"Some keywords will be replaced by the following rule:".tl}
 
 ${"Multiple path separators will be automatically replaced with a single".tl}
 """;
+}
+
+class _BlockTagsPage extends StatefulWidget {
+  const _BlockTagsPage();
+
+  @override
+  State<_BlockTagsPage> createState() => __BlockTagsPageState();
+}
+
+class __BlockTagsPageState extends State<_BlockTagsPage> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        TitleBar(
+          title: "Block".tl,
+          action: FilledButton(
+            child: Text("Add".tl),
+            onPressed: () {
+              var controller = TextEditingController();
+
+              void finish(BuildContext context) {
+                var text = controller.text;
+                if (text.isNotEmpty &&
+                    !(appdata.settings["blockTags"] as List).contains(text)) {
+                  setState(() {
+                    appdata.settings["blockTags"].add(text);
+                  });
+                  appdata.writeSettings();
+                }
+                context.pop();
+              }
+
+              showDialog(
+                  context: context,
+                  barrierDismissible: true,
+                  builder: (context) {
+                    return ContentDialog(
+                      title: Text("Add".tl),
+                      content: SizedBox(
+                        width: 300,
+                        height: 32,
+                        child: TextBox(
+                          controller: controller,
+                          onSubmitted: (v) => finish(context),
+                        ),
+                      ),
+                      actions: [
+                        FilledButton(
+                            child: Text("Submit".tl),
+                            onPressed: () {
+                              finish(context);
+                            })
+                      ],
+                    );
+                  });
+            },
+          ),
+        ),
+        Expanded(
+          child: ListView.builder(
+            itemCount: appdata.settings["blockTags"].length,
+            itemBuilder: (context, index) {
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                padding: EdgeInsets.zero,
+                child: ListTile(
+                  title: Text(appdata.settings["blockTags"][index]),
+                  trailing: Button(
+                    child: Text("Delete".tl),
+                    onPressed: () {
+                      setState(() {
+                        (appdata.settings["blockTags"] as List).removeAt(index);
+                      });
+                      appdata.writeSettings();
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        )
+      ],
+    );
+  }
 }
