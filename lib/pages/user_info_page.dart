@@ -545,7 +545,8 @@ class _RelatedUsersState
               hoveringMainAxisMargin: 4),
           child: content);
     }
-    return content;
+    return MediaQuery.removePadding(
+        context: context, removeBottom: true, child: content);
   }
 
   @override
