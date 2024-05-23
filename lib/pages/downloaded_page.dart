@@ -56,7 +56,7 @@ class _DownloadedPageState extends State<DownloadedPage> {
               });
             },
           ),
-          ),
+        ),
         Expanded(
           child: buildBody(),
         ),
@@ -77,8 +77,9 @@ class _DownloadedPageState extends State<DownloadedPage> {
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
               onTap: () {
-                context.to(() => _DownloadedIllustViewPage(
-                    DownloadManager().getImagePaths(illusts[index].illustId)));
+                App.rootNavigatorKey.currentContext?.to(() =>
+                    _DownloadedIllustViewPage(DownloadManager()
+                        .getImagePaths(illusts[index].illustId)));
               },
               child: Row(
                 children: [

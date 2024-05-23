@@ -1192,7 +1192,7 @@ class __BlockingPageState extends State<_BlockingPage> {
                 strokeWidth: 1.6,
               ).fixWidth(18).fixHeight(18).toAlign(Alignment.center)
             : Text("Submit".tl),
-      ).fixWidth(96).fixHeight(28),
+      ).fixWidth(96).fixHeight(32),
     ).toAlign(Alignment.center).paddingTop(16);
   }
 }

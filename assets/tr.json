@@ -147,7 +147,8 @@
         "Submit": "提交",
         "Local": "本地",
         "Both": "同时",
-        "This artwork is blocked": "此作品已被屏蔽"
+        "This artwork is blocked": "此作品已被屏蔽",
+        "Delete Invalid Items": "删除无效项目"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -297,6 +298,7 @@
         "Submit": "提交",
         "Local": "本地",
         "Both": "同時",
-        "This artwork is blocked": "此作品已被屏蔽"
+        "This artwork is blocked": "此作品已被屏蔽",
+        "Delete Invalid Items": "刪除無效項目"
     }
 }

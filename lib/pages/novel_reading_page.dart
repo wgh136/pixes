@@ -33,11 +33,12 @@ class _NovelReadingPageState extends LoadingState<NovelReadingPage, String> {
       if (!isShowingSettings) {
         _NovelReadingSettings.show(context, () {
           setState(() {});
+        }).then((value) {
+          isShowingSettings = false;
         });
         isShowingSettings = true;
       } else {
         Navigator.of(context).pop();
-        isShowingSettings = false;
       }
     });
     Future.delayed(const Duration(milliseconds: 200), () {
@@ -136,8 +137,8 @@ class _NovelReadingSettings extends StatefulWidget {
 
   final void Function() callback;
 
-  static void show(BuildContext context, void Function() callback) {
-    Navigator.of(context).push(SideBarRoute(_NovelReadingSettings(callback)));
+  static Future show(BuildContext context, void Function() callback) {
+    return Navigator.of(context).push(SideBarRoute(_NovelReadingSettings(callback)));
   }
 
   @override
