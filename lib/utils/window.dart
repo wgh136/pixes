@@ -15,6 +15,10 @@ class WindowPlacement {
   Future<void> applyToWindow() async {
     await windowManager.setBounds(rect);
 
+    if(!validate(rect)){
+      await windowManager.center();
+    }
+
     if (isMaximized) {
       await windowManager.maximize();
     }
@@ -55,10 +59,17 @@ class WindowPlacement {
 
   static void loop() async {
     var placement = await WindowPlacement.current;
+    if(!validate(placement.rect)){
+      return;
+    }
     if (placement.rect != cache.rect ||
         placement.isMaximized != cache.isMaximized) {
       cache = placement;
       await placement.writeToFile();
     }
+  }
+
+  static bool validate(Rect rect){
+    return rect.topLeft.dx >= 0 && rect.topLeft.dy >= 0;
   }
 }
