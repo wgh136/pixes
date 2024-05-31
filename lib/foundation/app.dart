@@ -48,18 +48,20 @@ class _App {
   init() async {
     cachePath = (await getApplicationCacheDirectory()).path;
     dataPath = (await getApplicationSupportDirectory()).path;
-    final deviceInfoPlugin = DeviceInfoPlugin();
-    final deviceInfo = await deviceInfoPlugin.windowsInfo;
-    if (deviceInfo.majorVersion <= 6) {
-      if (deviceInfo.minorVersion < 2) {
-        _windowsVersion = 7;
+    if (App.isWindows) {
+      final deviceInfoPlugin = DeviceInfoPlugin();
+      final deviceInfo = await deviceInfoPlugin.windowsInfo;
+      if (deviceInfo.majorVersion <= 6) {
+        if (deviceInfo.minorVersion < 2) {
+          _windowsVersion = 7;
+        } else {
+          _windowsVersion = 8;
+        }
+      } else if (deviceInfo.buildNumber < 22000) {
+        _windowsVersion = 10;
       } else {
-        _windowsVersion = 8;
+        _windowsVersion = 11;
       }
-    } else if (deviceInfo.buildNumber < 22000) {
-      _windowsVersion = 10;
-    } else {
-      _windowsVersion = 11;
     }
   }
 
