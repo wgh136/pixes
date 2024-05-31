@@ -269,11 +269,17 @@ class _MainPageState extends State<MainPage> with WindowListener {
                     if (!App.isDesktop) const Spacer(),
                     if (App.isDesktop)
                       const Expanded(
-                        child: DragToMoveArea(
+                        child: SizedBox(
+                          height: double.infinity,
+                          child: DragToMoveArea(
+                              child: Align(
+                            alignment: Alignment.centerLeft,
                             child: Text(
-                          "Pixes",
-                          style: TextStyle(fontSize: 13),
-                        )),
+                              "Pixes",
+                              style: TextStyle(fontSize: 13),
+                            ),
+                          )),
+                        ),
                       ),
                     for (var action in controller.actions)
                       Button(
