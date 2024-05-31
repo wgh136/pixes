@@ -152,7 +152,9 @@ class _MainPageState extends State<MainPage> with WindowListener {
               ),
               PaneItemSeparator(),
               PaneItemHeader(
-                  header: Text("Artwork".tl).paddingBottom(4).paddingLeft(8)),
+                  header: Text('${"Artwork".tl}/${"Manga".tl}')
+                      .paddingBottom(4)
+                      .paddingLeft(8)),
               PaneItem(
                 icon: const Icon(
                   MdIcons.explore_outlined,
@@ -215,10 +217,10 @@ class _MainPageState extends State<MainPage> with WindowListener {
                 context: context,
                 removeTop: true,
                 child: Navigator(
-                    key: navigatorKey,
-                    onGenerateRoute: (settings) => AppPageRoute(
-                        builder: (context) => const RecommendationPage()),
-                  ),
+                  key: navigatorKey,
+                  onGenerateRoute: (settings) => AppPageRoute(
+                      builder: (context) => const RecommendationPage()),
+                ),
               ))),
     );
   }

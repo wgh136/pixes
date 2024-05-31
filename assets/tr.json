@@ -3,14 +3,14 @@
         "Search": "搜索",
         "Downloading": "下载中",
         "Downloaded": "已下载",
-        "Artwork": "作品",
+        "Artwork": "插画",
         "Explore": "探索",
         "Bookmarks": "收藏",
         "Following": "关注",
         "History": "历史",
         "Ranking": "排行",
         "Settings": "设置",
-        "Artworks": "作品",
+        "Artworks": "插画",
         "Mangas": "漫画",
         "Users": "用户",
         "Search artwork": "搜索作品",
@@ -156,7 +156,9 @@
         "Next work": "下一作品",
         "Previous work": "上一作品",
         "Add to favorites": "添加收藏",
-        "Follow the artist": "关注画师"
+        "Follow the artist": "关注画师",
+        "Manga": "漫画",
+        "Actions": "操作"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -315,6 +317,8 @@
         "Next work": "下一作品",
         "Previous work": "上一作品",
         "Add to favorites": "添加收藏",
-        "Follow the artist": "關注畫師"
+        "Follow the artist": "關注畫師",
+        "Manga": "漫畫",
+        "Actions": "操作"
     }
 }

@@ -252,16 +252,16 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
       child: width > 600
           ? Button(
               onPressed: showMenu,
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(
+                  const Icon(
                     MdIcons.menu,
                     size: 18,
                   ),
-                  SizedBox(
+                  const SizedBox(
                     width: 8,
                   ),
-                  Text('Actions'),
+                  Text('Actions'.tl),
                 ],
               ))
           : IconButton(
