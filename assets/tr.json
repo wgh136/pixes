@@ -158,7 +158,8 @@
         "Add to favorites": "添加收藏",
         "Follow the artist": "关注画师",
         "Manga": "漫画",
-        "Actions": "操作"
+        "Actions": "操作",
+        "Current quantity": "当前数量"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -319,6 +320,7 @@
         "Add to favorites": "添加收藏",
         "Follow the artist": "關注畫師",
         "Manga": "漫畫",
-        "Actions": "操作"
+        "Actions": "操作",
+        "Current quantity": "當前數量"
     }
 }

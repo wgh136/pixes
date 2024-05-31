@@ -15,7 +15,10 @@ class BatchDownloadButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Button(
-      child: const Icon(MdIcons.download, size: 20,),
+      child: const Icon(
+        MdIcons.download,
+        size: 20,
+      ),
       onPressed: () {
         showDialog(
             context: context,
@@ -40,6 +43,8 @@ class _DownloadDialog extends StatefulWidget {
 class _DownloadDialogState extends State<_DownloadDialog> {
   int maxCount = 30;
 
+  int currentCount = 0;
+
   bool loading = false;
 
   bool cancel = false;
@@ -53,15 +58,18 @@ class _DownloadDialogState extends State<_DownloadDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('${"Maximum number of downloads".tl}:'),
-            const SizedBox(height: 16,),
+            if (!loading) Text('${"Maximum number of downloads".tl}:'),
+            if (loading) Text("${"Current quantity".tl}: $currentCount"),
+            const SizedBox(
+              height: 16,
+            ),
             SizedBox(
               height: 42,
               width: 196,
               child: NumberBox(
                 value: maxCount,
                 onChanged: (value) {
-                  if(!loading) {
+                  if (!loading) {
                     setState(() => maxCount = value ?? maxCount);
                   }
                 },
@@ -71,35 +79,39 @@ class _DownloadDialogState extends State<_DownloadDialog> {
                 largeChange: 30,
                 clearButton: false,
               ),
-            )
+            ),
           ],
         ).paddingVertical(8),
       ),
       actions: [
-        Button(child: Text("Cancel".tl), onPressed: () {
-          cancel = true;
-          context.pop();
-        }),
-        if(!loading)
+        Button(
+            child: Text("Cancel".tl),
+            onPressed: () {
+              cancel = true;
+              context.pop();
+            }),
+        if (!loading)
           FilledButton(onPressed: load, child: Text("Continue".tl))
         else
-          FilledButton(onPressed: (){}, child: const SizedBox(
-            height: 20,
-            width: 64,
-            child: Center(
-              child: SizedBox.square(
-                dimension: 18,
-                child: ProgressRing(
-                  strokeWidth: 1.6,
+          FilledButton(
+              onPressed: () {},
+              child: const SizedBox(
+                height: 20,
+                width: 64,
+                child: Center(
+                  child: SizedBox.square(
+                    dimension: 18,
+                    child: ProgressRing(
+                      strokeWidth: 1.6,
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ))
+              ))
       ],
     );
   }
 
-  void load() async{
+  void load() async {
     setState(() {
       loading = true;
     });
@@ -109,17 +121,17 @@ class _DownloadDialogState extends State<_DownloadDialog> {
     List<Illust> all = [];
     String? nextUrl;
     int retryCount = 0;
-    while(nextUrl != "end" && all.length < maxCount) {
-      if(nextUrl != null) {
+    while (nextUrl != "end" && all.length < maxCount) {
+      if (nextUrl != null) {
         request = Network().getIllustsWithNextUrl(nextUrl);
       }
       var res = await request;
-      if(cancel || !mounted) {
+      if (cancel || !mounted) {
         return;
       }
-      if(res.error) {
+      if (res.error) {
         retryCount++;
-        if(retryCount > 3) {
+        if (retryCount > 3) {
           setState(() {
             loading = false;
           });
@@ -130,15 +142,17 @@ class _DownloadDialogState extends State<_DownloadDialog> {
         continue;
       }
       all.addAll(res.data);
+      setState(() {
+        currentCount = all.length;
+      });
       nextUrl = res.subData ?? "end";
     }
     int i = 0;
-    for(var illust in all) {
-      if(i > maxCount)  return;
+    for (var illust in all) {
+      if (i > maxCount) break;
       DownloadManager().addDownloadingTask(illust);
       i++;
     }
     context.pop();
   }
 }
-
