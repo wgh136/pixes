@@ -24,6 +24,15 @@ class _Appdata {
     "readingLineHeight": 1.5,
     "readingParagraphSpacing": 8.0,
     "blockTags": [],
+    "shortcuts": <int>[
+      LogicalKeyboardKey.arrowDown.keyId,
+      LogicalKeyboardKey.arrowUp.keyId,
+      LogicalKeyboardKey.arrowRight.keyId,
+      LogicalKeyboardKey.arrowLeft.keyId,
+      LogicalKeyboardKey.enter.keyId,
+      LogicalKeyboardKey.keyD.keyId,
+      LogicalKeyboardKey.keyF.keyId,
+    ],
   };
 
   bool lock = false;

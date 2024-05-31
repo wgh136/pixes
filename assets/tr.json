@@ -148,7 +148,15 @@
         "Local": "本地",
         "Both": "同时",
         "This artwork is blocked": "此作品已被屏蔽",
-        "Delete Invalid Items": "删除无效项目"
+        "Delete Invalid Items": "删除无效项目",
+        "Private Favorite": "私人收藏",
+        "Shortcuts": "快捷键",
+        "Page down": "向下翻页",
+        "Page up": "向上翻页",
+        "Next work": "下一作品",
+        "Previous work": "上一作品",
+        "Add to favorites": "添加收藏",
+        "Follow the artist": "关注画师"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -299,6 +307,14 @@
         "Local": "本地",
         "Both": "同時",
         "This artwork is blocked": "此作品已被屏蔽",
-        "Delete Invalid Items": "刪除無效項目"
+        "Delete Invalid Items": "刪除無效項目",
+        "Private Favorite": "私人收藏",
+        "Shortcuts": "快捷鍵",
+        "Page down": "向下翻頁",
+        "Page up": "向上翻頁",
+        "Next work": "下一作品",
+        "Previous work": "上一作品",
+        "Add to favorites": "添加收藏",
+        "Follow the artist": "關注畫師"
     }
 }

@@ -6,6 +6,7 @@ import "package:flutter/material.dart" as md;
 import "package:flutter/services.dart";
 import "package:flutter_acrylic/flutter_acrylic.dart" as flutter_acrylic;
 import "package:pixes/appdata.dart";
+import "package:pixes/components/keyboard.dart";
 import "package:pixes/components/md.dart";
 import "package:pixes/components/message.dart";
 import "package:pixes/foundation/app.dart";
@@ -88,7 +89,7 @@ class MyApp extends StatelessWidget {
                     title: 'pixes',
                     theme: FluentThemeData(
                         brightness: brightness,
-                        fontFamily: App.isWindows ? 'font' : null,
+                        fontFamily: App.isWindows ? '微软雅黑' : null,
                         accentColor: AccentColor.swatch({
                           'darkest': darken(colorScheme.primary, 30),
                           'darker': darken(colorScheme.primary, 20),
@@ -97,7 +98,11 @@ class MyApp extends StatelessWidget {
                           'light': lighten(colorScheme.primary, 10),
                           'lighter': lighten(colorScheme.primary, 20),
                           'lightest': lighten(colorScheme.primary, 30)
-                        })),
+                        }),
+                        focusTheme: const FocusThemeData(
+                          primaryBorder: BorderSide.none,
+                          secondaryBorder: BorderSide.none,
+                        )),
                     home: const MainPage(),
                     builder: (context, child) {
                       ErrorWidget.builder = (details) {
@@ -151,7 +156,7 @@ class MyApp extends StatelessWidget {
                         }
                       }
 
-                      return widget;
+                      return KeyEventListener(child: widget);
                     });
               },
             ),

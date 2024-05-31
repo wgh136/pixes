@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/services.dart';
 import 'package:pixes/appdata.dart';
+import 'package:pixes/components/keyboard.dart';
 import 'package:pixes/components/md.dart';
 import 'package:pixes/components/message.dart';
 import 'package:pixes/components/page_route.dart';
@@ -240,6 +242,14 @@ class _SettingsPageState extends State<SettingsPage> {
                 child: Text("Edit".tl).fixWidth(64),
                 onPressed: () {
                   context.to(() => const _BlockTagsPage());
+                },
+              )),
+          buildItem(
+              title: "Shortcuts".tl,
+              action: Button(
+                child: Text("Edit".tl).fixWidth(64),
+                onPressed: () {
+                  context.to(() => const ShortcutsSettings());
                 },
               )),
         ],
@@ -535,6 +545,84 @@ class __BlockTagsPageState extends State<_BlockTagsPage> {
           ),
         )
       ],
+    );
+  }
+}
+
+class ShortcutsSettings extends StatefulWidget {
+  const ShortcutsSettings({super.key});
+
+  @override
+  State<ShortcutsSettings> createState() => _ShortcutsSettingsState();
+}
+
+class _ShortcutsSettingsState extends State<ShortcutsSettings> {
+  int listening = -1;
+
+  KeyEventListenerState? listener;
+
+  @override
+  void initState() {
+    listener = KeyEventListener.of(context);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    listener?.removeAll();
+    super.dispose();
+  }
+
+  final settings = <String>[
+    "Page down",
+    "Page up",
+    "Next work",
+    "Previous work",
+    "Add to favorites",
+    "Download",
+    "Follow the artist",
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(children: [
+        TitleBar(title: "Shortcuts".tl),
+        ...settings.map((e) => buildItem(e, settings.indexOf(e)))
+      ]),
+    );
+  }
+
+  Widget buildItem(String text, int index) {
+    var keyText = listening == index
+        ? "Waiting..."
+        : LogicalKeyboardKey(appdata.settings['shortcuts'][index]).keyLabel;
+    return Card(
+      padding: EdgeInsets.zero,
+      margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+      child: ListTile(
+        title: Text(text.tl),
+        trailing: Button(
+          child: Text(keyText),
+          onPressed: () {
+            if (listening != -1) {
+              listener?.removeAll();
+            }
+            setState(() {
+              listening = index;
+            });
+            listener?.addHandler((key) {
+              if (key == LogicalKeyboardKey.escape) return;
+              setState(() {
+                appdata.settings['shortcuts'][index] = key.keyId;
+                listening = -1;
+                appdata.writeData();
+              });
+              Future.microtask(() => listener?.removeAll());
+            });
+          },
+        ),
+      ),
     );
   }
 }

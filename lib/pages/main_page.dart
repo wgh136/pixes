@@ -3,6 +3,7 @@ import "dart:async";
 import "package:fluent_ui/fluent_ui.dart";
 import "package:flutter/foundation.dart";
 import "package:pixes/appdata.dart";
+import "package:pixes/components/keyboard.dart";
 import "package:pixes/components/md.dart";
 import "package:pixes/foundation/app.dart";
 import "package:pixes/foundation/image_provider.dart";
@@ -214,10 +215,10 @@ class _MainPageState extends State<MainPage> with WindowListener {
                 context: context,
                 removeTop: true,
                 child: Navigator(
-                  key: navigatorKey,
-                  onGenerateRoute: (settings) => AppPageRoute(
-                      builder: (context) => const RecommendationPage()),
-                ),
+                    key: navigatorKey,
+                    onGenerateRoute: (settings) => AppPageRoute(
+                        builder: (context) => const RecommendationPage()),
+                  ),
               ))),
     );
   }

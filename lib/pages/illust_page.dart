@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/appdata.dart';
 import 'package:pixes/components/animated_image.dart';
+import 'package:pixes/components/keyboard.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/message.dart';
 import 'package:pixes/components/page_route.dart';
@@ -154,8 +155,15 @@ class IllustPage extends StatefulWidget {
 class _IllustPageState extends State<IllustPage> {
   String get id => "${widget.illust.author.id}#${widget.illust.id}";
 
+  final _bottomBarController = _BottomBarController();
+
+  KeyEventListenerState? keyboardListener;
+
   @override
   void initState() {
+    keyboardListener = KeyEventListener.of(context);
+    keyboardListener?.removeAll();
+    keyboardListener?.addHandler(handleKey);
     IllustPage.followCallbacks[id] = (v) {
       setState(() {
         widget.illust.author.isFollowed = v;
@@ -166,6 +174,7 @@ class _IllustPageState extends State<IllustPage> {
 
   @override
   void dispose() {
+    keyboardListener?.removeHandler(handleKey);
     IllustPage.followCallbacks.remove(id);
     super.dispose();
   }
@@ -173,7 +182,7 @@ class _IllustPageState extends State<IllustPage> {
   @override
   Widget build(BuildContext context) {
     var isBlocked = checkIllusts([widget.illust]).isEmpty;
-    return buildKeyboardListener(ColoredBox(
+    return ColoredBox(
       color: FluentTheme.of(context).micaBackgroundColor,
       child: SizedBox.expand(
         child: ColoredBox(
@@ -195,6 +204,7 @@ class _IllustPageState extends State<IllustPage> {
                     constrains.maxHeight,
                     constrains.maxWidth,
                     updateCallback: () => setState(() {}),
+                    controller: _bottomBarController,
                   ),
                 if (isBlocked)
                   const Positioned.fill(
@@ -209,36 +219,53 @@ class _IllustPageState extends State<IllustPage> {
           }),
         ),
       ),
-    ));
+    );
   }
 
   final scrollController = ScrollController();
 
-  Widget buildKeyboardListener(Widget child) {
-    return KeyboardListener(
-      focusNode: FocusNode(),
-      autofocus: true,
-      onKeyEvent: (event) {
-        if (event is! KeyUpEvent) return;
-        const kShortcutScrollOffset = 200;
-        if (event.logicalKey == LogicalKeyboardKey.arrowDown) {
+  void handleKey(LogicalKeyboardKey key) {
+    const kShortcutScrollOffset = 200;
+
+    var shortcuts = appdata.settings["shortcuts"] as List;
+
+    switch (shortcuts.indexOf(key.keyId)) {
+      case 0:
+        if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent) {
+          _bottomBarController.openOrClose();
+        } else {
           scrollController.animateTo(
-              scrollController.offset + kShortcutScrollOffset,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut);
-        } else if (event.logicalKey == LogicalKeyboardKey.arrowUp) {
-          scrollController.animateTo(
-              scrollController.offset - kShortcutScrollOffset,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut);
-        } else if (event.logicalKey == LogicalKeyboardKey.arrowRight) {
-          widget.nextPage?.call();
-        } else if (event.logicalKey == LogicalKeyboardKey.arrowLeft) {
-          widget.previousPage?.call();
+            scrollController.offset + kShortcutScrollOffset,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut,
+          );
         }
-      },
-      child: child,
-    );
+        break;
+      case 1:
+        if (_bottomBarController.isOpen()) {
+          _bottomBarController.openOrClose();
+          break;
+        }
+        scrollController.animateTo(
+          scrollController.offset - kShortcutScrollOffset,
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOut,
+        );
+        break;
+      case 2:
+        widget.nextPage?.call();
+        break;
+      case 3:
+        widget.previousPage?.call();
+        break;
+      case 4:
+        _bottomBarController.favorite();
+      case 5:
+        _bottomBarController.download();
+      case 6:
+        _bottomBarController.follow();
+    }
   }
 
   Widget buildBody(double width, double height) {
@@ -344,8 +371,31 @@ class _IllustPageState extends State<IllustPage> {
   }
 }
 
+class _BottomBarController {
+  VoidCallback? _openOrClose;
+
+  VoidCallback get openOrClose => _openOrClose!;
+
+  bool Function()? _isOpen;
+
+  bool isOpen() => _isOpen!();
+
+  VoidCallback? _favorite;
+
+  VoidCallback get favorite => _favorite!;
+
+  VoidCallback? _download;
+
+  VoidCallback get download => _download!;
+
+  VoidCallback? _follow;
+
+  VoidCallback get follow => _follow!;
+}
+
 class _BottomBar extends StatefulWidget {
-  const _BottomBar(this.illust, this.height, this.width, {this.updateCallback});
+  const _BottomBar(this.illust, this.height, this.width,
+      {this.updateCallback, this.controller});
 
   final void Function()? updateCallback;
 
@@ -354,6 +404,8 @@ class _BottomBar extends StatefulWidget {
   final double height;
 
   final double width;
+
+  final _BottomBarController? controller;
 
   @override
   State<_BottomBar> createState() => _BottomBarState();
@@ -391,7 +443,30 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
       ..onCancel = _handlePointerCancel;
     animationController = AnimationController(
         vsync: this, duration: const Duration(milliseconds: 180), value: 1);
+    if (widget.controller != null) {
+      widget.controller!._openOrClose = () {
+        if (animationController.value == 0) {
+          animationController.animateTo(1);
+        } else if (animationController.value == 1) {
+          animationController.animateTo(0);
+        }
+      };
+      widget.controller!._isOpen = () => animationController.value == 0;
+      widget.controller!._favorite = favorite;
+      widget.controller!._download = () {
+        DownloadManager().addDownloadingTask(widget.illust);
+        setState(() {});
+      };
+      widget.controller!._follow = follow;
+    }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    _recognizer.dispose();
+    super.dispose();
   }
 
   void _handlePointerDown(DragStartDetails details) {}
@@ -541,31 +616,31 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
 
   bool isFollowing = false;
 
-  Widget buildAuthor() {
-    void follow() async {
-      if (isFollowing) return;
-      setState(() {
-        isFollowing = true;
-      });
-      var method = widget.illust.author.isFollowed ? "delete" : "add";
-      var res =
-          await Network().follow(widget.illust.author.id.toString(), method);
-      if (res.error) {
-        if (mounted) {
-          context.showToast(message: "Network Error");
-        }
-      } else {
-        widget.illust.author.isFollowed = !widget.illust.author.isFollowed;
+  void follow() async {
+    if (isFollowing) return;
+    setState(() {
+      isFollowing = true;
+    });
+    var method = widget.illust.author.isFollowed ? "delete" : "add";
+    var res =
+        await Network().follow(widget.illust.author.id.toString(), method);
+    if (res.error) {
+      if (mounted) {
+        context.showToast(message: "Network Error");
       }
-      setState(() {
-        isFollowing = false;
-      });
-      UserInfoPage.followCallbacks[widget.illust.author.id.toString()]
-          ?.call(widget.illust.author.isFollowed);
-      UserPreviewWidget.followCallbacks[widget.illust.author.id.toString()]
-          ?.call(widget.illust.author.isFollowed);
+    } else {
+      widget.illust.author.isFollowed = !widget.illust.author.isFollowed;
     }
+    setState(() {
+      isFollowing = false;
+    });
+    UserInfoPage.followCallbacks[widget.illust.author.id.toString()]
+        ?.call(widget.illust.author.isFollowed);
+    UserPreviewWidget.followCallbacks[widget.illust.author.id.toString()]
+        ?.call(widget.illust.author.isFollowed);
+  }
 
+  Widget buildAuthor() {
     final bool showUserName = MediaQuery.of(context).size.width > 640;
 
     return Card(
@@ -981,7 +1056,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
         ).fixWidth(96),
         Button(
           onPressed: () {
-            var text = "https://www.pixiv.net/artworks/${widget.illust.id}";
+            var text = "https://pixiv.net/artworks/${widget.illust.id}";
             Clipboard.setData(ClipboardData(text: text));
             showToast(context, message: "Copied".tl);
           },
