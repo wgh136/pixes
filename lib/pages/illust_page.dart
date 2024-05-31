@@ -318,6 +318,10 @@ class _IllustPageState extends State<IllustPage> {
     }
     Widget image;
 
+    var imageUrl = appdata.settings["showOriginalImage"]
+        ? widget.illust.images[index].original
+        : widget.illust.images[index].large;
+
     if (!widget.illust.isUgoira) {
       image = SizedBox(
         width: imageWidth,
@@ -327,8 +331,7 @@ class _IllustPageState extends State<IllustPage> {
           child: Image(
               key: ValueKey(index),
               image: downloadFile == null
-                  ? CachedImageProvider(widget.illust.images[index].large)
-                      as ImageProvider
+                  ? CachedImageProvider(imageUrl) as ImageProvider
                   : FileImage(downloadFile) as ImageProvider,
               width: imageWidth,
               fit: BoxFit.cover,

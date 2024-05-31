@@ -159,7 +159,8 @@
         "Follow the artist": "关注画师",
         "Manga": "漫画",
         "Actions": "操作",
-        "Current quantity": "当前数量"
+        "Current quantity": "当前数量",
+        "Display the original image on the details page": "在详情页显示原图"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -321,6 +322,7 @@
         "Follow the artist": "關注畫師",
         "Manga": "漫畫",
         "Actions": "操作",
-        "Current quantity": "當前數量"
+        "Current quantity": "當前數量",
+        "Display the original image on the details page": "在詳情頁顯示原圖"
     }
 }

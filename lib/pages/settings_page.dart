@@ -252,6 +252,16 @@ class _SettingsPageState extends State<SettingsPage> {
                   context.to(() => const ShortcutsSettings());
                 },
               )),
+          buildItem(
+              title: "Display the original image on the details page".tl,
+              action: ToggleSwitch(
+                  checked: appdata.settings['showOriginalImage'],
+                  onChanged: (value) {
+                    setState(() {
+                      appdata.settings['showOriginalImage'] = value;
+                    });
+                    appdata.writeData();
+                  })),
         ],
       ),
     );

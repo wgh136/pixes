@@ -33,6 +33,7 @@ class _Appdata {
       LogicalKeyboardKey.keyD.keyId,
       LogicalKeyboardKey.keyF.keyId,
     ],
+    "showOriginalImage": false,
   };
 
   bool lock = false;
