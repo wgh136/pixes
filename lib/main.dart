@@ -2,6 +2,7 @@ import "dart:ui";
 
 import "package:dynamic_color/dynamic_color.dart";
 import "package:fluent_ui/fluent_ui.dart";
+import "package:flutter/foundation.dart";
 import "package:flutter/material.dart" as md;
 import "package:flutter/services.dart";
 import "package:flutter_acrylic/flutter_acrylic.dart" as flutter_acrylic;
@@ -57,6 +58,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    var windowsFont = kDebugMode ? "微软雅黑" : "font";
     return StateBuilder<SimpleController>(
         init: SimpleController(),
         tag: "MyApp",
@@ -89,7 +91,7 @@ class MyApp extends StatelessWidget {
                     title: 'pixes',
                     theme: FluentThemeData(
                         brightness: brightness,
-                        fontFamily: App.isWindows ? '微软雅黑' : null,
+                        fontFamily: App.isWindows ? windowsFont : null,
                         accentColor: AccentColor.swatch({
                           'darkest': darken(colorScheme.primary, 30),
                           'darker': darken(colorScheme.primary, 20),
