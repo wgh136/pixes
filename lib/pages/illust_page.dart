@@ -981,7 +981,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
         ).fixWidth(96),
         Button(
           onPressed: () {
-            var text = "https://pixiv.net/artworks/${widget.illust.id}";
+            var text = "https://www.pixiv.net/artworks/${widget.illust.id}";
             Clipboard.setData(ClipboardData(text: text));
             showToast(context, message: "Copied".tl);
           },
