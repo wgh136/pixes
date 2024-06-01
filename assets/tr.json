@@ -160,7 +160,8 @@
         "Manga": "漫画",
         "Actions": "操作",
         "Current quantity": "当前数量",
-        "Display the original image on the details page": "在详情页显示原图"
+        "Display the original image on the details page": "在详情页显示原图",
+        "Open link": "打开链接"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -323,6 +324,7 @@
         "Manga": "漫畫",
         "Actions": "操作",
         "Current quantity": "當前數量",
-        "Display the original image on the details page": "在詳情頁顯示原圖"
+        "Display the original image on the details page": "在詳情頁顯示原圖",
+        "Open link": "打開鏈接"
     }
 }

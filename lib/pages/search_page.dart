@@ -10,7 +10,9 @@ import 'package:pixes/network/network.dart';
 import 'package:pixes/pages/illust_page.dart';
 import 'package:pixes/pages/novel_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
+import 'package:pixes/utils/app_links.dart';
 import 'package:pixes/utils/block.dart';
+import 'package:pixes/utils/ext.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../components/animated_image.dart';
@@ -41,6 +43,12 @@ class _SearchPageState extends State<SearchPage> {
   ];
 
   void search() {
+    if (text.isURL && handleLink(Uri.parse(text))) {
+      return;
+    } else if ("https://$text".isURL &&
+        handleLink(Uri.parse("https://$text"))) {
+      return;
+    }
     switch (searchType) {
       case 0:
         context.to(() => SearchResultPage(text));
@@ -92,7 +100,8 @@ class _SearchPageState extends State<SearchPage> {
                 children: [
                   Expanded(
                     child: TextBox(
-                      placeholder: searchTypes[searchType].tl,
+                      placeholder:
+                          searchTypes[searchType].tl + ' / ' "Open link".tl,
                       onChanged: (s) => text = s,
                       onSubmitted: (s) => search(),
                       foregroundDecoration: BoxDecoration(
@@ -127,9 +136,9 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                       onPressed: () {
                         optionController.showFlyout(
-                          placementMode: FlyoutPlacementMode.bottomCenter,
-                          builder: buildSearchOption,
-                        );
+                            placementMode: FlyoutPlacementMode.bottomCenter,
+                            builder: buildSearchOption,
+                            barrierColor: Colors.transparent);
                       },
                     ),
                   ),
