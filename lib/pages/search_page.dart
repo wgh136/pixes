@@ -101,7 +101,7 @@ class _SearchPageState extends State<SearchPage> {
                   Expanded(
                     child: TextBox(
                       placeholder:
-                          searchTypes[searchType].tl + ' / ' "Open link".tl,
+                          '${searchTypes[searchType].tl} / ${"Open link".tl}',
                       onChanged: (s) => text = s,
                       onSubmitted: (s) => search(),
                       foregroundDecoration: BoxDecoration(
