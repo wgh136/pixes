@@ -59,48 +59,58 @@ class _IllustWidgetState extends State<IllustWidget> {
           height: height,
           child: Stack(
             children: [
-              Positioned.fill(child: Container(
+              Positioned.fill(
+                  child: Container(
                 width: width,
                 height: height,
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                 child: Card(
                   padding: EdgeInsets.zero,
                   margin: EdgeInsets.zero,
                   child: GestureDetector(
-                    onTap: widget.onTap ?? (){
-                      context.to(() => IllustPage(widget.illust));
-                    },
+                    onTap: widget.onTap ??
+                        () {
+                          context.to(() => IllustPage(widget.illust));
+                        },
                     onSecondaryTapUp: showMenu,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(4.0),
                       child: AnimatedImage(
-                        image: CachedImageProvider(widget.illust.images.first.medium),
+                        image: CachedImageProvider(
+                            widget.illust.images.first.medium),
                         fit: BoxFit.cover,
-                        width: width-16.0,
-                        height: height-16.0,
+                        width: width - 16.0,
+                        height: height - 16.0,
                       ),
                     ),
                   ),
                 ),
               )),
-              if(widget.illust.images.length > 1)
+              if (widget.illust.images.length > 1)
                 Positioned(
                   top: 12,
                   left: 12,
                   child: Container(
-                    width: 28,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      color: FluentTheme.of(context).cardColor,
-                      borderRadius: BorderRadius.circular(4),
-                      border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6),
-                    ),
-                    child: Center(
-                      child: Text("${widget.illust.images.length}P",
-                        style: const TextStyle(fontSize: 12),),
-                    )),
+                      width: 28,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: FluentTheme.of(context)
+                            .micaBackgroundColor
+                            .withOpacity(0.72),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant,
+                            width: 0.6),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "${widget.illust.images.length}P",
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      )),
                 ),
-              if(widget.illust.isAi)
+              if (widget.illust.isAi)
                 Positioned(
                   bottom: 12,
                   left: 12,
@@ -108,16 +118,22 @@ class _IllustWidgetState extends State<IllustWidget> {
                       width: 28,
                       height: 20,
                       decoration: BoxDecoration(
-                        color: ColorScheme.of(context).errorContainer.withOpacity(0.8),
+                        color: ColorScheme.of(context)
+                            .errorContainer
+                            .withOpacity(0.8),
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant,
+                            width: 0.6),
                       ),
                       child: const Center(
-                        child: Text("AI",
-                          style: TextStyle(fontSize: 12),),
+                        child: Text(
+                          "AI",
+                          style: TextStyle(fontSize: 12),
+                        ),
                       )),
                 ),
-              if(widget.illust.isUgoira)
+              if (widget.illust.isUgoira)
                 Positioned(
                   bottom: 12,
                   left: 12,
@@ -125,16 +141,22 @@ class _IllustWidgetState extends State<IllustWidget> {
                       width: 28,
                       height: 20,
                       decoration: BoxDecoration(
-                        color: ColorScheme.of(context).primaryContainer.withOpacity(0.8),
+                        color: ColorScheme.of(context)
+                            .primaryContainer
+                            .withOpacity(0.8),
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant,
+                            width: 0.6),
                       ),
                       child: const Center(
-                        child: Text("GIF",
-                          style: TextStyle(fontSize: 12),),
+                        child: Text(
+                          "GIF",
+                          style: TextStyle(fontSize: 12),
+                        ),
                       )),
                 ),
-              if(widget.illust.isR18)
+              if (widget.illust.isR18)
                 Positioned(
                   bottom: 12,
                   right: 12,
@@ -144,14 +166,18 @@ class _IllustWidgetState extends State<IllustWidget> {
                       decoration: BoxDecoration(
                         color: ColorScheme.of(context).errorContainer,
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant,
+                            width: 0.6),
                       ),
                       child: const Center(
-                        child: Text("R18",
-                          style: TextStyle(fontSize: 12),),
+                        child: Text(
+                          "R18",
+                          style: TextStyle(fontSize: 12),
+                        ),
                       )),
                 ),
-              if(widget.illust.isR18G)
+              if (widget.illust.isR18G)
                 Positioned(
                   bottom: 12,
                   right: 12,
@@ -161,11 +187,15 @@ class _IllustWidgetState extends State<IllustWidget> {
                       decoration: BoxDecoration(
                         color: ColorScheme.of(context).errorContainer,
                         borderRadius: BorderRadius.circular(4),
-                        border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant,
+                            width: 0.6),
                       ),
                       child: const Center(
-                        child: Text("R18G",
-                          style: TextStyle(fontSize: 12),),
+                        child: Text(
+                          "R18G",
+                          style: TextStyle(fontSize: 12),
+                        ),
                       )),
                 ),
               Positioned(
@@ -196,31 +226,38 @@ class _IllustWidgetState extends State<IllustWidget> {
       builder: (context) {
         return MenuFlyout(
           items: [
-            MenuFlyoutItem(text: Text("View".tl), onPressed: (){
-              context.to(() => IllustPage(widget.illust));
-            }),
-            MenuFlyoutItem(text: Text("Private Favorite".tl), onPressed: (){
-              favorite("private");
-            }),
-            MenuFlyoutItem(text: Text("Download".tl), onPressed: (){
-              context.showToast(message: "Added");
-              DownloadManager().addDownloadingTask(widget.illust);
-            }),
+            MenuFlyoutItem(
+                text: Text("View".tl),
+                onPressed: () {
+                  context.to(() => IllustPage(widget.illust));
+                }),
+            MenuFlyoutItem(
+                text: Text("Private Favorite".tl),
+                onPressed: () {
+                  favorite("private");
+                }),
+            MenuFlyoutItem(
+                text: Text("Download".tl),
+                onPressed: () {
+                  context.showToast(message: "Added");
+                  DownloadManager().addDownloadingTask(widget.illust);
+                }),
           ],
         );
       },
     );
   }
 
-  void favorite([String type = "public"]) async{
-    if(isBookmarking) return;
+  void favorite([String type = "public"]) async {
+    if (isBookmarking) return;
     setState(() {
       isBookmarking = true;
     });
     var method = widget.illust.isBookmarked ? "delete" : "add";
-    var res = await Network().addBookmark(widget.illust.id.toString(), method, type);
-    if(res.error) {
-      if(mounted) {
+    var res =
+        await Network().addBookmark(widget.illust.id.toString(), method, type);
+    if (res.error) {
+      if (mounted) {
         context.showToast(message: "Network Error");
       }
     } else {
@@ -233,16 +270,18 @@ class _IllustWidgetState extends State<IllustWidget> {
 
   Widget buildButton() {
     Widget child;
-    if(isBookmarking) {
+    if (isBookmarking) {
       child = const SizedBox(
         width: 14,
         height: 14,
-        child: ProgressRing(strokeWidth: 1.6,),
+        child: ProgressRing(
+          strokeWidth: 1.6,
+        ),
       );
-    } else if(widget.illust.isBookmarked) {
+    } else if (widget.illust.isBookmarked) {
       child = Icon(
         MdIcons.favorite,
-        color: ColorScheme.of(context).error,
+        color: Colors.red,
         size: 22,
       );
     } else {

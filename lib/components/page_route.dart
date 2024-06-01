@@ -328,11 +328,15 @@ class SideBarRoute<T> extends PopupRoute<T> {
             bottom: 0,
             child: Container(
               decoration: BoxDecoration(
-                color: FluentTheme.of(context).micaBackgroundColor.withOpacity(0.98),
-                borderRadius: const BorderRadius.only(topLeft: Radius.circular(4), bottomLeft: Radius.circular(4))
-              ),
-              constraints: BoxConstraints(maxWidth: min(_kSideBarWidth,
-                  MediaQuery.of(context).size.width)),
+                  color: FluentTheme.of(context)
+                      .micaBackgroundColor
+                      .withOpacity(0.98),
+                  borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(4),
+                      bottomLeft: Radius.circular(4))),
+              constraints: BoxConstraints(
+                  maxWidth:
+                      min(_kSideBarWidth, MediaQuery.of(context).size.width)),
               width: double.infinity,
               child: child,
             ),

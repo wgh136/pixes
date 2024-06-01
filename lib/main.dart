@@ -136,7 +136,8 @@ class MyApp extends StatelessWidget {
                         if (App.windowsVersion == 11) {
                           flutter_acrylic.Window.setEffect(
                               effect: flutter_acrylic.WindowEffect.mica,
-                              dark: false);
+                              dark: FluentTheme.of(context).brightness ==
+                                  Brightness.dark);
                           widget = NavigationPaneTheme(
                             data: const NavigationPaneThemeData(
                               backgroundColor: Colors.transparent,
@@ -146,12 +147,13 @@ class MyApp extends StatelessWidget {
                         } else if (App.windowsVersion == 10) {
                           flutter_acrylic.Window.setEffect(
                               effect: flutter_acrylic.WindowEffect.acrylic,
-                              dark: false);
+                              dark: FluentTheme.of(context).brightness ==
+                                  Brightness.dark);
                           widget = NavigationPaneTheme(
                             data: NavigationPaneThemeData(
                               backgroundColor: FluentTheme.of(context)
                                   .micaBackgroundColor
-                                  .withOpacity(0.05),
+                                  .withOpacity(0.72),
                             ),
                             child: widget,
                           );

@@ -29,7 +29,7 @@ class _NovelReadingPageState extends LoadingState<NovelReadingPage, String> {
 
   @override
   void initState() {
-    action = TitleBarAction(MdIcons.tune, "Settings", () {
+    action = TitleBarAction(MdIcons.tune, "Settings".tl, () {
       if (!isShowingSettings) {
         _NovelReadingSettings.show(context, () {
           setState(() {});
@@ -138,7 +138,8 @@ class _NovelReadingSettings extends StatefulWidget {
   final void Function() callback;
 
   static Future show(BuildContext context, void Function() callback) {
-    return Navigator.of(context).push(SideBarRoute(_NovelReadingSettings(callback)));
+    return Navigator.of(context)
+        .push(SideBarRoute(_NovelReadingSettings(callback)));
   }
 
   @override

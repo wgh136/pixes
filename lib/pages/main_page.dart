@@ -3,7 +3,6 @@ import "dart:async";
 import "package:fluent_ui/fluent_ui.dart";
 import "package:flutter/foundation.dart";
 import "package:pixes/appdata.dart";
-import "package:pixes/components/keyboard.dart";
 import "package:pixes/components/md.dart";
 import "package:pixes/foundation/app.dart";
 import "package:pixes/foundation/image_provider.dart";

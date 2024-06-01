@@ -161,7 +161,8 @@
         "Actions": "操作",
         "Current quantity": "当前数量",
         "Display the original image on the details page": "在详情页显示原图",
-        "Open link": "打开链接"
+        "Open link": "打开链接",
+        "Read": "阅读"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -325,6 +326,7 @@
         "Actions": "操作",
         "Current quantity": "當前數量",
         "Display the original image on the details page": "在詳情頁顯示原圖",
-        "Open link": "打開鏈接"
+        "Open link": "打開鏈接",
+        "Read": "閱讀"
     }
 }

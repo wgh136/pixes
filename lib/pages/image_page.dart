@@ -201,35 +201,37 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                     ),
                   ),
                 ),
-                Positioned(
-                  left: 0,
-                  top: height / 2 - 9,
-                  child: IconButton(
-                    icon: const Icon(
-                      FluentIcons.chevron_left,
-                      size: 18,
-                    ),
-                    onPressed: () {
-                      controller.previousPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    },
-                  ).paddingAll(8),
-                ),
-                Positioned(
-                  right: 0,
-                  top: height / 2 - 9,
-                  child: IconButton(
-                    icon: const Icon(FluentIcons.chevron_right, size: 18),
-                    onPressed: () {
-                      controller.nextPage(
-                        duration: const Duration(milliseconds: 300),
-                        curve: Curves.easeInOut,
-                      );
-                    },
-                  ).paddingAll(8),
-                ),
+                if (currentPage != 0)
+                  Positioned(
+                    left: 0,
+                    top: height / 2 - 9,
+                    child: IconButton(
+                      icon: const Icon(
+                        FluentIcons.chevron_left,
+                        size: 18,
+                      ),
+                      onPressed: () {
+                        controller.previousPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                    ).paddingAll(8),
+                  ),
+                if (currentPage != widget.urls.length - 1)
+                  Positioned(
+                    right: 0,
+                    top: height / 2 - 9,
+                    child: IconButton(
+                      icon: const Icon(FluentIcons.chevron_right, size: 18),
+                      onPressed: () {
+                        controller.nextPage(
+                          duration: const Duration(milliseconds: 300),
+                          curve: Curves.easeInOut,
+                        );
+                      },
+                    ).paddingAll(8),
+                  ),
                 Positioned(
                   left: 12,
                   bottom: 8,
