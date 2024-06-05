@@ -162,7 +162,10 @@
         "Current quantity": "当前数量",
         "Display the original image on the details page": "在详情页显示原图",
         "Open link": "打开链接",
-        "Read": "阅读"
+        "Read": "阅读",
+        "Error": "错误",
+        "Failed to register URL scheme.": "注册URL协议失败",
+        "Retry": "重试"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -327,6 +330,9 @@
         "Current quantity": "當前數量",
         "Display the original image on the details page": "在詳情頁顯示原圖",
         "Open link": "打開鏈接",
-        "Read": "閱讀"
+        "Read": "閱讀",
+        "Error": "錯誤",
+        "Failed to register URL scheme.": "註冊URL協議失敗",
+        "Retry": "重試"
     }
 }

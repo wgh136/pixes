@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:app_links/app_links.dart';
+import 'package:fluent_ui/fluent_ui.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/log.dart';
 import 'package:pixes/pages/illust_page.dart';
@@ -8,6 +9,7 @@ import 'package:pixes/pages/novel_page.dart';
 import 'package:pixes/pages/search_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/ext.dart';
+import 'package:pixes/utils/translation.dart';
 import 'package:win32_registry/win32_registry.dart';
 
 Future<void> _register(String scheme) async {
@@ -31,13 +33,40 @@ Future<void> _register(String scheme) async {
   regKey.createKey(protocolCmdRegKey).createValue(protocolCmdRegValue);
 }
 
+void _registerPixiv() async {
+  try {
+    await _register("pixiv");
+  } catch (e) {
+    // 注册失败会导致登录不可用
+    while (App.mainNavigatorKey == null) {
+      await Future.delayed(const Duration(milliseconds: 100));
+    }
+    Future.delayed(const Duration(seconds: 1), () async {
+      showDialog(
+          context: App.rootNavigatorKey.currentContext!,
+          builder: (context) => ContentDialog(
+                title: Text("Error".tl),
+                content: Text("${"Failed to register URL scheme.".tl}\n$e"),
+                actions: [
+                  FilledButton(
+                      child: Text("Retry".tl),
+                      onPressed: () {
+                        context.pop();
+                        _registerPixiv();
+                      })
+                ],
+              ));
+    });
+  }
+}
+
 bool Function(Uri uri)? onLink;
 
 bool _firstLink = true;
 
 void handleLinks() async {
   if (App.isWindows) {
-    await _register("pixiv");
+    _registerPixiv();
   }
   AppLinks().uriLinkStream.listen((uri) async {
     if (_firstLink) {
