@@ -63,13 +63,16 @@ class _Appdata {
   Future<void> readData() async {
     final file = File("${App.dataPath}/account.json");
     if (file.existsSync()) {
-      account = Account.fromJson(jsonDecode(await file.readAsString()));
+      var json = jsonDecode(await file.readAsString());
+      if(json != null) {
+        account = Account.fromJson(json);
+      }
     }
     final settingsFile = File("${App.dataPath}/settings.json");
     if (settingsFile.existsSync()) {
       var json = jsonDecode(await settingsFile.readAsString());
       for (var key in json.keys) {
-        if(json[key] != null) {
+        if (json[key] != null) {
           settings[key] = json[key];
         }
       }

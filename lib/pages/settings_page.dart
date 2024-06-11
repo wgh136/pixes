@@ -88,6 +88,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         child: Text('Continue'.tl),
                         onPressed: () {
                           appdata.account = null;
+                          appdata.writeData();
                           App.rootNavigatorKey.currentState!.pushAndRemoveUntil(
                               AppPageRoute(
                                   builder: (context) => const MainPage()),

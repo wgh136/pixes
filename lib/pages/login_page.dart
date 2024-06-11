@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:pixes/components/button.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/network.dart';
 import 'package:pixes/pages/webview_page.dart';
@@ -56,22 +57,11 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (checked)
-                            FilledButton(
-                              onPressed: onContinue,
-                              child: Text("Continue".tl),
-                            )
-                          else
-                            Container(
-                              height: 28,
-                              width: 78,
-                              decoration: BoxDecoration(
-                                  color: FluentTheme.of(context)
-                                      .inactiveBackgroundColor,
-                                  borderRadius: BorderRadius.circular(4)),
-                              child: Center(
-                                child: Text("Continue".tl),
-                              ),
+                          FluentButton(
+                            onPressed: onContinue,
+                            enabled: checked, 
+                            width: 96,
+                            child: Text("Continue".tl),
                             ),
                           const SizedBox(
                             height: 16,
