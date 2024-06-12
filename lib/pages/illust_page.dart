@@ -60,6 +60,8 @@ class _IllustGalleryPageState extends State<IllustGalleryPage> {
 
   bool loading = false;
 
+  late int page = widget.initialPage;
+
   @override
   void initState() {
     illusts = List.from(widget.illusts);
@@ -114,14 +116,16 @@ class _IllustGalleryPageState extends State<IllustGalleryPage> {
               return IllustPage(illusts[index],
                   nextPage: nextPage, previousPage: previousPage);
             },
-            onPageChanged: (value) => setState(() {}),
+            onPageChanged: (value) => setState(() {
+              page = value;
+            }),
           ),
         ),
-        if (controller.page! < length - 1 && length > 1)
+        if (page < length - 1 && length > 1 && App.isDesktop)
           Positioned(
-            right: 16,
+            right: 0,
             top: 0,
-            bottom: 0,
+            bottom: 32,
             child: Center(
                 child: IconButton(
               icon: const Icon(FluentIcons.chevron_right),
@@ -130,11 +134,11 @@ class _IllustGalleryPageState extends State<IllustGalleryPage> {
               },
             )),
           ),
-        if (controller.page != 0 && length > 1)
+        if (page != 0 && length > 1 && App.isDesktop)
           Positioned(
-            left: 16,
+            left: 0,
             top: 0,
-            bottom: 0,
+            bottom: 32,
             child: Center(
                 child: IconButton(
               icon: const Icon(FluentIcons.chevron_left),

@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:pixes/components/md.dart';
+import 'package:pixes/components/message.dart';
 import 'package:pixes/components/page_route.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/cache_manager.dart';
@@ -89,6 +91,8 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
 
   void showMenu() {
     menuController.showFlyout(
+        barrierColor: Colors.transparent,
+        position: Offset(context.size!.width, 0),
         builder: (context) => MenuFlyout(
               items: [
                 MenuFlyoutItem(
@@ -103,6 +107,23 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                         saveFile(file, fileName);
                       }
                     }),
+                if (App.isMobile)
+                  MenuFlyoutItem(
+                      text: Text("Save to gallery".tl),
+                      onPressed: () async {
+                        var file = await getFile();
+                        if (file != null) {
+                          var fileName = file.path.split('/').last;
+                          if (!fileName.contains('.')) {
+                            fileName += getExtensionName();
+                          }
+                          await ImageGallerySaver.saveFile(file.path,
+                              name: fileName);
+                          if (mounted) {
+                            showToast(context, message: "Saved".tl);
+                          }
+                        }
+                      }),
                 MenuFlyoutItem(
                     text: Text("Share".tl),
                     onPressed: () async {

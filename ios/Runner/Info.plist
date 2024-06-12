@@ -56,5 +56,9 @@
             <string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
         </dict>
     </array>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>photo</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>photo</string>
 </dict>
 </plist>

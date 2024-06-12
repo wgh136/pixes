@@ -166,7 +166,8 @@
         "Error": "错误",
         "Failed to register URL scheme.": "注册URL协议失败",
         "Retry": "重试",
-        "Network": "网络"
+        "Network": "网络",
+        "Save to gallery": "保存到相册"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -335,6 +336,7 @@
         "Error": "錯誤",
         "Failed to register URL scheme.": "註冊URL協議失敗",
         "Retry": "重試",
-        "Network": "網絡"
+        "Network": "網絡",
+        "Save to gallery": "保存到相冊"
     }
 }
