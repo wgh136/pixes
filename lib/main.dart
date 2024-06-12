@@ -11,6 +11,7 @@ import "package:pixes/components/keyboard.dart";
 import "package:pixes/components/md.dart";
 import "package:pixes/components/message.dart";
 import "package:pixes/foundation/app.dart";
+import "package:pixes/foundation/history.dart";
 import "package:pixes/foundation/log.dart";
 import "package:pixes/network/app_dio.dart";
 import "package:pixes/pages/main_page.dart";
@@ -29,6 +30,7 @@ void main() async {
   await App.init();
   await appdata.readData();
   await Translation.init();
+  HistoryManager().init();
   handleLinks();
   if (App.isDesktop) {
     await flutter_acrylic.Window.initialize();

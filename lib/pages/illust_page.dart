@@ -14,6 +14,7 @@ import 'package:pixes/components/page_route.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/components/user_preview.dart';
 import 'package:pixes/foundation/app.dart';
+import 'package:pixes/foundation/history.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/network/download.dart';
 import 'package:pixes/network/network.dart';
@@ -44,6 +45,8 @@ class IllustGalleryPage extends StatefulWidget {
 
   final String? nextUrl;
 
+  static var cachedHistoryIds = <int>{};
+
   @override
   State<IllustGalleryPage> createState() => _IllustGalleryPageState();
 }
@@ -66,6 +69,16 @@ class _IllustGalleryPageState extends State<IllustGalleryPage> {
       nextUrl = null;
     }
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    if(IllustGalleryPage.cachedHistoryIds.length > 5) {
+      Network().sendHistory(
+        IllustGalleryPage.cachedHistoryIds.toList().reversed.toList());
+      IllustGalleryPage.cachedHistoryIds.clear();
+    }
+    super.dispose();
   }
 
   void nextPage() {
@@ -169,6 +182,10 @@ class _IllustPageState extends State<IllustPage> {
         widget.illust.author.isFollowed = v;
       });
     };
+    HistoryManager().addHistory(widget.illust);
+    if(appdata.account!.user.isPremium) {
+      IllustGalleryPage.cachedHistoryIds.add(widget.illust.id);
+    }
     super.initState();
   }
 

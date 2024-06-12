@@ -573,4 +573,14 @@ class Network {
       return Res.error(res.errorMessage);
     }
   }
+
+  Future<Res<bool>> sendHistory(List<int> ids) async{
+    var res = await apiPost("/v2/user/browsing-history/illust/add",
+        data: {"illust_ids": ids});
+    if (res.success) {
+      return const Res(true);
+    } else {
+      return Res.fromErrorRes(res);
+    }
+  }
 }

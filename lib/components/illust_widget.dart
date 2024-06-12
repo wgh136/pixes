@@ -1,6 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/foundation/app.dart';
+import 'package:pixes/foundation/history.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/network/download.dart';
 import 'package:pixes/utils/translation.dart';
@@ -305,5 +306,164 @@ class _IllustWidgetState extends State<IllustWidget> {
         ),
       ),
     );
+  }
+}
+
+class IllustHistoryWidget extends StatelessWidget {
+  const IllustHistoryWidget(this.illust, {super.key});
+
+  final IllustHistory illust;
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(builder: (context, constrains) {
+      final width = constrains.maxWidth;
+      final height = illust.height * width / illust.width;
+      return SizedBox(
+          width: width,
+          height: height,
+          child: Stack(
+            children: [
+              Positioned.fill(
+                  child: Container(
+                width: width,
+                height: height,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                child: Card(
+                  padding: EdgeInsets.zero,
+                  margin: EdgeInsets.zero,
+                  child: GestureDetector(
+                    onTap: () {
+                      context.to(() => IllustPageWithId(illust.id.toString()));
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(4.0),
+                      child: AnimatedImage(
+                        image: CachedImageProvider(
+                            illust.imgPath),
+                        fit: BoxFit.cover,
+                        width: width - 16.0,
+                        height: height - 16.0,
+                      ),
+                    ),
+                  ),
+                ),
+              )),
+              if (illust.imageCount > 1)
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                      width: 28,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: FluentTheme.of(context)
+                            .micaBackgroundColor
+                            .withOpacity(0.72),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant,
+                            width: 0.6),
+                      ),
+                      child: Center(
+                        child: Text(
+                          "${illust.imageCount}P",
+                          style: const TextStyle(fontSize: 12),
+                        ),
+                      )),
+                ),
+              if (illust.isAi)
+                Positioned(
+                  bottom: 12,
+                  left: 12,
+                  child: Container(
+                      width: 28,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context)
+                            .errorContainer
+                            .withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant,
+                            width: 0.6),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "AI",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      )),
+                ),
+              if (illust.isGif)
+                Positioned(
+                  bottom: 12,
+                  left: 12,
+                  child: Container(
+                      width: 28,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context)
+                            .primaryContainer
+                            .withOpacity(0.8),
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant,
+                            width: 0.6),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "GIF",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      )),
+                ),
+              if (illust.isR18)
+                Positioned(
+                  bottom: 12,
+                  right: 12,
+                  child: Container(
+                      width: 28,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).errorContainer,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant,
+                            width: 0.6),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "R18",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      )),
+                ),
+              if (illust.isR18G)
+                Positioned(
+                  bottom: 12,
+                  right: 12,
+                  child: Container(
+                      width: 28,
+                      height: 20,
+                      decoration: BoxDecoration(
+                        color: ColorScheme.of(context).errorContainer,
+                        borderRadius: BorderRadius.circular(4),
+                        border: Border.all(
+                            color: ColorScheme.of(context).outlineVariant,
+                            width: 0.6),
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "R18G",
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      )),
+                ),
+            ],
+          ),
+        );
+    });
   }
 }
