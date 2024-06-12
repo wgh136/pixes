@@ -6,7 +6,7 @@
 [![stars](https://img.shields.io/github/stars/wgh136/pixes)](https://github.com/wgh136/pixes/stargazers)
 [![Telegram Discussion](https://img.shields.io/static/v1?label=Discussion&message=Telegram&color=blue&logo=telegram)](https://t.me/pica_group)
 
-非官方 Pixiv app, 支持 Windows, Android, iOS, macOS
+非官方 Pixiv app, 支持 Windows, Android, iOS, macOS, linux
 
 主要功能均已实现
 
