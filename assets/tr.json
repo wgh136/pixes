@@ -167,7 +167,11 @@
         "Failed to register URL scheme.": "注册URL协议失败",
         "Retry": "重试",
         "Network": "网络",
-        "Save to gallery": "保存到相册"
+        "Save to gallery": "保存到相册",
+        "Choose a way to login": "选择登录方式",
+        "Use Webview: you cannot sign in with Google.": "使用Webview: 无法使用Google登录",
+        "Use an external browser: You can sign in using Google. However, some browsers may not be compatible with the application": "使用外部浏览器: 可以使用Google登录. 但是, 一些浏览器可能与应用程序不兼容",
+        "External browser": "外部浏览器"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -337,6 +341,10 @@
         "Failed to register URL scheme.": "註冊URL協議失敗",
         "Retry": "重試",
         "Network": "網絡",
-        "Save to gallery": "保存到相冊"
+        "Save to gallery": "保存到相冊",
+        "Choose a way to login": "選擇登錄方式",
+        "Use Webview: you cannot sign in with Google.": "使用Webview: 無法使用Google登錄",
+        "Use an external browser: You can sign in using Google. However, some browsers may not be compatible with the application": "使用外部瀏覽器: 可以使用Google登錄. 但是, 一些瀏覽器可能與應用程序不兼容",
+        "External browser": "外部瀏覽器"
     }
 }

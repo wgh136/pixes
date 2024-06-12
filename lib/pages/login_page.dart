@@ -25,7 +25,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    if(isLogging) {
+    if (isLogging) {
       return buildLoading(context);
     } else if (!waitingForAuth) {
       return buildLogin(context);
@@ -59,10 +59,10 @@ class _LoginPageState extends State<LoginPage> {
                         children: [
                           FluentButton(
                             onPressed: onContinue,
-                            enabled: checked, 
+                            enabled: checked,
                             width: 96,
                             child: Text("Continue".tl),
-                            ),
+                          ),
                           const SizedBox(
                             height: 16,
                           ),
@@ -176,6 +176,39 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void onContinue() async {
+    bool? useExternal;
+    if (App.isMobile) {
+      await showDialog(
+        context: context,
+        barrierDismissible: true,
+        builder: (context) => ContentDialog(
+            title: Text("Choose a way to login".tl),
+            content: Text("${"Use Webview: you cannot sign in with Google.".tl}"
+                "\n\n"
+                "${"Use an external browser: You can sign in using Google. However, some browsers may not be compatible with the application".tl}"),
+            actions: [
+              Button(
+                child: Text("Webview".tl),
+                onPressed: () {
+                  useExternal = false;
+                  App.rootNavigatorKey.currentState!.pop();
+                },
+              ),
+              Button(
+                child: Text("External browser".tl),
+                onPressed: () {
+                  useExternal = true;
+                  App.rootNavigatorKey.currentState!.pop();
+                },
+              )
+            ]),
+      );
+    } else {
+      useExternal = true;
+    }
+    if (useExternal == null) {
+      return;
+    }
     var url = await Network().generateWebviewUrl();
     onLink = (uri) {
       if (uri.scheme == "pixiv") {
@@ -188,15 +221,18 @@ class _LoginPageState extends State<LoginPage> {
     setState(() {
       waitingForAuth = true;
     });
-    if(App.isMobile && mounted) {
-      context.to(() => WebviewPage(url, onNavigation: (req) {
-        if(req.url.startsWith("pixiv://")) {
-          App.rootNavigatorKey.currentState!.pop();
-          onLink?.call(Uri.parse(req.url));
-          return false;
-        }
-        return true;
-      },));
+    if (!useExternal! && mounted) {
+      context.to(() => WebviewPage(
+            url,
+            onNavigation: (req) {
+              if (req.url.startsWith("pixiv://")) {
+                App.rootNavigatorKey.currentState!.pop();
+                onLink?.call(Uri.parse(req.url));
+                return false;
+              }
+              return true;
+            },
+          ));
     } else {
       launchUrlString(url);
     }
@@ -209,7 +245,7 @@ class _LoginPageState extends State<LoginPage> {
     });
     var res = await Network().loginWithCode(code);
     if (res.error) {
-      if(mounted) {
+      if (mounted) {
         context.showToast(message: res.errorMessage!);
       }
       setState(() {

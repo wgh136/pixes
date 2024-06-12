@@ -42,13 +42,13 @@ class FluentButton extends BaseButton {
 
   final double? width;
 
-  static const _kFluentButtonPadding = 24;
+  static const _kFluentButtonPadding = 12.0;
 
   @override
   Widget buildNormal(BuildContext context) {
     Widget child = this.child;
     if (width != null) {
-      child = child.fixWidth(width! - _kFluentButtonPadding);
+      child = child.fixWidth(width! - _kFluentButtonPadding * 2);
     }
     return FilledButton(
       onPressed: onPressed,
@@ -59,15 +59,18 @@ class FluentButton extends BaseButton {
   @override
   Widget buildLoading(BuildContext context) {
     Widget child = Center(
+      widthFactor: 1,
+      heightFactor: 1,
       child: const ProgressRing(
         strokeWidth: 1.6,
       ).fixWidth(14).fixHeight(14),
     );
     if (width != null) {
-      child = child.fixWidth(width!);
+      child = child.fixWidth(width! - _kFluentButtonPadding * 2);
     }
     return Container(
-      height: 26,
+      padding: const EdgeInsets.symmetric(
+          horizontal: _kFluentButtonPadding, vertical: 6.5),
       decoration: BoxDecoration(
           color: FluentTheme.of(context).inactiveBackgroundColor,
           borderRadius: BorderRadius.circular(4)),
@@ -78,19 +81,20 @@ class FluentButton extends BaseButton {
   @override
   Widget buildDisabled(BuildContext context) {
     Widget child = Center(
+      widthFactor: 1,
+      heightFactor: 1,
       child: this.child,
     );
     if (width != null) {
-      child = child.fixWidth(width!);
+      child = child.fixWidth(width! - _kFluentButtonPadding * 2);
     }
-    return Center(
-      child: Container(
-        height: 26,
-        decoration: BoxDecoration(
-            color: FluentTheme.of(context).inactiveBackgroundColor,
-            borderRadius: BorderRadius.circular(4)),
-        child: child,
-      ),
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: _kFluentButtonPadding, vertical: 6.5),
+      decoration: BoxDecoration(
+          color: FluentTheme.of(context).inactiveBackgroundColor,
+          borderRadius: BorderRadius.circular(4)),
+      child: child,
     );
   }
 }
