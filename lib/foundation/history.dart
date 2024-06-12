@@ -62,12 +62,19 @@ class HistoryManager {
       illust.width,
       illust.height
     ]);
+    if(length > 1000) {
+      _db.execute('''
+        delete from history where id in (
+          select id from history order by time asc limit 100
+        )
+      ''');
+    }
   }
 
   List<IllustHistory> getHistories(int page) {
     var rows = _db.select('''
-      select * from history
-      limit 20 offset ?
+      select * from history order by time desc
+      limit 20 offset ? 
     ''', [(page - 1) * 20]);
     List<IllustHistory> res = [];
     for (var row in rows) {

@@ -32,6 +32,8 @@ class _Appdata {
       LogicalKeyboardKey.enter.keyId,
       LogicalKeyboardKey.keyD.keyId,
       LogicalKeyboardKey.keyF.keyId,
+      LogicalKeyboardKey.keyC.keyId,
+      LogicalKeyboardKey.keyG.keyId,
     ],
     "showOriginalImage": false,
   };
@@ -64,7 +66,7 @@ class _Appdata {
     final file = File("${App.dataPath}/account.json");
     if (file.existsSync()) {
       var json = jsonDecode(await file.readAsString());
-      if(json != null) {
+      if (json != null) {
         account = Account.fromJson(json);
       }
     }
@@ -73,7 +75,15 @@ class _Appdata {
       var json = jsonDecode(await settingsFile.readAsString());
       for (var key in json.keys) {
         if (json[key] != null) {
-          settings[key] = json[key];
+          if (json[key] is List && settings[key] is List) {
+            for (int i = 0;
+                i < json[key].length && i < settings[key].length;
+                i++) {
+              settings[key][i] = json[key][i];
+            }
+          } else {
+            settings[key] = json[key];
+          }
         }
       }
     }

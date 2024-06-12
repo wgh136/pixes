@@ -319,6 +319,14 @@ class _IllustPageState extends State<IllustPage> {
         _bottomBarController.download();
       case 6:
         _bottomBarController.follow();
+      case 7:
+        if (ModalRoute.of(context)?.isCurrent ?? true) {
+          CommentsPage.show(context, widget.illust.id.toString());
+        } else {
+          context.pop();
+        }
+      case 8:
+        openImage(0);
     }
   }
 

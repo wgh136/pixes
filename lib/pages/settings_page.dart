@@ -592,6 +592,8 @@ class _ShortcutsSettingsState extends State<ShortcutsSettings> {
     "Add to favorites",
     "Download",
     "Follow the artist",
+    "Show comments",
+    "Show original image"
   ];
 
   @override
