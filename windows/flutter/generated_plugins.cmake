@@ -4,9 +4,12 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   app_links
+  dynamic_color
+  file_selector_windows
+  flutter_acrylic
   screen_retriever
+  share_plus
   sqlite3_flutter_libs
-  system_theme
   url_launcher_windows
   window_manager
 )

@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/foundation.dart';
 import 'package:pixes/utils/ext.dart';
 
@@ -25,6 +27,9 @@ class Log {
   static const maxLogNumber = 500;
 
   static bool ignoreLimitation = false;
+
+  /// only for debug
+  static const String? logFile = null;
 
   static void printWarning(String text) {
     print('\x1B[33m$text\x1B[0m');
@@ -57,6 +62,9 @@ class Log {
     }
 
     _logs.add(newLog);
+    if(logFile != null) {
+      File(logFile!).writeAsString(newLog.toString(), mode: FileMode.append);
+    }
     if (_logs.length > maxLogNumber) {
       var res = _logs.remove(
           _logs.firstWhereOrNull((element) => element.level == LogLevel.info));

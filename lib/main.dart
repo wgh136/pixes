@@ -36,13 +36,17 @@ void main() async {
     await flutter_acrylic.Window.initialize();
     if (App.isWindows) {
       await flutter_acrylic.Window.hideWindowControls();
-    }
+    } 
     await WindowManager.instance.ensureInitialized();
     windowManager.waitUntilReadyToShow().then((_) async {
       await windowManager.setTitleBarStyle(
         TitleBarStyle.hidden,
         windowButtonVisibility: false,
       );
+      if(App.isLinux) {
+        // https://github.com/leanflutter/window_manager/issues/460
+        return;
+      }
       await windowManager.setMinimumSize(const Size(500, 600));
       var placement = await WindowPlacement.loadFromFile();
       await placement.applyToWindow();
@@ -51,6 +55,7 @@ void main() async {
     });
   }
   Loop.start();
+  Log.info("APP", "Application started");
   runApp(const MyApp());
 }
 

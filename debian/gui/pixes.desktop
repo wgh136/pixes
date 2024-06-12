@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0.6
+Name=Pixes
+GenericName=Pixes
+Comment=Unofficial pixiv application
+Terminal=false
+Type=Application
+Categories=Utility
+Keywords=Flutter;share;images;
+MimeType=x-scheme-handler/pixiv;
