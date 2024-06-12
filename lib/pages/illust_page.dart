@@ -73,9 +73,9 @@ class _IllustGalleryPageState extends State<IllustGalleryPage> {
 
   @override
   void dispose() {
-    if(IllustGalleryPage.cachedHistoryIds.length > 5) {
+    if (IllustGalleryPage.cachedHistoryIds.length > 5) {
       Network().sendHistory(
-        IllustGalleryPage.cachedHistoryIds.toList().reversed.toList());
+          IllustGalleryPage.cachedHistoryIds.toList().reversed.toList());
       IllustGalleryPage.cachedHistoryIds.clear();
     }
     super.dispose();
@@ -101,16 +101,49 @@ class _IllustGalleryPageState extends State<IllustGalleryPage> {
       length++;
     }
 
-    return PageView.builder(
-      controller: controller,
-      itemCount: length,
-      itemBuilder: (context, index) {
-        if (index == illusts.length) {
-          return buildLast();
-        }
-        return IllustPage(illusts[index],
-            nextPage: nextPage, previousPage: previousPage);
-      },
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: PageView.builder(
+            controller: controller,
+            itemCount: length,
+            itemBuilder: (context, index) {
+              if (index == illusts.length) {
+                return buildLast();
+              }
+              return IllustPage(illusts[index],
+                  nextPage: nextPage, previousPage: previousPage);
+            },
+            onPageChanged: (value) => setState(() {}),
+          ),
+        ),
+        if (controller.page! < length - 1 && length > 1)
+          Positioned(
+            right: 16,
+            top: 0,
+            bottom: 0,
+            child: Center(
+                child: IconButton(
+              icon: const Icon(FluentIcons.chevron_right),
+              onPressed: () {
+                nextPage();
+              },
+            )),
+          ),
+        if (controller.page != 0 && length > 1)
+          Positioned(
+            left: 16,
+            top: 0,
+            bottom: 0,
+            child: Center(
+                child: IconButton(
+              icon: const Icon(FluentIcons.chevron_left),
+              onPressed: () {
+                previousPage();
+              },
+            )),
+          ),
+      ],
     );
   }
 
@@ -183,7 +216,7 @@ class _IllustPageState extends State<IllustPage> {
       });
     };
     HistoryManager().addHistory(widget.illust);
-    if(appdata.account!.user.isPremium) {
+    if (appdata.account!.user.isPremium) {
       IllustGalleryPage.cachedHistoryIds.add(widget.illust.id);
     }
     super.initState();
@@ -1014,7 +1047,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
 
   Widget buildMoreActions() {
     return Wrap(
-      runSpacing: 4,
+      runSpacing: 8,
       spacing: 8,
       children: [
         Button(
