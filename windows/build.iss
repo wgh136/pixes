@@ -2,11 +2,11 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "pixes"
-#define MyAppVersion "1.0.5"
+#define MyAppVersion "{{version}}"
 #define MyAppPublisher "Nyne"
 #define MyAppURL "https://github.com/wgh136/pixes"
 #define MyAppExeName "pixes.exe"
-#define RootPath "C:\Users\wgh19\IdeaProjects\pixes"
+#define RootPath "{{root_path}}"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
