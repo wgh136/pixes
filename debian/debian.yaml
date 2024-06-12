@@ -7,7 +7,7 @@ flutter_app:
 
 control:
   Package: pixes
-  Version: 1.0.6
+  Version: {{Version}}
   Architecture: amd64
   Priority: optional
   Depends:
