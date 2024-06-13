@@ -36,6 +36,7 @@ class _Appdata {
       LogicalKeyboardKey.keyG.keyId,
     ],
     "showOriginalImage": false,
+    "checkUpdate": true,
   };
 
   bool lock = false;

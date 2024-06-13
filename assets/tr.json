@@ -174,7 +174,12 @@
         "External browser": "外部浏览器",
         "Show comments": "显示评论",
         "Show original image": "显示原图",
-        "Illustrations": "插画"
+        "Illustrations": "插画",
+        "New version available": "新版本可用",
+        "A new version of Pixes is available. Do you want to update now?" : "Pixes有新版本可用. 您要立即更新吗?",
+        "Update": "更新",
+        "Check for updates": "检查更新",
+        "Check for updates on startup": "启动时检查更新"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -351,6 +356,11 @@
         "External browser": "外部瀏覽器",
         "Show comments": "顯示評論",
         "Show original image": "顯示原圖",
-        "Illustrations": "插畫"
+        "Illustrations": "插畫",
+        "New version available": "新版本可用",
+        "A new version of Pixes is available. Do you want to update now?" : "Pixes有新版本可用. 您要立即更新嗎?",
+        "Update": "更新",
+        "Check for updates": "檢查更新",
+        "Check for updates on startup": "啟動時檢查更新"
     }
 }

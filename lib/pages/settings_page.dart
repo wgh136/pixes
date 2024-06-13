@@ -12,6 +12,7 @@ import 'package:pixes/foundation/app.dart';
 import 'package:pixes/pages/main_page.dart';
 import 'package:pixes/utils/io.dart';
 import 'package:pixes/utils/translation.dart';
+import 'package:pixes/utils/update.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'logs.dart';
@@ -182,6 +183,16 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Column(
         children: [
           buildItem(title: "Version", subtitle: App.version),
+          buildItem(
+              title: "Check for updates on startup".tl,
+              action: ToggleSwitch(
+                  checked: appdata.settings["checkUpdate"],
+                  onChanged: (value) {
+                    setState(() {
+                      appdata.settings["checkUpdate"] = value;
+                    });
+                    appdata.writeData();
+                  })),
           buildItem(
               title: "Github",
               action: IconButton(

@@ -19,11 +19,13 @@ import "package:pixes/pages/main_page.dart";
 import "package:pixes/utils/app_links.dart";
 import "package:pixes/utils/loop.dart";
 import "package:pixes/utils/translation.dart";
+import "package:pixes/utils/update.dart";
 import "package:pixes/utils/window.dart";
 import "package:window_manager/window_manager.dart";
 
 void main() {
   runZonedGuarded(() async {
+    Future.delayed(const Duration(seconds: 3), checkUpdate);
     WidgetsFlutterBinding.ensureInitialized();
     FlutterError.onError = (details) {
       Log.error("Unhandled", "${details.exception}\n${details.stack}");
