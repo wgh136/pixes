@@ -151,7 +151,7 @@ class MyApp extends StatelessWidget {
                             ),
                             child: widget,
                           );
-                        } else if (App.windowsVersion == 10) {
+                        } /* else if (App.windowsVersion == 10) {
                           flutter_acrylic.Window.setEffect(
                               effect: flutter_acrylic.WindowEffect.acrylic,
                               dark: FluentTheme.of(context).brightness ==
@@ -164,7 +164,7 @@ class MyApp extends StatelessWidget {
                             ),
                             child: widget,
                           );
-                        }
+                        }*/
                       }
 
                       return KeyEventListener(child: widget);
