@@ -1,3 +1,4 @@
+import "dart:async";
 import "dart:ui";
 
 import "package:dynamic_color/dynamic_color.dart";
@@ -21,42 +22,46 @@ import "package:pixes/utils/translation.dart";
 import "package:pixes/utils/window.dart";
 import "package:window_manager/window_manager.dart";
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  FlutterError.onError = (details) {
-    Log.error("Unhandled", "${details.exception}\n${details.stack}");
-  };
-  setSystemProxy();
-  await App.init();
-  await appdata.readData();
-  await Translation.init();
-  HistoryManager().init();
-  handleLinks();
-  if (App.isDesktop) {
-    await flutter_acrylic.Window.initialize();
-    if (App.isWindows) {
-      await flutter_acrylic.Window.hideWindowControls();
-    } 
-    await WindowManager.instance.ensureInitialized();
-    windowManager.waitUntilReadyToShow().then((_) async {
-      await windowManager.setTitleBarStyle(
-        TitleBarStyle.hidden,
-        windowButtonVisibility: false,
-      );
-      if(App.isLinux) {
-        // https://github.com/leanflutter/window_manager/issues/460
-        return;
+void main() {
+  runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+    FlutterError.onError = (details) {
+      Log.error("Unhandled", "${details.exception}\n${details.stack}");
+    };
+    setSystemProxy();
+    await App.init();
+    await appdata.readData();
+    await Translation.init();
+    HistoryManager().init();
+    handleLinks();
+    if (App.isDesktop) {
+      await flutter_acrylic.Window.initialize();
+      if (App.isWindows) {
+        await flutter_acrylic.Window.hideWindowControls();
       }
-      await windowManager.setMinimumSize(const Size(500, 600));
-      var placement = await WindowPlacement.loadFromFile();
-      await placement.applyToWindow();
-      await windowManager.show();
-      Loop.register(WindowPlacement.loop);
-    });
-  }
-  Loop.start();
-  Log.info("APP", "Application started");
-  runApp(const MyApp());
+      await WindowManager.instance.ensureInitialized();
+      windowManager.waitUntilReadyToShow().then((_) async {
+        await windowManager.setTitleBarStyle(
+          TitleBarStyle.hidden,
+          windowButtonVisibility: false,
+        );
+        if (App.isLinux) {
+          // https://github.com/leanflutter/window_manager/issues/460
+          return;
+        }
+        await windowManager.setMinimumSize(const Size(500, 600));
+        var placement = await WindowPlacement.loadFromFile();
+        await placement.applyToWindow();
+        await windowManager.show();
+        Loop.register(WindowPlacement.loop);
+      });
+    }
+    Loop.start();
+    Log.info("APP", "Application started");
+    runApp(const MyApp());
+  }, (error, stack) {
+    Log.error("Unhandled Exception", "$error\n$stack");
+  });
 }
 
 class MyApp extends StatelessWidget {
