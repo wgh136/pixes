@@ -63,7 +63,7 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
           _RelatedUsers(widget.id),
           buildInformation(),
           buildArtworkHeader(),
-          if (page == 2)
+          if (page == 4)
             _UserNovels(widget.id)
           else
             _UserArtworks(
@@ -228,8 +228,10 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
                   SegmentedButton<int>(
                     options: [
                       SegmentedButtonOption(0, "Artworks".tl),
-                      SegmentedButtonOption(1, "Bookmarks".tl),
-                      SegmentedButtonOption(2, "Novels".tl),
+                      SegmentedButtonOption(1, "Illustrations".tl),
+                      SegmentedButtonOption(2, "Mangas".tl),
+                      SegmentedButtonOption(3, "Bookmarks".tl),
+                      SegmentedButtonOption(4, "Novels".tl),
                     ],
                     value: page,
                     onPressed: (value) {
@@ -239,15 +241,24 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
                     },
                   ),
                   const Spacer(),
-                  if (page != 2)
+                  if (page != 4)
                     BatchDownloadButton(
                       request: () {
-                        if (page == 0) {
-                          return Network().getUserIllusts(data!.id.toString());
-                        } else {
-                          return Network()
-                              .getUserBookmarks(data!.id.toString());
+                        switch (page) {
+                          case 0:
+                            return Network()
+                                .getUserIllusts(data!.id.toString(), null);
+                          case 1:
+                            return Network()
+                                .getUserIllusts(data!.id.toString(), "illust");
+                          case 2:
+                            return Network()
+                                .getUserIllusts(data!.id.toString(), "manga");
+                          case 3:
+                            return Network()
+                                .getUserBookmarks(data!.id.toString());
                         }
+                        throw "Invalid page";
                       },
                     ),
                 ],
@@ -269,14 +280,14 @@ class _UserInfoPageState extends LoadingState<UserInfoPage, UserDetails> {
         margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
         padding: EdgeInsets.zero,
         child: ListTile(
-          leading: icon == null
-              ? null
-              : Icon(
-                  icon,
-                  size: 20,
-                ),
-          title: Text(title),
-          subtitle: SelectableText(content),
+          title: Row(
+            children: [
+              Icon(icon, size: 20),
+              const SizedBox(width: 8),
+              Text(title)
+            ],
+          ),
+          subtitle: SelectableText(content).paddingLeft(icon == null ? 0 : 28),
           trailing: trailing,
         ),
       );
@@ -409,8 +420,9 @@ class _UserArtworksState extends MultiPageLoadingState<_UserArtworks, Illust> {
       return Res.error("No more data");
     }
     var res = nextUrl == null
-        ? (widget.type == 0
-            ? await Network().getUserIllusts(widget.uid)
+        ? (widget.type != 3
+            ? await Network().getUserIllusts(
+                widget.uid, [null, "illust", "manga"][widget.type])
             : await Network().getUserBookmarks(widget.uid))
         : await Network().getIllustsWithNextUrl(nextUrl!);
     if (!res.error) {
@@ -422,7 +434,7 @@ class _UserArtworksState extends MultiPageLoadingState<_UserArtworks, Illust> {
 }
 
 class _UserNovels extends StatefulWidget {
-  const _UserNovels(this.uid, {super.key});
+  const _UserNovels(this.uid);
 
   final String uid;
 
@@ -534,7 +546,7 @@ class _RelatedUsersState
             return UserPreviewWidget(data[index]).fixWidth(342);
           },
         ));
-    if (MediaQuery.of(context).size.width > 500) {
+    if (App.isDesktop) {
       content = ScrollbarTheme.merge(
           data: const ScrollbarThemeData(
               thickness: 6,
@@ -542,7 +554,21 @@ class _RelatedUsersState
               mainAxisMargin: 4,
               hoveringPadding: EdgeInsets.zero,
               padding: EdgeInsets.zero,
-              hoveringMainAxisMargin: 4),
+              hoveringMainAxisMargin: 4,
+              crossAxisMargin: 0,
+              hoveringCrossAxisMargin: 0),
+          child: content);
+    } else {
+      content = ScrollbarTheme.merge(
+          data: const ScrollbarThemeData(
+              thickness: 4,
+              hoveringThickness: 4,
+              mainAxisMargin: 4,
+              hoveringPadding: EdgeInsets.zero,
+              padding: EdgeInsets.zero,
+              hoveringMainAxisMargin: 4,
+              crossAxisMargin: 0,
+              hoveringCrossAxisMargin: 0),
           child: content);
     }
     return MediaQuery.removePadding(

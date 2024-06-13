@@ -2,6 +2,7 @@ import "dart:async";
 
 import "package:fluent_ui/fluent_ui.dart";
 import "package:flutter/foundation.dart";
+import "package:flutter/services.dart";
 import "package:pixes/appdata.dart";
 import "package:pixes/components/md.dart";
 import "package:pixes/foundation/app.dart";
@@ -64,12 +65,16 @@ class MainPage extends StatefulWidget {
   State<MainPage> createState() => _MainPageState();
 }
 
-class _MainPageState extends State<MainPage> with WindowListener {
+class _MainPageState extends State<MainPage>
+    with WindowListener
+    implements PopEntry {
   final navigatorKey = GlobalKey<NavigatorState>();
 
   int index = 4;
 
   int windowButtonKey = 0;
+
+  ModalRoute<dynamic>? _route;
 
   @override
   void initState() {
@@ -81,9 +86,21 @@ class _MainPageState extends State<MainPage> with WindowListener {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ModalRoute<dynamic>? nextRoute = ModalRoute.of(context);
+    if (nextRoute != _route) {
+      _route?.unregisterPopEntry(this);
+      _route = nextRoute;
+      _route?.registerPopEntry(this);
+    }
+  }
+
+  @override
   void dispose() {
     StateController.remove<TitleBarController>();
     windowManager.removeListener(this);
+    ModalRoute.of(context)!.unregisterPopEntry(this);
     super.dispose();
   }
 
@@ -151,7 +168,7 @@ class _MainPageState extends State<MainPage> with WindowListener {
               ),
               PaneItemSeparator(),
               PaneItemHeader(
-                  header: Text('${"Artwork".tl}/${"Manga".tl}')
+                  header: Text('${"Illustrations".tl}/${"Manga".tl}')
                       .paddingBottom(4)
                       .paddingLeft(8)),
               PaneItem(
@@ -209,10 +226,7 @@ class _MainPageState extends State<MainPage> with WindowListener {
               ),
             ],
           ),
-          paneBodyBuilder: (pane, child) => NavigatorPopHandler(
-              key: const Key("navigator"),
-              onPop: () => navigatorKey.currentState?.pop(),
-              child: MediaQuery.removePadding(
+          paneBodyBuilder: (pane, child) => MediaQuery.removePadding(
                 context: context,
                 removeTop: true,
                 child: Navigator(
@@ -220,7 +234,7 @@ class _MainPageState extends State<MainPage> with WindowListener {
                   onGenerateRoute: (settings) => AppPageRoute(
                       builder: (context) => const RecommendationPage()),
                 ),
-              ))),
+              )),
     );
   }
 
@@ -314,6 +328,25 @@ class _MainPageState extends State<MainPage> with WindowListener {
             )
           : null,
     );
+  }
+
+  final popValue = ValueNotifier(false);
+
+  @override
+  ValueListenable<bool> get canPopNotifier => popValue;
+
+  @override
+  PopInvokedCallback? get onPopInvoked => onPop;
+
+  void onPop(bool value) {
+    print("ok");
+    if (App.rootNavigatorKey.currentState?.canPop() ?? false) {
+      App.rootNavigatorKey.currentState?.pop();
+    } else if (App.mainNavigatorKey?.currentState?.canPop() ?? false) {
+      App.mainNavigatorKey?.currentState?.pop();
+    } else {
+      SystemNavigator.pop();
+    }
   }
 }
 

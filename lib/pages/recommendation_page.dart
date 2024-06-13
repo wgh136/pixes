@@ -45,7 +45,7 @@ class _RecommendationPageState extends State<RecommendationPage> {
       title: "Explore".tl,
       action: SegmentedButton<int>(
         options: [
-          SegmentedButtonOption(0, "Artworks".tl),
+          SegmentedButtonOption(0, "Illustrations".tl),
           SegmentedButtonOption(1, "Mangas".tl),
           SegmentedButtonOption(2, "Users".tl),
         ],

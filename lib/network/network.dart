@@ -387,9 +387,9 @@ class Network {
     }
   }
 
-  Future<Res<List<Illust>>> getUserIllusts(String uid) async {
+  Future<Res<List<Illust>>> getUserIllusts(String uid, String? type) async {
     var res = await apiGet(
-        "/v1/user/illusts?filter=for_android&user_id=$uid&type=illust");
+        "/v1/user/illusts?filter=for_android&user_id=$uid${type != null ? "&type=$type" : ""}");
     if (res.success) {
       return Res(
           (res.data["illusts"] as List).map((e) => Illust.fromJson(e)).toList(),
@@ -574,7 +574,7 @@ class Network {
     }
   }
 
-  Future<Res<bool>> sendHistory(List<int> ids) async{
+  Future<Res<bool>> sendHistory(List<int> ids) async {
     var res = await apiPost("/v2/user/browsing-history/illust/add",
         data: {"illust_ids": ids});
     if (res.success) {

@@ -92,7 +92,7 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
   void showMenu() {
     menuController.showFlyout(
         barrierColor: Colors.transparent,
-        position: Offset(context.size!.width, 0),
+        position: App.isMobile ? Offset(context.size!.width, 0) : null,
         builder: (context) => MenuFlyout(
               items: [
                 MenuFlyoutItem(
@@ -100,10 +100,11 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                     onPressed: () async {
                       var file = await getFile();
                       if (file != null) {
-                        var fileName = file.path.split('/').last;
+                        var fileName = widget.urls[currentPage].split('/').last;
                         if (!fileName.contains('.')) {
                           fileName += getExtensionName();
                         }
+                        print(fileName);
                         saveFile(file, fileName);
                       }
                     }),
@@ -113,7 +114,8 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                       onPressed: () async {
                         var file = await getFile();
                         if (file != null) {
-                          var fileName = file.path.split('/').last;
+                          var fileName =
+                              widget.urls[currentPage].split('/').last;
                           if (!fileName.contains('.')) {
                             fileName += getExtensionName();
                           }
@@ -130,7 +132,7 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                       var file = await getFile();
                       if (file != null) {
                         var ext = getExtensionName();
-                        var fileName = file.path.split('/').last;
+                        var fileName = widget.urls[currentPage].split('/').last;
                         if (!fileName.contains('.')) {
                           fileName += ext;
                         }
