@@ -104,7 +104,6 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                         if (!fileName.contains('.')) {
                           fileName += getExtensionName();
                         }
-                        print(fileName);
                         saveFile(file, fileName);
                       }
                     }),
@@ -119,7 +118,9 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                           if (!fileName.contains('.')) {
                             fileName += getExtensionName();
                           }
-                          await ImageGallerySaver.saveFile(file.path,
+                          await ImageGallerySaver.saveImage(
+                              await file.readAsBytes(),
+                              quality: 100,
                               name: fileName);
                           if (mounted) {
                             showToast(context, message: "Saved".tl);
