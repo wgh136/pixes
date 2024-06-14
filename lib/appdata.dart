@@ -37,6 +37,7 @@ class _Appdata {
     ],
     "showOriginalImage": false,
     "checkUpdate": true,
+    "emphasizeArtworksFromFollowingArtists": true,
   };
 
   bool lock = false;

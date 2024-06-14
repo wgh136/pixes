@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:pixes/appdata.dart';
 import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/history.dart';
@@ -70,6 +71,15 @@ class _IllustWidgetState extends State<IllustWidget> {
                 child: Card(
                   padding: EdgeInsets.zero,
                   margin: EdgeInsets.zero,
+                  borderColor: () {
+                    return widget.illust.author.isFollowed &&
+                            appdata.settings[
+                                'emphasizeArtworksFromFollowingArtists']
+                        ? ColorScheme.of(context).primary
+                        : ColorScheme.of(context)
+                            .outlineVariant
+                            .withOpacity(0.64);
+                  }(),
                   child: GestureDetector(
                     onTap: widget.onTap ??
                         () {

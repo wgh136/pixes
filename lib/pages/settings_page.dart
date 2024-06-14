@@ -273,6 +273,19 @@ class _SettingsPageState extends State<SettingsPage> {
                     });
                     appdata.writeData();
                   })),
+          buildItem(
+              title: "Emphasize artworks from following artists".tl,
+              subtitle: "The border of the artworks will be darker".tl,
+              action: ToggleSwitch(
+                  checked:
+                      appdata.settings['emphasizeArtworksFromFollowingArtists'],
+                  onChanged: (value) {
+                    setState(() {
+                      appdata.settings[
+                          'emphasizeArtworksFromFollowingArtists'] = value;
+                    });
+                    appdata.writeData();
+                  })),
         ],
       ),
     );
