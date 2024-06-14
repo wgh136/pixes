@@ -4,7 +4,6 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart' show Icons;
 import 'package:flutter/services.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:pixes/appdata.dart';
 import 'package:pixes/components/animated_image.dart';
 import 'package:pixes/components/keyboard.dart';
@@ -20,6 +19,7 @@ import 'package:pixes/network/download.dart';
 import 'package:pixes/network/network.dart';
 import 'package:pixes/pages/comments_page.dart';
 import 'package:pixes/pages/image_page.dart';
+import 'package:pixes/pages/related_page.dart';
 import 'package:pixes/pages/search_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/block.dart';
@@ -1140,7 +1140,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
         ).fixWidth(96),
         Button(
           onPressed: () {
-            context.to(() => _RelatedIllustsPage(widget.illust.id.toString()));
+            context.to(() => RelatedIllustsPage(widget.illust.id.toString()));
           },
           child: SizedBox(
             height: 28,
@@ -1355,66 +1355,5 @@ class _IllustPageWithIdState extends LoadingState<IllustPageWithId, Illust> {
   @override
   Future<Res<Illust>> loadData() {
     return Network().getIllustByID(widget.id);
-  }
-}
-
-class _RelatedIllustsPage extends StatefulWidget {
-  const _RelatedIllustsPage(this.id);
-
-  final String id;
-
-  @override
-  State<_RelatedIllustsPage> createState() => _RelatedIllustsPageState();
-}
-
-class _RelatedIllustsPageState
-    extends MultiPageLoadingState<_RelatedIllustsPage, Illust> {
-  @override
-  Widget? buildFrame(BuildContext context, Widget child) {
-    return Column(
-      children: [
-        TitleBar(title: "Related artworks".tl),
-        Expanded(
-          child: child,
-        )
-      ],
-    );
-  }
-
-  @override
-  Widget buildContent(BuildContext context, final List<Illust> data) {
-    return LayoutBuilder(builder: (context, constrains) {
-      return MasonryGridView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 8) +
-            EdgeInsets.only(bottom: context.padding.bottom),
-        gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
-          maxCrossAxisExtent: 240,
-        ),
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          if (index == data.length - 1) {
-            nextPage();
-          }
-          return IllustWidget(data[index]);
-        },
-      );
-    });
-  }
-
-  String? nextUrl;
-
-  @override
-  Future<Res<List<Illust>>> loadData(page) async {
-    if (nextUrl == "end") {
-      return Res.error("No more data");
-    }
-    var res = nextUrl == null
-        ? await Network().relatedIllusts(widget.id)
-        : await Network().getIllustsWithNextUrl(nextUrl!);
-    if (!res.error) {
-      nextUrl = res.subData;
-      nextUrl ??= "end";
-    }
-    return res;
   }
 }

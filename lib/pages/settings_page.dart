@@ -12,7 +12,6 @@ import 'package:pixes/foundation/app.dart';
 import 'package:pixes/pages/main_page.dart';
 import 'package:pixes/utils/io.dart';
 import 'package:pixes/utils/translation.dart';
-import 'package:pixes/utils/update.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'logs.dart';

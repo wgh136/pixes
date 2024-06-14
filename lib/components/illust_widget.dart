@@ -4,6 +4,7 @@ import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/history.dart';
 import 'package:pixes/foundation/image_provider.dart';
 import 'package:pixes/network/download.dart';
+import 'package:pixes/pages/related_page.dart';
 import 'package:pixes/utils/translation.dart';
 
 import '../network/network.dart';
@@ -75,6 +76,7 @@ class _IllustWidgetState extends State<IllustWidget> {
                           context.to(() => IllustPage(widget.illust));
                         },
                     onSecondaryTapUp: showMenu,
+                    onLongPress: showMenu,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(4.0),
                       child: AnimatedImage(
@@ -211,13 +213,13 @@ class _IllustWidgetState extends State<IllustWidget> {
     });
   }
 
-  void showMenu(TapUpDetails details) {
+  void showMenu([TapUpDetails? details]) {
     // This calculates the position of the flyout according to the parent navigator
     final targetContext = contextAttachKey.currentContext;
     if (targetContext == null) return;
     final box = targetContext.findRenderObject() as RenderBox;
-    final position = box.localToGlobal(
-      details.localPosition,
+    Offset? position = box.localToGlobal(
+      details?.localPosition ?? box.size.center(Offset.zero),
       ancestor: Navigator.of(context).context.findRenderObject(),
     );
 
@@ -242,6 +244,12 @@ class _IllustWidgetState extends State<IllustWidget> {
                 onPressed: () {
                   context.showToast(message: "Added");
                   DownloadManager().addDownloadingTask(widget.illust);
+                }),
+            MenuFlyoutItem(
+                text: Text("Related Artworks".tl),
+                onPressed: () {
+                  context.to(
+                      () => RelatedIllustsPage(widget.illust.id.toString()));
                 }),
           ],
         );
@@ -320,150 +328,149 @@ class IllustHistoryWidget extends StatelessWidget {
       final width = constrains.maxWidth;
       final height = illust.height * width / illust.width;
       return SizedBox(
-          width: width,
-          height: height,
-          child: Stack(
-            children: [
-              Positioned.fill(
-                  child: Container(
-                width: width,
-                height: height,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                child: Card(
-                  padding: EdgeInsets.zero,
-                  margin: EdgeInsets.zero,
-                  child: GestureDetector(
-                    onTap: () {
-                      context.to(() => IllustPageWithId(illust.id.toString()));
-                    },
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4.0),
-                      child: AnimatedImage(
-                        image: CachedImageProvider(
-                            illust.imgPath),
-                        fit: BoxFit.cover,
-                        width: width - 16.0,
-                        height: height - 16.0,
-                      ),
+        width: width,
+        height: height,
+        child: Stack(
+          children: [
+            Positioned.fill(
+                child: Container(
+              width: width,
+              height: height,
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+              child: Card(
+                padding: EdgeInsets.zero,
+                margin: EdgeInsets.zero,
+                child: GestureDetector(
+                  onTap: () {
+                    context.to(() => IllustPageWithId(illust.id.toString()));
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(4.0),
+                    child: AnimatedImage(
+                      image: CachedImageProvider(illust.imgPath),
+                      fit: BoxFit.cover,
+                      width: width - 16.0,
+                      height: height - 16.0,
                     ),
                   ),
                 ),
-              )),
-              if (illust.imageCount > 1)
-                Positioned(
-                  top: 12,
-                  left: 12,
-                  child: Container(
-                      width: 28,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: FluentTheme.of(context)
-                            .micaBackgroundColor
-                            .withOpacity(0.72),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                            color: ColorScheme.of(context).outlineVariant,
-                            width: 0.6),
+              ),
+            )),
+            if (illust.imageCount > 1)
+              Positioned(
+                top: 12,
+                left: 12,
+                child: Container(
+                    width: 28,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: FluentTheme.of(context)
+                          .micaBackgroundColor
+                          .withOpacity(0.72),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                          color: ColorScheme.of(context).outlineVariant,
+                          width: 0.6),
+                    ),
+                    child: Center(
+                      child: Text(
+                        "${illust.imageCount}P",
+                        style: const TextStyle(fontSize: 12),
                       ),
-                      child: Center(
-                        child: Text(
-                          "${illust.imageCount}P",
-                          style: const TextStyle(fontSize: 12),
-                        ),
-                      )),
-                ),
-              if (illust.isAi)
-                Positioned(
-                  bottom: 12,
-                  left: 12,
-                  child: Container(
-                      width: 28,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: ColorScheme.of(context)
-                            .errorContainer
-                            .withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                            color: ColorScheme.of(context).outlineVariant,
-                            width: 0.6),
+                    )),
+              ),
+            if (illust.isAi)
+              Positioned(
+                bottom: 12,
+                left: 12,
+                child: Container(
+                    width: 28,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: ColorScheme.of(context)
+                          .errorContainer
+                          .withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                          color: ColorScheme.of(context).outlineVariant,
+                          width: 0.6),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "AI",
+                        style: TextStyle(fontSize: 12),
                       ),
-                      child: const Center(
-                        child: Text(
-                          "AI",
-                          style: TextStyle(fontSize: 12),
-                        ),
-                      )),
-                ),
-              if (illust.isGif)
-                Positioned(
-                  bottom: 12,
-                  left: 12,
-                  child: Container(
-                      width: 28,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: ColorScheme.of(context)
-                            .primaryContainer
-                            .withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                            color: ColorScheme.of(context).outlineVariant,
-                            width: 0.6),
+                    )),
+              ),
+            if (illust.isGif)
+              Positioned(
+                bottom: 12,
+                left: 12,
+                child: Container(
+                    width: 28,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: ColorScheme.of(context)
+                          .primaryContainer
+                          .withOpacity(0.8),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                          color: ColorScheme.of(context).outlineVariant,
+                          width: 0.6),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "GIF",
+                        style: TextStyle(fontSize: 12),
                       ),
-                      child: const Center(
-                        child: Text(
-                          "GIF",
-                          style: TextStyle(fontSize: 12),
-                        ),
-                      )),
-                ),
-              if (illust.isR18)
-                Positioned(
-                  bottom: 12,
-                  right: 12,
-                  child: Container(
-                      width: 28,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: ColorScheme.of(context).errorContainer,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                            color: ColorScheme.of(context).outlineVariant,
-                            width: 0.6),
+                    )),
+              ),
+            if (illust.isR18)
+              Positioned(
+                bottom: 12,
+                right: 12,
+                child: Container(
+                    width: 28,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: ColorScheme.of(context).errorContainer,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                          color: ColorScheme.of(context).outlineVariant,
+                          width: 0.6),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "R18",
+                        style: TextStyle(fontSize: 12),
                       ),
-                      child: const Center(
-                        child: Text(
-                          "R18",
-                          style: TextStyle(fontSize: 12),
-                        ),
-                      )),
-                ),
-              if (illust.isR18G)
-                Positioned(
-                  bottom: 12,
-                  right: 12,
-                  child: Container(
-                      width: 28,
-                      height: 20,
-                      decoration: BoxDecoration(
-                        color: ColorScheme.of(context).errorContainer,
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                            color: ColorScheme.of(context).outlineVariant,
-                            width: 0.6),
+                    )),
+              ),
+            if (illust.isR18G)
+              Positioned(
+                bottom: 12,
+                right: 12,
+                child: Container(
+                    width: 28,
+                    height: 20,
+                    decoration: BoxDecoration(
+                      color: ColorScheme.of(context).errorContainer,
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                          color: ColorScheme.of(context).outlineVariant,
+                          width: 0.6),
+                    ),
+                    child: const Center(
+                      child: Text(
+                        "R18G",
+                        style: TextStyle(fontSize: 12),
                       ),
-                      child: const Center(
-                        child: Text(
-                          "R18G",
-                          style: TextStyle(fontSize: 12),
-                        ),
-                      )),
-                ),
-            ],
-          ),
-        );
+                    )),
+              ),
+          ],
+        ),
+      );
     });
   }
 }

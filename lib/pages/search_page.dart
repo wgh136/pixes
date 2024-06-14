@@ -33,6 +33,8 @@ class _SearchPageState extends State<SearchPage> {
 
   int searchType = 0;
 
+  final focusNode = FocusNode();
+
   static const searchTypes = [
     "Search artwork",
     "Search novel",
@@ -100,6 +102,9 @@ class _SearchPageState extends State<SearchPage> {
                 children: [
                   Expanded(
                     child: TextBox(
+                      focusNode: focusNode,
+                      autofocus: false,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
                       placeholder:
                           '${searchTypes[searchType].tl} / ${"Open link".tl}',
                       onChanged: (s) => text = s,

@@ -188,6 +188,7 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                     var image = widget.urls[index];
 
                     return PhotoViewGalleryPageOptions(
+                      filterQuality: FilterQuality.medium,
                       imageProvider: getImageProvider(image),
                     );
                   },

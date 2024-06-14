@@ -87,7 +87,9 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(
                         width: 8,
                       ),
-                      Text("I have read and agree to the Terms of Use".tl)
+                      Expanded(
+                        child: Text("I understand pixes is a free unofficial application.".tl),
+                      )
                     ],
                   )
                 ],

@@ -112,7 +112,6 @@
         "Multiple path separators will be automatically replaced with a single": "多个路径分隔符将被自动替换为单个",
         "Login": "登录",
         "You need to complete the login operation in the browser window that will open.": "您需要在打开的浏览器窗口中完成登录操作",
-        "I have read and agree to the Terms of Use": "我已阅读并同意使用条款",
         "Waiting..." : "等待中...",
         "Waiting for authentication. Please finished in the browser." : "等待验证. 请在浏览器中完成.",
         "Back" : "返回",
@@ -179,7 +178,9 @@
         "A new version of Pixes is available. Do you want to update now?" : "Pixes有新版本可用. 您要立即更新吗?",
         "Update": "更新",
         "Check for updates": "检查更新",
-        "Check for updates on startup": "启动时检查更新"
+        "Check for updates on startup": "启动时检查更新",
+        "I understand pixes is a free unofficial application.": "我了解Pixes是一个免费的非官方应用程序",
+        "Related Artworks": "相关作品"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -294,7 +295,6 @@
         "Multiple path separators will be automatically replaced with a single": "多個路徑分隔符號將自動替換為單一",
         "Login": "登錄",
         "You need to complete the login operation in the browser window that will open.": "您需要在打開的瀏覽器窗口中完成登錄操作",
-        "I have read and agree to the Terms of Use": "我已閱讀並同意使用條款",
         "Waiting..." : "等待中...",
         "Waiting for authentication. Please finished in the browser." : "等待驗證. 請在瀏覽器中完成.",
         "Back" : "返回",
@@ -361,6 +361,8 @@
         "A new version of Pixes is available. Do you want to update now?" : "Pixes有新版本可用. 您要立即更新嗎?",
         "Update": "更新",
         "Check for updates": "檢查更新",
-        "Check for updates on startup": "啟動時檢查更新"
+        "Check for updates on startup": "啟動時檢查更新",
+        "I understand pixes is a free unofficial application.": "我了解Pixes是一個免費的非官方應用程序",
+        "Related Artworks": "相關作品"
     }
 }
