@@ -68,18 +68,23 @@ class _IllustWidgetState extends State<IllustWidget> {
                 height: height,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-                child: Card(
+                child: Container(
                   padding: EdgeInsets.zero,
-                  margin: EdgeInsets.zero,
-                  borderColor: () {
-                    return widget.illust.author.isFollowed &&
+                  decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4.0),
+                      border: () {
+                        var emphasis = widget.illust.author.isFollowed &&
                             appdata.settings[
-                                'emphasizeArtworksFromFollowingArtists']
-                        ? ColorScheme.of(context).primary
-                        : ColorScheme.of(context)
-                            .outlineVariant
-                            .withOpacity(0.64);
-                  }(),
+                                'emphasizeArtworksFromFollowingArtists'];
+                        var color = emphasis
+                            ? ColorScheme.of(context).primary
+                            : ColorScheme.of(context)
+                                .outlineVariant
+                                .withOpacity(0.64);
+                        var width = emphasis ? 1.6 : 1.0;
+                        return Border.all(color: color, width: width);
+                      }()),
+                  margin: EdgeInsets.zero,
                   child: GestureDetector(
                     onTap: widget.onTap ??
                         () {
