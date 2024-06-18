@@ -311,7 +311,26 @@ class _MainPageState extends State<MainPage>
                           ],
                         ),
                       ).paddingTop(4).paddingLeft(4),
-                    if (App.isDesktop) const SizedBox(width: 128),
+                    if (App.isDesktop)
+                      const SizedBox(width: 128)
+                    else
+                      Tooltip(
+                          message: "Search".tl,
+                          child: IconButton(
+                            icon: const Icon(
+                              MdIcons.search,
+                              size: 18,
+                            ),
+                            onPressed: () {
+                              if(index == 1) {
+                                return;
+                              }
+                              setState(() {
+                                index = 1;
+                              });
+                              navigate(1);
+                            },
+                          )),
                   ],
                 ),
               ),
@@ -339,7 +358,6 @@ class _MainPageState extends State<MainPage>
   PopInvokedCallback? get onPopInvoked => onPop;
 
   void onPop(bool value) {
-    print("ok");
     if (App.rootNavigatorKey.currentState?.canPop() ?? false) {
       App.rootNavigatorKey.currentState?.pop();
     } else if (App.mainNavigatorKey?.currentState?.canPop() ?? false) {
