@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:dio/dio.dart';
@@ -109,12 +110,53 @@ class AppDio extends DioForNative {
       CancelToken? cancelToken,
       Options? options,
       ProgressCallback? onSendProgress,
-      ProgressCallback? onReceiveProgress}) {
+      ProgressCallback? onReceiveProgress}) async{
     if (!isInitialized) {
       isInitialized = true;
       interceptors.add(MyLogInterceptor());
     }
-    return super.request(path,
+    if(T == Map<String, dynamic>) {
+      var res = await super.request<String>(path,
+          data: data,
+          queryParameters: queryParameters,
+          cancelToken: cancelToken,
+          options: options,
+          onSendProgress: onSendProgress,
+          onReceiveProgress: onReceiveProgress);
+      if(res.data == null) {
+        return Response(
+          data: null,
+          requestOptions: res.requestOptions,
+          statusCode: res.statusCode,
+          statusMessage: res.statusMessage,
+          isRedirect: res.isRedirect,
+          redirects: res.redirects,
+          extra: res.extra,
+          headers: res.headers
+        );
+      }
+      try {
+        var json = jsonDecode(res.data!);
+        return Response(
+            data: json,
+            requestOptions: res.requestOptions,
+            statusCode: res.statusCode,
+            statusMessage: res.statusMessage,
+            isRedirect: res.isRedirect,
+            redirects: res.redirects,
+            extra: res.extra,
+            headers: res.headers
+        );
+      }
+      catch(e) {
+        var data = res.data!;
+        if(data.length > 50) {
+          data = "${data.substring(0, 50)}...";
+        }
+        throw "Failed to decode response: $e\n$data";
+      }
+    }
+    return super.request<T>(path,
         data: data,
         queryParameters: queryParameters,
         cancelToken: cancelToken,
