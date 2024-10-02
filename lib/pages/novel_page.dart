@@ -646,7 +646,7 @@ class _NovelPageWithIdState extends LoadingState<NovelPageWithId, Novel> {
 }
 
 class _RelatedNovelsPage extends StatefulWidget {
-  const _RelatedNovelsPage(this.id, {super.key});
+  const _RelatedNovelsPage(this.id);
 
   final String id;
 

@@ -7,7 +7,9 @@ import 'package:pixes/components/page_route.dart';
 import 'package:pixes/components/title_bar.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/foundation/image_provider.dart';
+import 'package:pixes/foundation/log.dart';
 import 'package:pixes/network/network.dart';
+import 'package:pixes/network/translator.dart';
 import 'package:pixes/pages/image_page.dart';
 import 'package:pixes/pages/main_page.dart';
 import 'package:pixes/utils/ext.dart';
@@ -27,15 +29,36 @@ class _NovelReadingPageState extends LoadingState<NovelReadingPage, String> {
 
   bool isShowingSettings = false;
 
+  String? translatedContent;
+
   @override
   void initState() {
     action = TitleBarAction(MdIcons.tune, "Settings".tl, () {
       if (!isShowingSettings) {
-        _NovelReadingSettings.show(context, () {
-          setState(() {});
-        }).then((value) {
-          isShowingSettings = false;
-        });
+        _NovelReadingSettings.show(
+          context,
+          () {
+            setState(() {});
+          },
+          TranslationController(
+            content: data!,
+            isTranslated: translatedContent != null,
+            onTranslated: (s) {
+              setState(() {
+                translatedContent = s;
+              });
+            },
+            revert: () {
+              setState(() {
+                translatedContent = null;
+              });
+            },
+          ),
+        ).then(
+          (value) {
+            isShowingSettings = false;
+          },
+        );
         isShowingSettings = true;
       } else {
         Navigator.of(context).pop();
@@ -92,7 +115,7 @@ class _NovelReadingPageState extends LoadingState<NovelReadingPage, String> {
     );
     yield const SizedBox(height: 12.0);
 
-    var novelContent = data!.split('\n');
+    var novelContent = (translatedContent ?? data!).split('\n');
     for (var content in novelContent) {
       if (content.isEmpty) continue;
       if (content.startsWith('[uploadedimage:')) {
@@ -132,14 +155,38 @@ class _NovelReadingPageState extends LoadingState<NovelReadingPage, String> {
   }
 }
 
+class TranslationController {
+  final String content;
+
+  final bool isTranslated;
+
+  final void Function(String translated) onTranslated;
+
+  final void Function() revert;
+
+  const TranslationController({
+    required this.content,
+    required this.isTranslated,
+    required this.onTranslated,
+    required this.revert,
+  });
+}
+
 class _NovelReadingSettings extends StatefulWidget {
-  const _NovelReadingSettings(this.callback);
+  const _NovelReadingSettings(this.callback, this.controller);
 
   final void Function() callback;
 
-  static Future show(BuildContext context, void Function() callback) {
-    return Navigator.of(context)
-        .push(SideBarRoute(_NovelReadingSettings(callback)));
+  final TranslationController controller;
+
+  static Future show(
+    BuildContext context,
+    void Function() callback,
+    TranslationController controller,
+  ) {
+    return Navigator.of(context).push(
+      SideBarRoute(_NovelReadingSettings(callback, controller)),
+    );
   }
 
   @override
@@ -256,9 +303,64 @@ class __NovelReadingSettingsState extends State<_NovelReadingSettings> {
                         }),
                   ]),
             ),
-          ),
+          ).paddingBottom(8),
+          Card(
+            padding: EdgeInsets.zero,
+            child: ListTile(
+              title: Text("Translate Novel".tl),
+              trailing: widget.controller.isTranslated
+                  ? Button(
+                      onPressed: () {
+                        widget.controller.revert();
+                        context.pop();
+                      },
+                      child: Text("Revert".tl),
+                    )
+                  : Button(
+                      onPressed: translate,
+                      child: isTranslating
+                          ? const SizedBox(
+                              width: 42,
+                              height: 18,
+                              child: Center(
+                                child: SizedBox.square(
+                                  dimension: 18,
+                                  child: ProgressRing(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                              ),
+                            )
+                          : Text("Translate".tl),
+                    ),
+            ),
+          ).paddingHorizontal(8).paddingBottom(8),
         ],
       ),
     );
+  }
+
+  bool isTranslating = false;
+
+  void translate() async {
+    setState(() {
+      isTranslating = true;
+    });
+    try {
+      var translated = await Translator.instance
+          .translate(widget.controller.content, "zh-CN");
+      widget.controller.onTranslated(translated);
+      if (mounted) {
+        context.pop();
+      }
+    } catch (e) {
+      setState(() {
+        isTranslating = false;
+      });
+      if (mounted) {
+        context.showToast(message: "Failed to translate".tl);
+      }
+      Log.error("Translate", e.toString());
+    }
   }
 }
