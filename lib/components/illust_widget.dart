@@ -63,15 +63,18 @@ class _IllustWidgetState extends State<IllustWidget> {
           child: Stack(
             children: [
               Positioned.fill(
-                  child: Container(
-                width: width,
-                height: height,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
                 child: Container(
-                  padding: EdgeInsets.zero,
-                  decoration: BoxDecoration(
+                  width: width,
+                  height: height,
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 8.0, vertical: 8.0),
+                  child: Container(
+                    width: double.infinity,
+                    height: double.infinity,
+                    padding: EdgeInsets.zero,
+                    decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(4.0),
+                      color: FluentTheme.of(context).cardColor,
                       border: () {
                         var emphasis = widget.illust.author.isFollowed &&
                             appdata.settings[
@@ -83,28 +86,30 @@ class _IllustWidgetState extends State<IllustWidget> {
                                 .withOpacity(0.64);
                         var width = emphasis ? 1.6 : 1.0;
                         return Border.all(color: color, width: width);
-                      }()),
-                  margin: EdgeInsets.zero,
-                  child: GestureDetector(
-                    onTap: widget.onTap ??
-                        () {
-                          context.to(() => IllustPage(widget.illust));
-                        },
-                    onSecondaryTapUp: showMenu,
-                    onLongPress: showMenu,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(4.0),
-                      child: AnimatedImage(
-                        image: CachedImageProvider(
-                            widget.illust.images.first.medium),
-                        fit: BoxFit.cover,
-                        width: width - 16.0,
-                        height: height - 16.0,
+                      }(),
+                    ),
+                    margin: EdgeInsets.zero,
+                    child: GestureDetector(
+                      onTap: widget.onTap ??
+                          () {
+                            context.to(() => IllustPage(widget.illust));
+                          },
+                      onSecondaryTapUp: showMenu,
+                      onLongPress: showMenu,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(4.0),
+                        child: AnimatedImage(
+                          image: CachedImageProvider(
+                              widget.illust.images.first.medium),
+                          fit: BoxFit.cover,
+                          width: width - 16.0,
+                          height: height - 16.0,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              )),
+              ),
               if (widget.illust.images.length > 1)
                 Positioned(
                   top: 12,
