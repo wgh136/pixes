@@ -8,8 +8,14 @@ import 'package:url_launcher/url_launcher_string.dart';
 Future<String> getLatestVersion() async {
   var dio = AppDio();
   var res = await dio
-      .get("https://api.github.com/repos/wgh136/pixes/releases/latest");
-  return (res.data["tag_name"] as String).replaceFirst("v", "");
+      .get("https://raw.githubusercontent.com/wgh136/pixes/refs/heads/master/pubspec.yaml");
+  var lines = (res.data as String).split("\n");
+  for (var line in lines) {
+    if (line.startsWith("version:")) {
+      return line.split(":")[1].split('+')[0].trim();
+    }
+  }
+  throw "Failed to get latest version";
 }
 
 /// Compare two versions.

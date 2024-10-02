@@ -12,6 +12,14 @@ extension FSExt on FileSystemEntity {
     }
   }
 
+  Future<void> deleteIgnoreError() async {
+    try {
+      await delete();
+    } catch (e) {
+      // ignore
+    }
+  }
+
   int get size {
     if (this is File) {
       return (this as File).lengthSync();

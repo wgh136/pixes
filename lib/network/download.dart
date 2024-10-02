@@ -324,7 +324,7 @@ class DownloadManager {
       where illust_id = ?;
     ''', [illust.illustId]);
     for(var image in images) {
-      File(image["path"] as String).deleteIfExists();
+      File(image["path"] as String).deleteIgnoreError();
     }
     _db.execute('''
       delete from images
