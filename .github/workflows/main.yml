@@ -28,6 +28,7 @@ jobs:
       with:
         channel: 'stable'
         architecture: x64
+        flutter-version-file: pubspec.yaml
     - run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app
     - run: flutter pub get
     - run: flutter build macos --release
