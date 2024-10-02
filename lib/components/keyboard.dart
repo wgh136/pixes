@@ -40,7 +40,7 @@ class KeyEventListenerState extends State<KeyEventListener> {
       focusNode: focusNode,
       autofocus: true,
       onKeyEvent: (node, event) {
-        if (event is! KeyUpEvent) return KeyEventResult.handled;
+        if (event is! KeyUpEvent) return KeyEventResult.ignored;
         if (event.logicalKey == LogicalKeyboardKey.escape) {
           if (App.rootNavigatorKey.currentState?.canPop() ?? false) {
             App.rootNavigatorKey.currentState?.pop();
@@ -52,7 +52,7 @@ class KeyEventListenerState extends State<KeyEventListener> {
         for (var handler in _handlers) {
           handler(event.logicalKey);
         }
-        return KeyEventResult.handled;
+        return KeyEventResult.ignored;
       },
       child: widget.child,
     );
