@@ -420,6 +420,19 @@ class _SearchSettingsState extends State<SearchSettings> {
                           }))
                       .toList(),
                 )),
+          const SizedBox(height: 4),
+          Center(
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Icon(FluentIcons.info, size: 16),
+                const SizedBox(
+                  width: 4,
+                ),
+                Text("Close the pane to apply the settings".tl)
+              ],
+            ),
+          ),
           SizedBox(
             height: context.padding.bottom,
           )
@@ -456,6 +469,12 @@ class _SearchResultPageState
   late String oldKeyword = widget.keyword;
 
   late final controller = TextEditingController(text: widget.keyword);
+
+  @override
+  void reset() {
+    nextUrl = null;
+    super.reset();
+  }
 
   void search() {
     if (keyword != oldKeyword) {
