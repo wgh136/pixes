@@ -1,49 +1,42 @@
 # pixes
 
-[![flutter](https://img.shields.io/badge/flutter-3.22.3-blue)](https://flutter.dev/) 
+[![flutter](https://img.shields.io/badge/flutter-3.27.0-blue)](https://flutter.dev/) 
 [![License](https://img.shields.io/github/license/wgh136/pixes)](https://github.com/wgh136/pixes/blob/master/LICENSE)
 [![Download](https://img.shields.io/github/v/release/wgh136/pixes)](https://github.com/wgh136/pixes)
 [![stars](https://img.shields.io/github/stars/wgh136/pixes)](https://github.com/wgh136/pixes/stargazers)
 
-非官方 Pixiv app, 支持 Windows, Android, iOS, macOS, linux
+Unofficial Pixiv app, support Windows, Android, iOS, macOS, linux
 
-主要功能均已实现
+All main features are implemented.
 
-## 下载
+## Download
 
-在 [Release](https://github.com/wgh136/pixes/releases) 页面下载
+Download from [Release](https://github.com/wgh136/pixes/releases)
 
-## 从源代码构建
+## Build from source
 
-### 准备工作
+### Install Flutter
 
-安装Stable版的Flutter
+View [Flutter Document](https://flutter.dev/docs/get-started/install)
 
-### 构建Android
+### Build Android
 
-将你的证书文件(`key.jks`, `key.properties`)放在`android`目录下
+Put your keystore file (`key.jks`, `key.properties`) in `android/`
 
-执行`flutter build apk`构建apk
+Run `flutter build apk`
 
-### 构建iOS
+### Build iOS/Windows/macOS
 
-执行`flutter build ios`构建iOS程序
+Run `flutter build ios/windows/macos`
 
-### 构建Windows
+### Build Linux
 
-执行`python windows/build_windows.py`构建Windows程序
+Use`python3 debian/build.py` to build deb package
 
-### 构建macOS
+For other linux distributions, you can use `flutter build linux` to build. 
+You must register the `pixiv` scheme in the `.desktop` file, otherwise the login will not work.
 
-执行`flutter build macos`构建macOS程序
-
-### 构建Linux
-
-执行`python3 debian/build.py`构建deb包
-
-如果你使用其他发行版, 请注意`.desktop`文件中需要注册 URI Scheme `pixiv`
-
-## 屏幕截图
+## Screenshots
 
 <img src="screenshots/1.png" style="width: 400px">
 <img src="screenshots/2.png" style="width: 400px">
