@@ -143,15 +143,15 @@ class _CommentsPageState extends MultiPageLoadingState<CommentsPage, Comment> {
     return Card(
       padding: EdgeInsets.zero,
       backgroundColor:
-          FluentTheme.of(context).micaBackgroundColor.withOpacity(0.96),
+          FluentTheme.of(context).micaBackgroundColor.toOpacity(0.96),
       child: SizedBox(
         height: 52,
         child: TextBox(
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
           placeholder: "Comment".tl,
-          foregroundDecoration: BoxDecoration(
+          foregroundDecoration: WidgetStatePropertyAll(BoxDecoration(
             border: Border.all(color: Colors.transparent),
-          ),
+          )),
           onSubmitted: (s) {
             showToast(context, message: "Sending".tl);
             if (isCommenting) return;
@@ -161,10 +161,12 @@ class _CommentsPageState extends MultiPageLoadingState<CommentsPage, Comment> {
             if (widget.isNovel) {
               Network().commentNovel(widget.id, s).then((value) {
                 if (value.error) {
-                  context.showToast(message: "Network Error");
-                  setState(() {
-                    isCommenting = false;
-                  });
+                  if (context.mounted) {
+                    context.showToast(message: "Network Error");
+                    setState(() {
+                      isCommenting = false;
+                    });
+                  }
                 } else {
                   isCommenting = false;
                   nextUrl = null;
@@ -174,10 +176,12 @@ class _CommentsPageState extends MultiPageLoadingState<CommentsPage, Comment> {
             } else {
               Network().comment(widget.id, s).then((value) {
                 if (value.error) {
-                  context.showToast(message: "Network Error");
-                  setState(() {
-                    isCommenting = false;
-                  });
+                  if(context.mounted) {
+                    context.showToast(message: "Network Error");
+                    setState(() {
+                      isCommenting = false;
+                    });
+                  }
                 } else {
                   isCommenting = false;
                   nextUrl = null;

@@ -83,7 +83,7 @@ class _IllustWidgetState extends State<IllustWidget> {
                             ? ColorScheme.of(context).primary
                             : ColorScheme.of(context)
                                 .outlineVariant
-                                .withOpacity(0.64);
+                                .toOpacity(0.64);
                         var width = emphasis ? 1.6 : 1.0;
                         return Border.all(color: color, width: width);
                       }(),
@@ -120,7 +120,7 @@ class _IllustWidgetState extends State<IllustWidget> {
                       decoration: BoxDecoration(
                         color: FluentTheme.of(context)
                             .micaBackgroundColor
-                            .withOpacity(0.72),
+                            .toOpacity(0.72),
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                             color: ColorScheme.of(context).outlineVariant,
@@ -143,7 +143,7 @@ class _IllustWidgetState extends State<IllustWidget> {
                       decoration: BoxDecoration(
                         color: ColorScheme.of(context)
                             .errorContainer
-                            .withOpacity(0.8),
+                            .toOpacity(0.8),
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                             color: ColorScheme.of(context).outlineVariant,
@@ -166,7 +166,7 @@ class _IllustWidgetState extends State<IllustWidget> {
                       decoration: BoxDecoration(
                         color: ColorScheme.of(context)
                             .primaryContainer
-                            .withOpacity(0.8),
+                            .toOpacity(0.8),
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
                             color: ColorScheme.of(context).outlineVariant,
@@ -387,7 +387,7 @@ class IllustHistoryWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: FluentTheme.of(context)
                           .micaBackgroundColor
-                          .withOpacity(0.72),
+                          .toOpacity(0.72),
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
                           color: ColorScheme.of(context).outlineVariant,
@@ -410,7 +410,7 @@ class IllustHistoryWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: ColorScheme.of(context)
                           .errorContainer
-                          .withOpacity(0.8),
+                          .toOpacity(0.8),
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
                           color: ColorScheme.of(context).outlineVariant,
@@ -433,7 +433,7 @@ class IllustHistoryWidget extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: ColorScheme.of(context)
                           .primaryContainer
-                          .withOpacity(0.8),
+                          .toOpacity(0.8),
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
                           color: ColorScheme.of(context).outlineVariant,

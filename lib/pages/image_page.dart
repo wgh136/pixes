@@ -122,7 +122,7 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                               await file.readAsBytes(),
                               quality: 100,
                               name: fileName);
-                          if (mounted) {
+                          if (context.mounted) {
                             showToast(context, message: "Saved".tl);
                           }
                         }

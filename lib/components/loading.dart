@@ -132,7 +132,9 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
         if(message.length > 20) {
           message = "${message.substring(0, 20)}...";
         }
-        context.showToast(message: message);
+        if (mounted) {
+          context.showToast(message: message);
+        }
       }
     });
   }

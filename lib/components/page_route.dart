@@ -330,7 +330,7 @@ class SideBarRoute<T> extends PopupRoute<T> {
               decoration: BoxDecoration(
                   color: FluentTheme.of(context)
                       .micaBackgroundColor
-                      .withOpacity(0.98),
+                      .toOpacity(0.98),
                   borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(4),
                       bottomLeft: Radius.circular(4))),

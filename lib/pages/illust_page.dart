@@ -620,7 +620,7 @@ class _BottomBarState extends State<_BottomBar> with TickerProviderStateMixin {
               borderRadius:
                   const BorderRadius.vertical(top: Radius.circular(8)),
               backgroundColor:
-                  FluentTheme.of(context).micaBackgroundColor.withOpacity(0.96),
+                  FluentTheme.of(context).micaBackgroundColor.toOpacity(0.96),
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: SizedBox(
                 width: double.infinity,
@@ -1219,7 +1219,7 @@ class __BlockingPageState extends State<_BlockingPage> {
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 borderColor: blockedTags.contains(index)
                     ? ColorScheme.of(context).outlineVariant
-                    : ColorScheme.of(context).outlineVariant.withOpacity(0.2),
+                    : ColorScheme.of(context).outlineVariant.toOpacity(0.2),
                 padding: EdgeInsets.zero,
                 child: ListTile(
                   title: Text(text),

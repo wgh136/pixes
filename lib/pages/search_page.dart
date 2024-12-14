@@ -105,12 +105,13 @@ class _SearchPageState extends State<SearchPage> {
                           '${searchTypes[searchType].tl} / ${"Open link".tl}',
                       onChanged: (s) => text = s,
                       onSubmitted: (s) => search(),
-                      foregroundDecoration: BoxDecoration(
-                          border: Border.all(
-                              color: ColorScheme.of(context)
-                                  .outlineVariant
-                                  .withOpacity(0.6)),
-                          borderRadius: BorderRadius.circular(4)),
+                      foregroundDecoration: WidgetStatePropertyAll(
+                          BoxDecoration(
+                              border: Border.all(
+                                  color: ColorScheme.of(context)
+                                      .outlineVariant
+                                      .toOpacity(0.6)),
+                              borderRadius: BorderRadius.circular(4))),
                       suffix: MouseRegion(
                         cursor: SystemMouseCursors.click,
                         child: GestureDetector(
@@ -247,7 +248,7 @@ class _TrendingTagsViewState
                       decoration: BoxDecoration(
                           color: FluentTheme.of(context)
                               .micaBackgroundColor
-                              .withOpacity(0.84),
+                              .toOpacity(0.84),
                           borderRadius: BorderRadius.circular(4)),
                       child: Text(text)
                           .paddingHorizontal(4)
@@ -517,12 +518,16 @@ class _SearchResultPageState
                           placeholder: "Search artworks".tl,
                           onChanged: (s) => keyword = s,
                           onSubmitted: (s) => search(),
-                          foregroundDecoration: BoxDecoration(
+                          foregroundDecoration: WidgetStatePropertyAll(
+                            BoxDecoration(
                               border: Border.all(
-                                  color: ColorScheme.of(context)
-                                      .outlineVariant
-                                      .withOpacity(0.6)),
-                              borderRadius: BorderRadius.circular(4)),
+                                color: ColorScheme.of(context)
+                                    .outlineVariant
+                                    .toOpacity(0.6),
+                              ),
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                          ),
                           suffix: MouseRegion(
                             cursor: SystemMouseCursors.click,
                             child: GestureDetector(
@@ -709,12 +714,14 @@ class _SearchNovelResultPageState
                           placeholder: "Search artworks".tl,
                           onChanged: (s) => keyword = s,
                           onSubmitted: (s) => search(),
-                          foregroundDecoration: BoxDecoration(
-                              border: Border.all(
-                                  color: ColorScheme.of(context)
-                                      .outlineVariant
-                                      .withOpacity(0.6)),
-                              borderRadius: BorderRadius.circular(4)),
+                          foregroundDecoration: WidgetStatePropertyAll(
+                            BoxDecoration(
+                                border: Border.all(
+                                    color: ColorScheme.of(context)
+                                        .outlineVariant
+                                        .toOpacity(0.6)),
+                                borderRadius: BorderRadius.circular(4)),
+                          ),
                           suffix: MouseRegion(
                             cursor: SystemMouseCursors.click,
                             child: GestureDetector(

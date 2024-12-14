@@ -129,7 +129,7 @@ class _MainPageState extends State<MainPage>
       );
     }
     return DefaultSelectionStyle.merge(
-      selectionColor: FluentTheme.of(context).selectionColor.withOpacity(0.4),
+      selectionColor: FluentTheme.of(context).selectionColor.toOpacity(0.4),
       child: NavigationView(
           appBar: buildAppBar(context, navigatorKey),
           pane: NavigationPane(
@@ -355,9 +355,7 @@ class _MainPageState extends State<MainPage>
   ValueListenable<bool> get canPopNotifier => popValue;
 
   @override
-  PopInvokedCallback? get onPopInvoked => onPop;
-
-  void onPop(bool value) {
+  void onPopInvokedWithResult(bool didPop, result) {
     if (App.rootNavigatorKey.currentState?.canPop() ?? false) {
       App.rootNavigatorKey.currentState?.pop();
     } else if (App.mainNavigatorKey?.currentState?.canPop() ?? false) {
@@ -366,6 +364,9 @@ class _MainPageState extends State<MainPage>
       SystemNavigator.pop();
     }
   }
+
+  @override
+  void onPopInvoked(bool didPop) { }
 }
 
 class _BackButton extends StatefulWidget {
@@ -416,7 +417,7 @@ class _BackButtonState extends State<_BackButton> {
 
     return NavigationPaneTheme(
       data: NavigationPaneTheme.of(context).merge(NavigationPaneThemeData(
-        unselectedIconColor: ButtonState.resolveWith((states) {
+        unselectedIconColor: WidgetStateProperty.resolveWith((states) {
           if (states.isDisabled) {
             return ButtonThemeData.buttonColor(context, states);
           }
@@ -669,16 +670,16 @@ class UserPane extends PaneItem {
               final tileColor = this.tileColor ??
                   theme.tileColor ??
                   kDefaultPaneItemColor(context, mode == PaneDisplayMode.top);
-              final newStates = states.toSet()..remove(ButtonStates.disabled);
+              final newStates = states.toSet()..remove(WidgetState.disabled);
               if (selected && selectedTileColor != null) {
                 return selectedTileColor!.resolve(newStates);
               }
               return tileColor.resolve(
                 selected
                     ? {
-                        states.isHovering
-                            ? ButtonStates.pressing
-                            : ButtonStates.hovering,
+                        states.isHovered
+                            ? WidgetState.pressed
+                            : WidgetState.hovered,
                       }
                     : newStates,
               );

@@ -214,7 +214,7 @@ class _NovelPageState extends State<NovelPage> {
       constraints: const BoxConstraints(maxWidth: 560),
       child: Card(
         margin: const EdgeInsets.only(left: 2, right: 2, bottom: 12),
-        borderColor: ColorScheme.of(context).outlineVariant.withOpacity(0.52),
+        borderColor: ColorScheme.of(context).outlineVariant.toOpacity(0.52),
         child: GestureDetector(
           behavior: HitTestBehavior.opaque,
           onTap: () {
@@ -555,7 +555,7 @@ class _NovelSeriesWidgetState
           color: FluentTheme.of(context).cardColor,
           borderRadius: BorderRadius.circular(4),
           border: Border.all(
-            color: ColorScheme.of(context).outlineVariant.withOpacity(0.6),
+            color: ColorScheme.of(context).outlineVariant.toOpacity(0.6),
             width: 0.5,
           )),
       sliver: SliverMainAxisGroup(slivers: [

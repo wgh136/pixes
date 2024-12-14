@@ -183,21 +183,28 @@ class MyApp extends StatelessWidget {
   }
 }
 
-/// from https://stackoverflow.com/a/60191441
+int _floatToInt8(double x) {
+  return (x * 255.0).round() & 0xff;
+}
+
 Color darken(Color c, [int percent = 10]) {
   assert(1 <= percent && percent <= 100);
   var f = 1 - percent / 100;
-  return Color.fromARGB(c.alpha, (c.red * f).round(), (c.green * f).round(),
-      (c.blue * f).round());
+  return Color.fromARGB(
+    _floatToInt8(c.a),
+    _floatToInt8(c.r * f),
+    _floatToInt8(c.g * f),
+    _floatToInt8(c.b * f),
+  );
 }
 
-/// from https://stackoverflow.com/a/60191441
 Color lighten(Color c, [int percent = 10]) {
   assert(1 <= percent && percent <= 100);
   var p = percent / 100;
   return Color.fromARGB(
-      c.alpha,
-      c.red + ((255 - c.red) * p).round(),
-      c.green + ((255 - c.green) * p).round(),
-      c.blue + ((255 - c.blue) * p).round());
+    _floatToInt8(c.a),
+    _floatToInt8(c.r + (1 - c.r) * p),
+    _floatToInt8(c.g + (1 - c.g) * p),
+    _floatToInt8(c.b + (1 - c.b) * p),
+  );
 }

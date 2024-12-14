@@ -65,3 +65,9 @@ extension WidgetExtension on Widget{
     return SizedBox(height: height, child: this);
   }
 }
+
+extension ColorExt on Color {
+  Color toOpacity(double opacity){
+    return withValues(alpha: opacity);
+  }
+}
