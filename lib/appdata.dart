@@ -38,6 +38,7 @@ class _Appdata {
     "showOriginalImage": false,
     "checkUpdate": true,
     "emphasizeArtworksFromFollowingArtists": true,
+    "initialPage": 4,
   };
 
   bool lock = false;

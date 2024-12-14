@@ -229,6 +229,14 @@ class _SettingsPageState extends State<SettingsPage> {
       child: Column(
         children: [
           buildItem(
+              title: "Initial Page".tl,
+              action: Button(
+                child: Text("Edit".tl).fixWidth(64),
+                onPressed: () {
+                  context.to(() => const _SetInitialPageWidget());
+                },
+              )),
+          buildItem(
               title: "Proxy".tl,
               action: Button(
                 child: Text("Edit".tl).fixWidth(64),
@@ -658,6 +666,71 @@ class _ShortcutsSettingsState extends State<ShortcutsSettings> {
             });
           },
         ),
+      ),
+    );
+  }
+}
+
+class _SetInitialPageWidget extends StatefulWidget {
+  const _SetInitialPageWidget();
+
+  @override
+  State<_SetInitialPageWidget> createState() => _SetInitialPageWidgetState();
+}
+
+class _SetInitialPageWidgetState extends State<_SetInitialPageWidget> {
+  int index = appdata.settings["initialPage"] ?? 4;
+
+  static const pageNames = [
+    "Search",
+    "Downloading",
+    "Downloaded",
+    "Explore",
+    "Bookmarks",
+    "Following",
+    "History",
+    "Ranking",
+    "Recommendation",
+    "Bookmarks",
+    "Ranking",
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return ScaffoldPage(
+      header: TitleBar(title: "Initial Page".tl),
+      content: ListView.builder(
+        itemCount: pageNames.length + 2,
+        itemBuilder: (context, index) {
+          if (index == 3) {
+            return Text('${"Illustrations".tl}/${"Manga".tl}').paddingHorizontal(16).paddingVertical(8);
+          } else if (index > 3) {
+            index--;
+          }
+          if (index == 8) {
+            return Text("Novel".tl).paddingHorizontal(16).paddingVertical(8);
+          } else if (index > 8) {
+            index--;
+          }
+
+          return Card(
+            margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            padding: EdgeInsets.zero,
+            child: ListTile(
+              title: Text(pageNames[index].tl),
+              trailing: RadioButton(
+                checked: this.index - 1 == index,
+                onChanged: (value) {
+                  setState(() {
+                    this.index = index + 1;
+                    appdata.settings["initialPage"] = index + 1;
+                    appdata.writeData();
+                  });
+                },
+              ),
+            ),
+          );
+        },
       ),
     );
   }

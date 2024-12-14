@@ -82,6 +82,7 @@ class _MainPageState extends State<MainPage>
     windowManager.addListener(this);
     listenMouseSideButtonToBack(navigatorKey);
     App.mainNavigatorKey = navigatorKey;
+    index = appdata.settings["initialPage"] ?? 4;
     super.initState();
   }
 
@@ -232,7 +233,9 @@ class _MainPageState extends State<MainPage>
                 child: Navigator(
                   key: navigatorKey,
                   onGenerateRoute: (settings) => AppPageRoute(
-                      builder: (context) => const RecommendationPage()),
+                    builder: (context) =>
+                        pageBuilders.elementAtOrNull(index)!(),
+                  ),
                 ),
               )),
     );
@@ -322,7 +325,7 @@ class _MainPageState extends State<MainPage>
                               size: 18,
                             ),
                             onPressed: () {
-                              if(index == 1) {
+                              if (index == 1) {
                                 return;
                               }
                               setState(() {
@@ -366,7 +369,7 @@ class _MainPageState extends State<MainPage>
   }
 
   @override
-  void onPopInvoked(bool didPop) { }
+  void onPopInvoked(bool didPop) {}
 }
 
 class _BackButton extends StatefulWidget {
@@ -707,13 +710,16 @@ class UserPane extends PaneItem {
 /// Close
 class CloseIcon extends StatelessWidget {
   final Color color;
+
   const CloseIcon({super.key, required this.color});
+
   @override
   Widget build(BuildContext context) => _AlignedPaint(_ClosePainter(color));
 }
 
 class _ClosePainter extends _IconPainter {
   _ClosePainter(super.color);
+
   @override
   void paint(Canvas canvas, Size size) {
     Paint p = getPaint(color, true);
@@ -725,13 +731,16 @@ class _ClosePainter extends _IconPainter {
 /// Maximize
 class MaximizeIcon extends StatelessWidget {
   final Color color;
+
   const MaximizeIcon({super.key, required this.color});
+
   @override
   Widget build(BuildContext context) => _AlignedPaint(_MaximizePainter(color));
 }
 
 class _MaximizePainter extends _IconPainter {
   _MaximizePainter(super.color);
+
   @override
   void paint(Canvas canvas, Size size) {
     Paint p = getPaint(color);
@@ -742,16 +751,19 @@ class _MaximizePainter extends _IconPainter {
 /// Restore
 class RestoreIcon extends StatelessWidget {
   final Color color;
+
   const RestoreIcon({
     super.key,
     required this.color,
   });
+
   @override
   Widget build(BuildContext context) => _AlignedPaint(_RestorePainter(color));
 }
 
 class _RestorePainter extends _IconPainter {
   _RestorePainter(super.color);
+
   @override
   void paint(Canvas canvas, Size size) {
     Paint p = getPaint(color);
@@ -768,13 +780,16 @@ class _RestorePainter extends _IconPainter {
 /// Minimize
 class MinimizeIcon extends StatelessWidget {
   final Color color;
+
   const MinimizeIcon({super.key, required this.color});
+
   @override
   Widget build(BuildContext context) => _AlignedPaint(_MinimizePainter(color));
 }
 
 class _MinimizePainter extends _IconPainter {
   _MinimizePainter(super.color);
+
   @override
   void paint(Canvas canvas, Size size) {
     Paint p = getPaint(color);
@@ -786,6 +801,7 @@ class _MinimizePainter extends _IconPainter {
 /// Helpers
 abstract class _IconPainter extends CustomPainter {
   _IconPainter(this.color);
+
   final Color color;
 
   @override
@@ -794,6 +810,7 @@ abstract class _IconPainter extends CustomPainter {
 
 class _AlignedPaint extends StatelessWidget {
   const _AlignedPaint(this.painter);
+
   final CustomPainter painter;
 
   @override
