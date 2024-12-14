@@ -24,8 +24,8 @@ DisableProgramGroupPage=yes
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 PrivilegesRequiredOverridesAllowed=dialog
-OutputDir=C:\Users\wgh19\IdeaProjects\pixes\build\windows
-OutputBaseFilename=pixes-windows-installer
+OutputDir={#RootPath}\build\windows
+OutputBaseFilename=pixes-{#MyAppVersion}-windows-installer
 SetupIconFile={#RootPath}\windows\runner\resources\app_icon.ico
 Compression=lzma
 SolidCompression=yes
@@ -35,7 +35,7 @@ ArchitecturesAllowed=x64 arm64
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
-Name: "chinesesimplified"; MessagesFile: "compiler:Languages\ChineseSimplified.isl"
+Name: "chinesesimplified"; MessagesFile: "{#RootPath}\windows\ChineseSimplified.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
