@@ -1,42 +1,167 @@
-name: Build IOS
-run-name: Build IOS
+name: Build ALL
+run-name: Build ALL
 on:
   workflow_dispatch: {}
+  release:
+    types: [published]
+
 jobs:
-  Build_IOS:
-    runs-on: macos-13
-    steps:
-    - uses: actions/checkout@v4
-    - uses: subosito/flutter-action@v2
-      with:
-        channel: 'stable'
-        architecture: x64
-        flutter-version-file: pubspec.yaml
-    - run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app
-    - run: flutter pub get
-    - run: flutter build ios --release --no-codesign
-    - run: bash .github/generate_ipa.sh
-    - uses: actions/upload-artifact@v3
-      with:
-        name: app-ios.ipa
-        path: build/ios/iphoneos/app-ios.ipa
   Build_MacOS:
-    runs-on: macos-13
+    runs-on: macos-15
     steps:
-    - uses: actions/checkout@v4
-    - uses: subosito/flutter-action@v2
-      with:
-        channel: 'stable'
-        architecture: x64
-        flutter-version-file: pubspec.yaml
-    - run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app
-    - run: flutter pub get
-    - run: flutter build macos --release
-    - run: |
-           cd build/macos/Build/Products/Release
-           zip -r macos-build.zip pixes.app
-    - uses: actions/upload-artifact@v4
-      with:
-        name: macos-build.zip
-        path: build/macos/Build/Products/Release/macos-build.zip
- 
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          architecture: x64
+          flutter-version-file: pubspec.yaml
+      - run: sudo xcode-select --switch /Applications/Xcode_14.3.1.app
+      - run: flutter pub get
+      - run: flutter build macos --release
+      - run: |
+          cd build/macos/Build/Products/Release
+          chmod +x pixes.app/Contents/MacOS/pixes
+          zip -r macos.zip pixes.app
+      - uses: actions/upload-artifact@v4
+        with:
+          name: macos.zip
+          path: build/macos/Build/Products/Release/macos.zip
+  Build_IOS:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          flutter-version-file: pubspec.yaml
+          architecture: x64
+      - run: sudo xcode-select --switch /Applications/Xcode_16.0.app
+      - run: flutter pub get
+      - run: flutter build ios --release --no-codesign
+      - run: |
+          mkdir -p /Users/runner/work/pixes/pixes/build/ios/iphoneos/Payload
+          mv /Users/runner/work/pixes/pixes/build/ios/iphoneos/Runner.app /Users/runner/work/pixes/pixes/build/ios/iphoneos/Payload
+          cd /Users/runner/work/pixes/pixes/build/ios/iphoneos/
+          zip -r pixes-ios.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app-ios.ipa
+          path: /Users/runner/work/pixes/pixes/build/ios/iphoneos/pixes-ios.ipa
+  Build_Android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          flutter-version-file: pubspec.yaml
+          architecture: x64
+      - name: Decode and install certificate
+        env:
+          STORE_FILE: ${{ secrets.ANDROID_KEYSTORE }}
+          PROPERTY_FILE: ${{ secrets.ANDROID_KEY_PROPERTIES }}
+        run: |
+          echo "$STORE_FILE" | base64 --decode > android/keystore.jks
+          echo "$PROPERTY_FILE" > android/key.properties
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'oracle'
+          java-version: '17'
+      - run: flutter pub get
+      - run: flutter build apk --release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: apks
+          path: build/app/outputs/apk/release
+  Build_Windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: install dependencies
+        run: |
+          choco install yq -y
+          pip install httpx
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          flutter-version-file: pubspec.yaml
+          architecture: x64
+      - name: build
+        run: |
+          flutter pub get
+          python windows/build.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: windows_build
+          path: build/windows/pixes-*
+  Build_Linux:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          flutter-version-file: pubspec.yaml
+          architecture: x64
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y ninja-build libgtk-3-dev webkit2gtk-4.1
+          dart pub global activate flutter_to_debian
+      - run: python3 debian/build.py
+      - run: dart run flutter_to_arch
+      - run: |
+          sudo rm -rf build/linux/arch/app.tar.gz
+          sudo rm -rf build/linux/arch/pkg
+          sudo rm -rf build/linux/arch/src
+          sudo rm -rf build/linux/arch/PKGBUILD
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb_build
+          path: build/linux/x64/release/debian
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arch_build
+          path: build/linux/arch/
+
+  Release:
+    runs-on: ubuntu-latest
+    needs: [Build_MacOS, Build_IOS, Build_Android, Build_Windows, Build_Linux]
+    if: github.event_name == 'release'  # 仅在 push 事件时执行
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos.zip
+          path: outputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: app-ios.ipa
+          path: outputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: apks
+          path: outputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows_build
+          path: outputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: deb_build
+          path: outputs
+      - uses: actions/download-artifact@v4
+        with:
+          name: arch_build
+          path: outputs
+      - uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            outputs/*.ipa
+            outputs/*.dmg
+            outputs/*.apk
+            outputs/*.zip
+            outputs/*.exe
+            outputs/*.deb
+            outputs/*.zst
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_GITHUB_TOKEN }}
