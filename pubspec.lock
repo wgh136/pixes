@@ -331,7 +331,7 @@ packages:
     description:
       path: "."
       ref: master
-      resolved-ref: "3f8c4d2cc41002d3ffdb770cab3b62583326ce01"
+      resolved-ref: "38a38c45d3ed229cbc1d827eb2b5aaad1a4519cd"
       url: "https://github.com/wgh136/image_gallery_saver"
     source: git
     version: "2.0.0"
