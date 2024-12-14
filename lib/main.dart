@@ -72,7 +72,6 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    var windowsFont = kDebugMode ? "微软雅黑" : "font";
     return StateBuilder<SimpleController>(
         init: SimpleController(),
         tag: "MyApp",
@@ -105,7 +104,7 @@ class MyApp extends StatelessWidget {
                     title: 'pixes',
                     theme: FluentThemeData(
                         brightness: brightness,
-                        fontFamily: App.isWindows ? windowsFont : null,
+                        fontFamily: App.isWindows ? "Microsoft YaHei UI" : null,
                         accentColor: AccentColor.swatch({
                           'darkest': darken(colorScheme.primary, 30),
                           'darker': darken(colorScheme.primary, 20),
@@ -140,7 +139,7 @@ class MyApp extends StatelessWidget {
                             colorScheme: colorScheme, useMaterial3: true),
                         child: DefaultTextStyle.merge(
                           style: TextStyle(
-                            fontFamily: App.isWindows ? 'font' : null,
+                            fontFamily: App.isWindows ? "Microsoft YaHei UI" : null,
                           ),
                           child: OverlayWidget(child),
                         ),
