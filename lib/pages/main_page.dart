@@ -132,112 +132,112 @@ class _MainPageState extends State<MainPage>
     return DefaultSelectionStyle.merge(
       selectionColor: FluentTheme.of(context).selectionColor.toOpacity(0.4),
       child: NavigationView(
-          appBar: buildAppBar(context, navigatorKey),
-          pane: NavigationPane(
-            selected: index,
-            onChanged: (value) {
-              setState(() {
-                index = value;
-              });
-              navigate(value);
-            },
-            items: [
-              UserPane(),
-              PaneItem(
-                icon: const Icon(
-                  MdIcons.search,
-                  size: 20,
-                ),
-                title: Text('Search'.tl),
-                body: const SizedBox.shrink(),
+        appBar: buildAppBar(context, navigatorKey),
+        pane: NavigationPane(
+          selected: index,
+          onChanged: (value) {
+            setState(() {
+              index = value;
+            });
+            navigate(value);
+          },
+          items: [
+            UserPane(),
+            PaneItem(
+              icon: const Icon(
+                MdIcons.search,
+                size: 20,
               ),
-              PaneItem(
-                icon: const Icon(
-                  MdIcons.downloading,
-                  size: 20,
-                ),
-                title: Text('Downloading'.tl),
-                body: const SizedBox.shrink(),
+              title: Text('Search'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItem(
+              icon: const Icon(
+                MdIcons.downloading,
+                size: 20,
               ),
-              PaneItem(
-                icon: const Icon(
-                  MdIcons.download,
-                  size: 20,
-                ),
-                title: Text('Downloaded'.tl),
-                body: const SizedBox.shrink(),
+              title: Text('Downloading'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItem(
+              icon: const Icon(
+                MdIcons.download,
+                size: 20,
               ),
-              PaneItemSeparator(),
-              PaneItemHeader(
-                  header: Text('${"Illustrations".tl}/${"Manga".tl}')
-                      .paddingBottom(4)
-                      .paddingLeft(8)),
-              PaneItem(
-                icon: const Icon(
-                  MdIcons.explore_outlined,
-                  size: 20,
-                ),
-                title: Text('Explore'.tl),
-                body: const SizedBox.shrink(),
+              title: Text('Downloaded'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItemSeparator(),
+            PaneItemHeader(
+                header: Text('${"Illustrations".tl}/${"Manga".tl}')
+                    .paddingBottom(4)
+                    .paddingLeft(8)),
+            PaneItem(
+              icon: const Icon(
+                MdIcons.explore_outlined,
+                size: 20,
               ),
-              PaneItem(
-                icon: const Icon(MdIcons.bookmark_outline, size: 20),
-                title: Text('Bookmarks'.tl),
-                body: const SizedBox.shrink(),
-              ),
-              PaneItem(
-                icon: const Icon(MdIcons.interests_outlined, size: 20),
-                title: Text('Following'.tl),
-                body: const SizedBox.shrink(),
-              ),
-              PaneItem(
-                icon: const Icon(MdIcons.history, size: 20),
-                title: Text('History'.tl),
-                body: const SizedBox.shrink(),
-              ),
-              PaneItem(
-                icon: const Icon(MdIcons.leaderboard_outlined, size: 20),
-                title: Text('Ranking'.tl),
-                body: const SizedBox.shrink(),
-              ),
-              PaneItemSeparator(),
-              PaneItemHeader(
-                  header: Text("Novel".tl).paddingBottom(4).paddingLeft(8)),
-              PaneItem(
-                icon: const Icon(MdIcons.featured_play_list_outlined, size: 20),
-                title: Text('Recommendation'.tl),
-                body: const SizedBox.shrink(),
-              ),
-              PaneItem(
-                icon:
-                    const Icon(MdIcons.collections_bookmark_outlined, size: 20),
-                title: Text('Bookmarks'.tl),
-                body: const SizedBox.shrink(),
-              ),
-              PaneItem(
-                icon: const Icon(MdIcons.leaderboard_outlined, size: 20),
-                title: Text('Ranking'.tl),
-                body: const SizedBox.shrink(),
-              ),
-              PaneItemSeparator(),
-              PaneItem(
-                icon: const Icon(MdIcons.settings_outlined, size: 20),
-                title: Text('Settings'.tl),
-                body: const SizedBox.shrink(),
-              ),
-            ],
+              title: Text('Explore'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItem(
+              icon: const Icon(MdIcons.bookmark_outline, size: 20),
+              title: Text('Bookmarks'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItem(
+              icon: const Icon(MdIcons.interests_outlined, size: 20),
+              title: Text('Following'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItem(
+              icon: const Icon(MdIcons.history, size: 20),
+              title: Text('History'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItem(
+              icon: const Icon(MdIcons.leaderboard_outlined, size: 20),
+              title: Text('Ranking'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItemSeparator(),
+            PaneItemHeader(
+                header: Text("Novel".tl).paddingBottom(4).paddingLeft(8)),
+            PaneItem(
+              icon: const Icon(MdIcons.featured_play_list_outlined, size: 20),
+              title: Text('Recommendation'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItem(
+              icon: const Icon(MdIcons.collections_bookmark_outlined, size: 20),
+              title: Text('Bookmarks'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItem(
+              icon: const Icon(MdIcons.leaderboard_outlined, size: 20),
+              title: Text('Ranking'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItemSeparator(),
+            PaneItem(
+              icon: const Icon(MdIcons.settings_outlined, size: 20),
+              title: Text('Settings'.tl),
+              body: const SizedBox.shrink(),
+            ),
+          ],
+        ),
+        paneBodyBuilder: (pane, child) => MediaQuery.removePadding(
+          context: context,
+          removeTop: true,
+          child: Navigator(
+            key: navigatorKey,
+            onGenerateRoute: (settings) => AppPageRoute(
+              isRoot: true,
+              builder: (context) => pageBuilders.elementAtOrNull(index)!(),
+            ),
           ),
-          paneBodyBuilder: (pane, child) => MediaQuery.removePadding(
-                context: context,
-                removeTop: true,
-                child: Navigator(
-                  key: navigatorKey,
-                  onGenerateRoute: (settings) => AppPageRoute(
-                    builder: (context) =>
-                        pageBuilders.elementAtOrNull(index)!(),
-                  ),
-                ),
-              )),
+        ),
+      ),
     );
   }
 
@@ -263,7 +263,12 @@ class _MainPageState extends State<MainPage>
               child: Text("Invalid Page: $index"),
             );
     navigatorKey.currentState!.pushAndRemoveUntil(
-        AppPageRoute(builder: (context) => page()), (route) => false);
+      AppPageRoute(
+        builder: (context) => page(),
+        isRoot: true,
+      ),
+      (route) => false,
+    );
   }
 
   NavigationAppBar buildAppBar(

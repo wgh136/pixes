@@ -20,6 +20,7 @@ class AppPageRoute<T> extends PageRoute<T> with _AppRouteTransitionMixin {
     super.barrierDismissible = false,
     this.enableIOSGesture = true,
     this.preventRebuild = true,
+    this.isRoot = false,
   }) {
     assert(opaque);
   }
@@ -43,6 +44,9 @@ class AppPageRoute<T> extends PageRoute<T> with _AppRouteTransitionMixin {
 
   @override
   final bool preventRebuild;
+
+  @override
+  final bool isRoot;
 
   static void updateBackButton() {
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -76,6 +80,8 @@ mixin _AppRouteTransitionMixin<T> on PageRoute<T> {
   bool get preventRebuild;
 
   Widget? _child;
+
+  bool get isRoot;
 
   @override
   Widget buildPage(
@@ -115,6 +121,22 @@ mixin _AppRouteTransitionMixin<T> on PageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
+    if (isRoot) {
+      return EntrancePageTransition(
+        animation: CurvedAnimation(
+          parent: animation,
+          curve: FluentTheme.of(context).animationCurve,
+        ),
+        child: enableIOSGesture && App.isIOS
+            ? IOSBackGestureDetector(
+                gestureWidth: _kBackGestureWidth,
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture(this),
+                child: child)
+            : child,
+      );
+    }
+
     return DrillInPageTransition(
       animation: CurvedAnimation(
         parent: animation,
@@ -386,5 +408,37 @@ class SideBarRoute<T> extends PopupRoute<T> {
 
   IOSBackGestureController _startPopGesture(PopupRoute<T> route) {
     return IOSBackGestureController(route.controller!, route.navigator!);
+  }
+}
+
+class EntrancePageTransition extends StatelessWidget {
+  /// Creates an entrance page transition
+  const EntrancePageTransition({
+    super.key,
+    required this.child,
+    required this.animation,
+  });
+
+  /// The widget to be animated
+  final Widget child;
+
+  /// The animation to drive this transition
+  final Animation<double> animation;
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: FluentTheme.of(context).micaBackgroundColor,
+      child: SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 0.1),
+          end: Offset.zero,
+        ).animate(animation),
+        child: FadeTransition(
+          opacity: animation,
+          child: child,
+        ),
+      ),
+    );
   }
 }
