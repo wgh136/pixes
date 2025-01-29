@@ -209,7 +209,7 @@ class _SettingsPageState extends State<SettingsPage> {
                   MdIcons.open_in_new,
                   size: 18,
                 ),
-                onPressed: () => launchUrlString("https://t.me/pica_group"),
+                onPressed: () => launchUrlString("https://t.me/venera_dev"),
               )),
           buildItem(
               title: "Logs",
