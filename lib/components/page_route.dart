@@ -121,8 +121,13 @@ mixin _AppRouteTransitionMixin<T> on PageRoute<T> {
   @override
   Widget buildTransitions(BuildContext context, Animation<double> animation,
       Animation<double> secondaryAnimation, Widget child) {
+    child = ColoredBox(
+      color: FluentTheme.of(context).micaBackgroundColor,
+      child: child,
+    );
+
     if (isRoot) {
-      return EntrancePageTransition(
+      child = EntrancePageTransition(
         animation: CurvedAnimation(
           parent: animation,
           curve: FluentTheme.of(context).animationCurve,
@@ -135,21 +140,25 @@ mixin _AppRouteTransitionMixin<T> on PageRoute<T> {
                 child: child)
             : child,
       );
+    } else {
+      child = DrillInPageTransition(
+        animation: CurvedAnimation(
+          parent: animation,
+          curve: FluentTheme
+              .of(context)
+              .animationCurve,
+        ),
+        child: enableIOSGesture && App.isIOS
+            ? IOSBackGestureDetector(
+            gestureWidth: _kBackGestureWidth,
+            enabledCallback: () => _isPopGestureEnabled<T>(this),
+            onStartPopGesture: () => _startPopGesture(this),
+            child: child)
+            : child,
+      );
     }
 
-    return DrillInPageTransition(
-      animation: CurvedAnimation(
-        parent: animation,
-        curve: FluentTheme.of(context).animationCurve,
-      ),
-      child: enableIOSGesture && App.isIOS
-          ? IOSBackGestureDetector(
-              gestureWidth: _kBackGestureWidth,
-              enabledCallback: () => _isPopGestureEnabled<T>(this),
-              onStartPopGesture: () => _startPopGesture(this),
-              child: child)
-          : child,
-    );
+    return child;
   }
 
   IOSBackGestureController _startPopGesture(PageRoute<T> route) {
@@ -427,17 +436,14 @@ class EntrancePageTransition extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: FluentTheme.of(context).micaBackgroundColor,
-      child: SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(0, 0.1),
-          end: Offset.zero,
-        ).animate(animation),
-        child: FadeTransition(
-          opacity: animation,
-          child: child,
-        ),
+    return SlideTransition(
+      position: Tween<Offset>(
+        begin: const Offset(0, 0.1),
+        end: Offset.zero,
+      ).animate(animation),
+      child: FadeTransition(
+        opacity: animation,
+        child: child,
       ),
     );
   }
