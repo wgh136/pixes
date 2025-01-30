@@ -11,6 +11,7 @@ import "package:pixes/network/network.dart";
 import "package:pixes/pages/bookmarks.dart";
 import "package:pixes/pages/downloaded_page.dart";
 import "package:pixes/pages/following_artworks.dart";
+import "package:pixes/pages/following_novels_page.dart";
 import "package:pixes/pages/history.dart";
 import "package:pixes/pages/novel_bookmarks_page.dart";
 import "package:pixes/pages/novel_ranking_page.dart";
@@ -214,6 +215,11 @@ class _MainPageState extends State<MainPage>
               body: const SizedBox.shrink(),
             ),
             PaneItem(
+              icon: const Icon(MdIcons.interests_outlined, size: 20),
+              title: Text('Following'.tl),
+              body: const SizedBox.shrink(),
+            ),
+            PaneItem(
               icon: const Icon(MdIcons.leaderboard_outlined, size: 20),
               title: Text('Ranking'.tl),
               body: const SizedBox.shrink(),
@@ -253,6 +259,7 @@ class _MainPageState extends State<MainPage>
     () => const RankingPage(),
     () => const NovelRecommendationPage(),
     () => const NovelBookmarksPage(),
+    () => const FollowingNovelsPage(),
     () => const NovelRankingPage(),
     () => const SettingsPage(),
   ];

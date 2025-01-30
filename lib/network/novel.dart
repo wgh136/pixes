@@ -149,4 +149,17 @@ extension NovelExt on Network {
     }
     return Res(Novel.fromJson(res.data["novel"]));
   }
+
+  Future<Res<List<Novel>>> getFollowingNovels(String restrict,
+      [String? nextUrl]) async {
+    var res = await apiGet(nextUrl ?? "/v1/novel/follow?restrict=$restrict");
+    if (res.success) {
+      return Res(
+        (res.data["novels"] as List).map((e) => Novel.fromJson(e)).toList(),
+        subData: res.data["next_url"],
+      );
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
 }
