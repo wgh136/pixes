@@ -35,15 +35,15 @@ extension NovelExt on Network {
     return getNovelsWithNextUrl(url);
   }
 
-  Future<Res<List<Novel>>> getBookmarkedNovels(String uid) {
+  Future<Res<List<Novel>>> getBookmarkedNovels(String uid, bool public) {
     return getNovelsWithNextUrl(
-        "/v1/user/bookmarks/novel?user_id=$uid&restrict=public");
+        "/v1/user/bookmarks/novel?user_id=$uid&restrict=${public ? "public" : "private"}");
   }
 
-  Future<Res<bool>> favoriteNovel(String id) async {
+  Future<Res<bool>> favoriteNovel(String id, bool public) async {
     var res = await apiPost("/v2/novel/bookmark/add", data: {
       "novel_id": id,
-      "restrict": "public",
+      "restrict": public ? "public" : "private",
     });
     if (res.error) {
       return Res.fromErrorRes(res);

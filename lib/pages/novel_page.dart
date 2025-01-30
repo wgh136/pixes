@@ -121,18 +121,18 @@ class _NovelPageState extends State<NovelPage> {
       padding: const EdgeInsets.only(bottom: 10),
       child: Row(
         children: [
-          const SizedBox(
-            width: 2,
-          ),
+          const SizedBox(width: 2),
           Expanded(
             child: Container(
               height: 68,
               decoration: BoxDecoration(
-                  border: Border.all(
-                      color: ColorScheme.of(context).outlineVariant,
-                      width: 0.6),
-                  borderRadius: BorderRadius.circular(4)),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                border: Border.all(
+                  color: ColorScheme.of(context).outlineVariant,
+                  width: 0.6,
+                ),
+                borderRadius: BorderRadius.circular(4),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               child: Row(
                 children: [
                   Column(
@@ -148,31 +148,31 @@ class _NovelPageState extends State<NovelPage> {
                       )
                     ],
                   ),
-                  const SizedBox(
-                    width: 12,
-                  ),
+                  const SizedBox(width: 8),
                   Text(
                     widget.novel.totalViews.toString(),
                     style: TextStyle(
-                        color: ColorScheme.of(context).primary,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18),
+                      color: ColorScheme.of(context).primary,
+                      fontWeight: FontWeight.w500,
+                      fontSize: 18,
+                    ),
                   )
                 ],
               ),
             ),
           ),
-          const SizedBox(
-            width: 16,
-          ),
+          const SizedBox(width: 16),
           Expanded(
               child: Container(
             height: 68,
             decoration: BoxDecoration(
-                border: Border.all(
-                    color: ColorScheme.of(context).outlineVariant, width: 0.6),
-                borderRadius: BorderRadius.circular(4)),
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              border: Border.all(
+                color: ColorScheme.of(context).outlineVariant,
+                width: 0.6,
+              ),
+              borderRadius: BorderRadius.circular(4),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             child: Row(
               children: [
                 Column(
@@ -188,22 +188,19 @@ class _NovelPageState extends State<NovelPage> {
                     )
                   ],
                 ),
-                const SizedBox(
-                  width: 12,
-                ),
+                const SizedBox(width: 8),
                 Text(
                   widget.novel.totalBookmarks.toString(),
                   style: TextStyle(
-                      color: ColorScheme.of(context).primary,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18),
+                    color: ColorScheme.of(context).primary,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                  ),
                 )
               ],
             ),
           )),
-          const SizedBox(
-            width: 2,
-          ),
+          const SizedBox(width: 2),
         ],
       ),
     );
@@ -241,25 +238,30 @@ class _NovelPageState extends State<NovelPage> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(widget.novel.author.name,
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        widget.novel.author.name,
                         style: const TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                        )),
-                    Text(
-                      widget.novel.createDate.toString().substring(0, 10),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: ColorScheme.of(context).outline,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
-                  ],
+                      Text(
+                        widget.novel.createDate.toString().substring(0, 10),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: ColorScheme.of(context).outline,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-                const Spacer(),
                 const Icon(MdIcons.chevron_right)
               ],
             ),
@@ -271,15 +273,43 @@ class _NovelPageState extends State<NovelPage> {
 
   bool isAddingFavorite = false;
 
+  var favoriteFlyout = FlyoutController();
+
   Widget buildActions() {
     void favorite() async {
       if (isAddingFavorite) return;
+      bool? public;
+      if (!widget.novel.isBookmarked) {
+        await favoriteFlyout.showFlyout(
+          builder: (context) {
+            return MenuFlyout(
+              items: [
+                MenuFlyoutItem(
+                  text: Text("Public".tl),
+                  onPressed: () {
+                    public = true;
+                  },
+                ),
+                MenuFlyoutItem(
+                  text: Text("Private".tl),
+                  onPressed: () {
+                    public = false;
+                  },
+                ),
+              ],
+            );
+          },
+        );
+        if (public == null) {
+          return;
+        }
+      }
       setState(() {
         isAddingFavorite = true;
       });
       var res = widget.novel.isBookmarked
           ? await Network().deleteFavoriteNovel(widget.novel.id.toString())
-          : await Network().favoriteNovel(widget.novel.id.toString());
+          : await Network().favoriteNovel(widget.novel.id.toString(), public!);
       if (res.error) {
         if (mounted) {
           context.showToast(message: res.errorMessage ?? "Network Error");
@@ -337,38 +367,41 @@ class _NovelPageState extends State<NovelPage> {
                           context.to(() => NovelReadingPage(widget.novel));
                         }),
                     const SizedBox(width: 16),
-                    Button(
-                      onPressed: favorite,
-                      child: Row(
-                        mainAxisAlignment: constrains.maxWidth > 420
-                            ? MainAxisAlignment.start
-                            : MainAxisAlignment.center,
-                        children: [
-                          if (isAddingFavorite)
-                            const SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: ProgressRing(
-                                strokeWidth: 2,
-                              ),
-                            )
-                          else if (widget.novel.isBookmarked)
-                            Icon(
-                              MdIcons.favorite,
-                              size: 18,
-                              color: ColorScheme.of(context).error,
-                            )
-                          else
-                            const Icon(MdIcons.favorite_outline, size: 18),
-                          if (constrains.maxWidth > 420)
-                            const SizedBox(width: 12),
-                          if (constrains.maxWidth > 420) Text("Favorite".tl)
-                        ],
-                      )
-                          .fixWidth(shouldFillSpace
-                              ? width / 4 - 4 - kFluentButtonPadding
-                              : 64)
-                          .fixHeight(32),
+                    FlyoutTarget(
+                      controller: favoriteFlyout,
+                      child: Button(
+                        onPressed: favorite,
+                        child: Row(
+                          mainAxisAlignment: constrains.maxWidth > 420
+                              ? MainAxisAlignment.start
+                              : MainAxisAlignment.center,
+                          children: [
+                            if (isAddingFavorite)
+                              const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: ProgressRing(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            else if (widget.novel.isBookmarked)
+                              Icon(
+                                MdIcons.favorite,
+                                size: 18,
+                                color: ColorScheme.of(context).error,
+                              )
+                            else
+                              const Icon(MdIcons.favorite_outline, size: 18),
+                            if (constrains.maxWidth > 420)
+                              const SizedBox(width: 12),
+                            if (constrains.maxWidth > 420) Text("Favorite".tl)
+                          ],
+                        )
+                            .fixWidth(shouldFillSpace
+                            ? width / 4 - 4 - kFluentButtonPadding
+                            : 64)
+                            .fixHeight(32),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     Button(

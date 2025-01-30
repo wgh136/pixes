@@ -152,6 +152,7 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
 
   void firstLoad() {
     loadData(_page).then((value) {
+      if (!mounted) return;
       if(value.success) {
         _page++;
         setState(() {
