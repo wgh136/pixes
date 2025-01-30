@@ -281,6 +281,7 @@ class _NovelPageState extends State<NovelPage> {
       bool? public;
       if (!widget.novel.isBookmarked) {
         await favoriteFlyout.showFlyout(
+          navigatorKey: App.rootNavigatorKey.currentState!,
           builder: (context) {
             return MenuFlyout(
               items: [
