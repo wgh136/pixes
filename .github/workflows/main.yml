@@ -142,7 +142,7 @@ jobs:
           path: build/linux/x64/release/debian # This is a bug related to flutter_to_debian, but it's not a big deal.
   Release:
     runs-on: ubuntu-latest
-    needs: [Build_MacOS, Build_IOS, Build_Android, Build_Windows, Build_Linux]
+    needs: [Build_MacOS, Build_IOS, Build_Android, Build_Windows, Build_Linux, Build_Linux_ARM64]
     if: github.event_name == 'release'  # 仅在 push 事件时执行
     steps:
       - uses: actions/download-artifact@v4
