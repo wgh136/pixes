@@ -13,8 +13,12 @@ import '../network/app_dio.dart';
 import 'dart:ui' as ui;
 
 class UgoiraWidget extends StatefulWidget {
-  const UgoiraWidget({super.key, required this.id, required this.previewImage,
-    required this.width, required this.height});
+  const UgoiraWidget(
+      {super.key,
+      required this.id,
+      required this.previewImage,
+      required this.width,
+      required this.height});
 
   final String id;
 
@@ -47,8 +51,11 @@ class _UgoiraWidgetState extends State<UgoiraWidget> {
       width: widget.width,
       height: widget.height,
       child: !_finished
-        ? buildPreview()
-        : _UgoiraAnimation(metadata: _metadata!, key: Key(widget.id),),
+          ? buildPreview()
+          : _UgoiraAnimation(
+              metadata: _metadata!,
+              key: Key(widget.id),
+            ),
     );
   }
 
@@ -64,15 +71,15 @@ class _UgoiraWidgetState extends State<UgoiraWidget> {
             ),
           ),
         ),
-        if(_error)
+        if (_error)
           const Positioned.fill(
-            child: Center(
-              child: Icon(
-                MdIcons.error_outline,
-                size: 36,
-              ),
-            )),
-        if(!_loading)
+              child: Center(
+            child: Icon(
+              MdIcons.error_outline,
+              size: 36,
+            ),
+          )),
+        if (!_loading)
           Positioned.fill(
             child: GestureDetector(
               onTap: load,
@@ -86,7 +93,9 @@ class _UgoiraWidgetState extends State<UgoiraWidget> {
           )
         else
           Center(
-            child: ProgressRing(value: (receivedBytes / expectedBytes) * 100,),
+            child: ProgressRing(
+              value: (receivedBytes / expectedBytes) * 100,
+            ),
           ),
       ],
     );
@@ -96,8 +105,9 @@ class _UgoiraWidgetState extends State<UgoiraWidget> {
     setState(() {
       _loading = true;
     });
-    var res0 = await Network().apiGet('/v1/ugoira/metadata?illust_id=${widget.id}');
-    if(res0.error) {
+    var res0 =
+        await Network().apiGet('/v1/ugoira/metadata?illust_id=${widget.id}');
+    if (res0.error) {
       setState(() {
         _error = true;
         _loading = false;
@@ -107,23 +117,25 @@ class _UgoiraWidgetState extends State<UgoiraWidget> {
     var json = res0.data;
     _metadata = _UgoiraMetadata(
       url: json["ugoira_metadata"]["zip_urls"]["medium"],
-      frames: (json["ugoira_metadata"]["frames"] as List).map<_UgoiraFrame>((e) => _UgoiraFrame(
-        delay: e["delay"],
-        fileName: e["file"],
-      )).toList(),
+      frames: (json["ugoira_metadata"]["frames"] as List)
+          .map<_UgoiraFrame>((e) => _UgoiraFrame(
+                delay: e["delay"],
+                fileName: e["file"],
+              ))
+          .toList(),
     );
     try {
       var key = "ugoira_${widget.id}";
       var cached = await CacheManager().findCache(key);
-      if(cached != null) {
+      if (cached != null) {
         await extract(cached);
         return;
       }
       var dio = AppDio();
-      final time = DateFormat("yyyy-MM-dd'T'HH:mm:ss'+00:00'").format(DateTime.now());
+      final time =
+          DateFormat("yyyy-MM-dd'T'HH:mm:ss'+00:00'").format(DateTime.now());
       final hash = md5.convert(utf8.encode(time + Network.hashSalt)).toString();
-      var res = await dio.get<ResponseBody>(
-          _metadata!.url,
+      var res = await dio.get<ResponseBody>(_metadata!.url,
           options: Options(
               responseType: ResponseType.stream,
               validateStatus: (status) => status != null && status < 500,
@@ -133,10 +145,8 @@ class _UgoiraWidgetState extends State<UgoiraWidget> {
                 "x-client-time": time,
                 "x-client-hash": hash,
                 "accept-enconding": "gzip",
-              }
-          )
-      );
-      if(res.statusCode != 200) {
+              }));
+      if (res.statusCode != 200) {
         throw "Failed to load image: ${res.statusCode}";
       }
       expectedBytes = int.parse(res.headers.value("content-length") ?? "1");
@@ -145,15 +155,14 @@ class _UgoiraWidgetState extends State<UgoiraWidget> {
         await cachingFile.writeBytes(chunk);
         setState(() {
           receivedBytes += chunk.length;
-          if(receivedBytes > expectedBytes) {
+          if (receivedBytes > expectedBytes) {
             expectedBytes = receivedBytes + 1;
           }
         });
       }
       await cachingFile.close();
       await extract(cachingFile.file.path);
-    }
-    catch(e) {
+    } catch (e) {
       setState(() {
         _error = true;
         _loading = false;
@@ -162,11 +171,12 @@ class _UgoiraWidgetState extends State<UgoiraWidget> {
     }
   }
 
-  Future<void> extract(String filePath) async{
+  Future<void> extract(String filePath) async {
     var zip = ZipDecoder().decodeBytes(await File(filePath).readAsBytes());
-    for(var file in zip) {
-      if(file.isFile) {
-        var frame = _metadata!.frames.firstWhere((element) => element.fileName == file.name);
+    for (var file in zip) {
+      if (file.isFile) {
+        var frame = _metadata!.frames
+            .firstWhere((element) => element.fileName == file.name);
         frame.data = await decodeImageFromList(file.content);
       }
     }
@@ -178,7 +188,6 @@ class _UgoiraWidgetState extends State<UgoiraWidget> {
   }
 }
 
-
 class _UgoiraAnimation extends StatefulWidget {
   const _UgoiraAnimation({super.key, required this.metadata});
 
@@ -188,7 +197,8 @@ class _UgoiraAnimation extends StatefulWidget {
   State<_UgoiraAnimation> createState() => _UgoiraAnimationState();
 }
 
-class _UgoiraAnimationState extends State<_UgoiraAnimation> with SingleTickerProviderStateMixin {
+class _UgoiraAnimationState extends State<_UgoiraAnimation>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
@@ -251,11 +261,10 @@ class _ImagePainter extends CustomPainter {
     // 覆盖整个画布
     Rect rect = Offset.zero & size;
     canvas.drawImageRect(
-      data,
-      Rect.fromLTRB(0, 0, data.width.toDouble(), data.height.toDouble()),
-      rect,
-      Paint()..filterQuality = FilterQuality.medium
-    );
+        data,
+        Rect.fromLTRB(0, 0, data.width.toDouble(), data.height.toDouble()),
+        rect,
+        Paint()..filterQuality = FilterQuality.medium);
   }
 
   @override

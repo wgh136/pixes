@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'pair.dart';
 
-class SimpleController extends StateController{
+class SimpleController extends StateController {
   final void Function()? refresh_;
 
   SimpleController({this.refresh_});
@@ -12,45 +12,48 @@ class SimpleController extends StateController{
   }
 }
 
-abstract class StateController{
+abstract class StateController {
   static final _controllers = <StateControllerWrapped>[];
 
-  static T put<T extends StateController>(T controller, {Object? tag, bool autoRemove = false}){
+  static T put<T extends StateController>(T controller,
+      {Object? tag, bool autoRemove = false}) {
     _controllers.add(StateControllerWrapped(controller, autoRemove, tag));
     return controller;
   }
 
-  static T putIfNotExists<T extends StateController>(T controller, {Object? tag, bool autoRemove = false}){
-    return findOrNull<T>(tag: tag) ?? put(controller, tag: tag, autoRemove: autoRemove);
+  static T putIfNotExists<T extends StateController>(T controller,
+      {Object? tag, bool autoRemove = false}) {
+    return findOrNull<T>(tag: tag) ??
+        put(controller, tag: tag, autoRemove: autoRemove);
   }
 
-  static T find<T extends StateController>({Object? tag}){
+  static T find<T extends StateController>({Object? tag}) {
     try {
-      return _controllers.lastWhere((element) =>
-      element.controller is T
-          && (tag == null || tag == element.tag)).controller as T;
-    }
-    catch(e){
+      return _controllers
+          .lastWhere((element) =>
+              element.controller is T && (tag == null || tag == element.tag))
+          .controller as T;
+    } catch (e) {
       throw StateError("${T.runtimeType} with tag $tag Not Found");
     }
   }
 
-  static T? findOrNull<T extends StateController>({Object? tag}){
+  static T? findOrNull<T extends StateController>({Object? tag}) {
     try {
-      return _controllers.lastWhere((element) =>
-      element.controller is T
-          && (tag == null || tag == element.tag)).controller as T;
-    }
-    catch(e){
+      return _controllers
+          .lastWhere((element) =>
+              element.controller is T && (tag == null || tag == element.tag))
+          .controller as T;
+    } catch (e) {
       return null;
     }
   }
 
-  static void remove<T>([Object? tag, bool check = false]){
-    for(int i=_controllers.length-1; i>=0; i--){
+  static void remove<T>([Object? tag, bool check = false]) {
+    for (int i = _controllers.length - 1; i >= 0; i--) {
       var element = _controllers[i];
-      if(element.controller is T && (tag == null || tag == element.tag)){
-        if(check && !element.autoRemove){
+      if (element.controller is T && (tag == null || tag == element.tag)) {
+        if (check && !element.autoRemove) {
           continue;
         }
         _controllers.removeAt(i);
@@ -59,7 +62,9 @@ abstract class StateController{
     }
   }
 
-  static SimpleController putSimpleController(void Function() onUpdate, Object? tag, {void Function()? refresh}){
+  static SimpleController putSimpleController(
+      void Function() onUpdate, Object? tag,
+      {void Function()? refresh}) {
     var controller = SimpleController(refresh_: refresh);
     controller.stateUpdaters.add(Pair(null, onUpdate));
     _controllers.add(StateControllerWrapped(controller, false, tag));
@@ -68,30 +73,30 @@ abstract class StateController{
 
   List<Pair<Object?, void Function()>> stateUpdaters = [];
 
-  void update([List<Object>? ids]){
-    if(ids == null){
-      for(var element in stateUpdaters){
+  void update([List<Object>? ids]) {
+    if (ids == null) {
+      for (var element in stateUpdaters) {
         element.right();
       }
-    }else{
-      for(var element in stateUpdaters){
-        if(ids.contains(element.left)) {
+    } else {
+      for (var element in stateUpdaters) {
+        if (ids.contains(element.left)) {
           element.right();
         }
       }
     }
   }
 
-  void dispose(){
+  void dispose() {
     _controllers.removeWhere((element) => element.controller == this);
   }
 
-  void refresh(){
+  void refresh() {
     update();
   }
 }
 
-class StateControllerWrapped{
+class StateControllerWrapped {
   StateController controller;
   bool autoRemove;
   Object? tag;
@@ -99,10 +104,15 @@ class StateControllerWrapped{
   StateControllerWrapped(this.controller, this.autoRemove, this.tag);
 }
 
-
 class StateBuilder<T extends StateController> extends StatefulWidget {
-  const StateBuilder({super.key, this.init, this.dispose, this.initState, this.tag,
-    required this.builder, this.id});
+  const StateBuilder(
+      {super.key,
+      this.init,
+      this.dispose,
+      this.initState,
+      this.tag,
+      required this.builder,
+      this.id});
 
   final T? init;
 
@@ -114,15 +124,15 @@ class StateBuilder<T extends StateController> extends StatefulWidget {
 
   final Widget Function(T controller) builder;
 
-  Widget builderWrapped(StateController controller){
+  Widget builderWrapped(StateController controller) {
     return builder(controller as T);
   }
 
-  void initStateWrapped(StateController controller){
+  void initStateWrapped(StateController controller) {
     return initState?.call(controller as T);
   }
 
-  void disposeWrapped(StateController controller){
+  void disposeWrapped(StateController controller) {
     return dispose?.call(controller as T);
   }
 
@@ -132,22 +142,22 @@ class StateBuilder<T extends StateController> extends StatefulWidget {
   State<StateBuilder> createState() => _StateBuilderState<T>();
 }
 
-class _StateBuilderState<T extends StateController> extends State<StateBuilder> {
+class _StateBuilderState<T extends StateController>
+    extends State<StateBuilder> {
   late T controller;
 
   @override
   void initState() {
-    if(widget.init != null) {
+    if (widget.init != null) {
       StateController.put(widget.init!, tag: widget.tag, autoRemove: true);
     }
     try {
       controller = StateController.find<T>(tag: widget.tag);
-    }
-    catch(e){
+    } catch (e) {
       throw "Controller Not Found";
     }
     controller.stateUpdaters.add(Pair(widget.id, () {
-      if(mounted){
+      if (mounted) {
         setState(() {});
       }
     }));
@@ -166,17 +176,19 @@ class _StateBuilderState<T extends StateController> extends State<StateBuilder> 
   Widget build(BuildContext context) => widget.builderWrapped(controller);
 }
 
-abstract class StateWithController<T extends StatefulWidget> extends State<T>{
+abstract class StateWithController<T extends StatefulWidget> extends State<T> {
   late final SimpleController _controller;
 
-  void refresh(){
+  void refresh() {
     _controller.update();
   }
 
   @override
   @mustCallSuper
   void initState() {
-    _controller = StateController.putSimpleController(() => setState(() {}), tag, refresh: refresh);
+    _controller = StateController.putSimpleController(
+        () => setState(() {}), tag,
+        refresh: refresh);
     super.initState();
   }
 
@@ -187,7 +199,7 @@ abstract class StateWithController<T extends StatefulWidget> extends State<T>{
     super.dispose();
   }
 
-  void update(){
+  void update() {
     _controller.update();
   }
 

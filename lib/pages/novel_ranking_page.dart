@@ -35,7 +35,10 @@ class _NovelRankingPageState extends State<NovelRankingPage> {
         children: [
           buildHeader(),
           Expanded(
-            child: _OneRankingPage(type, key: Key(type),),
+            child: _OneRankingPage(
+              type,
+              key: Key(type),
+            ),
           ),
         ],
       ),
@@ -46,16 +49,18 @@ class _NovelRankingPageState extends State<NovelRankingPage> {
     return TitleBar(
       title: "Ranking".tl,
       action: DropDownButton(
-            title: Text(types[type]!.tl),
-            items: types.entries.map((e) => MenuFlyoutItem(
-              text: Text(e.value.tl),
-              onPressed: () {
-                setState(() {
-                  type = e.key;
-                });
-              },
-            )).toList(),
-          ),
+        title: Text(types[type]!.tl),
+        items: types.entries
+            .map((e) => MenuFlyoutItem(
+                  text: Text(e.value.tl),
+                  onPressed: () {
+                    setState(() {
+                      type = e.key;
+                    });
+                  },
+                ))
+            .toList(),
+      ),
     );
   }
 }
@@ -69,31 +74,32 @@ class _OneRankingPage extends StatefulWidget {
   State<_OneRankingPage> createState() => _OneRankingPageState();
 }
 
-class _OneRankingPageState extends MultiPageLoadingState<_OneRankingPage, Novel> {
+class _OneRankingPageState
+    extends MultiPageLoadingState<_OneRankingPage, Novel> {
   @override
   Widget buildContent(BuildContext context, final List<Novel> data) {
     return GridViewWithFixedItemHeight(
-            itemCount: data.length,
-            itemHeight: 164,
-            minCrossAxisExtent: 400,
-            builder: (context, index) {
-              if (index == data.length - 1) {
-                nextPage();
-              }
-              return NovelWidget(data[index]);
-            },
-          ).paddingHorizontal(8);
+      itemCount: data.length,
+      itemHeight: 164,
+      minCrossAxisExtent: 400,
+      builder: (context, index) {
+        if (index == data.length - 1) {
+          nextPage();
+        }
+        return NovelWidget(data[index]);
+      },
+    ).paddingHorizontal(8);
   }
 
   String? nextUrl;
 
   @override
-  Future<Res<List<Novel>>> loadData(page) async{
-    if(nextUrl == "end") {
+  Future<Res<List<Novel>>> loadData(page) async {
+    if (nextUrl == "end") {
       return Res.error("No more data");
     }
     var res = await Network().getNovelRanking(widget.type, null);
-    if(!res.error) {
+    if (!res.error) {
       nextUrl = res.subData;
       nextUrl ??= "end";
     }

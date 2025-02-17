@@ -703,7 +703,9 @@ class _SetInitialPageWidgetState extends State<_SetInitialPageWidget> {
         itemCount: pageNames.length + 2,
         itemBuilder: (context, index) {
           if (index == 3) {
-            return Text('${"Illustrations".tl}/${"Manga".tl}').paddingHorizontal(16).paddingVertical(8);
+            return Text('${"Illustrations".tl}/${"Manga".tl}')
+                .paddingHorizontal(16)
+                .paddingVertical(8);
           } else if (index > 3) {
             index--;
           }

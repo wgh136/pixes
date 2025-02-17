@@ -47,7 +47,7 @@ class GoogleTranslator implements Translator {
       ),
     );
     var buffer = StringBuffer();
-    for(var e in response.data['sentences']) {
+    for (var e in response.data['sentences']) {
       buffer.write(e['trans']);
     }
     return buffer.toString();
@@ -58,7 +58,7 @@ class GoogleTranslator implements Translator {
     final lines = text.split('\n');
     var buffer = StringBuffer();
     var result = '';
-    for(int i=0; i<lines.length; i++) {
+    for (int i = 0; i < lines.length; i++) {
       final line = lines[i];
       if (buffer.length + line.length > 5000) {
         result += await translatePart(buffer.toString(), to);

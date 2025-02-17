@@ -62,7 +62,7 @@ class HistoryManager {
       illust.width,
       illust.height
     ]);
-    if(length > 1000) {
+    if (length > 1000) {
       _db.execute('''
         delete from history where id in (
           select id from history order by time asc limit 100

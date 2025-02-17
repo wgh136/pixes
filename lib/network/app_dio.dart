@@ -110,12 +110,12 @@ class AppDio extends DioForNative {
       CancelToken? cancelToken,
       Options? options,
       ProgressCallback? onSendProgress,
-      ProgressCallback? onReceiveProgress}) async{
+      ProgressCallback? onReceiveProgress}) async {
     if (!isInitialized) {
       isInitialized = true;
       interceptors.add(MyLogInterceptor());
     }
-    if(T == Map<String, dynamic>) {
+    if (T == Map<String, dynamic>) {
       var res = await super.request<String>(path,
           data: data,
           queryParameters: queryParameters,
@@ -123,17 +123,16 @@ class AppDio extends DioForNative {
           options: options,
           onSendProgress: onSendProgress,
           onReceiveProgress: onReceiveProgress);
-      if(res.data == null) {
+      if (res.data == null) {
         return Response(
-          data: null,
-          requestOptions: res.requestOptions,
-          statusCode: res.statusCode,
-          statusMessage: res.statusMessage,
-          isRedirect: res.isRedirect,
-          redirects: res.redirects,
-          extra: res.extra,
-          headers: res.headers
-        );
+            data: null,
+            requestOptions: res.requestOptions,
+            statusCode: res.statusCode,
+            statusMessage: res.statusMessage,
+            isRedirect: res.isRedirect,
+            redirects: res.redirects,
+            extra: res.extra,
+            headers: res.headers);
       }
       try {
         var json = jsonDecode(res.data!);
@@ -145,12 +144,10 @@ class AppDio extends DioForNative {
             isRedirect: res.isRedirect,
             redirects: res.redirects,
             extra: res.extra,
-            headers: res.headers
-        );
-      }
-      catch(e) {
+            headers: res.headers);
+      } catch (e) {
         var data = res.data!;
-        if(data.length > 50) {
+        if (data.length > 50) {
           data = "${data.substring(0, 50)}...";
         }
         throw "Failed to decode response: $e\n$data";

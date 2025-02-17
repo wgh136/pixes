@@ -60,7 +60,7 @@ class Log {
     }
 
     _logs.add(newLog);
-    if(logFile != null) {
+    if (logFile != null) {
       File(logFile!).writeAsString(newLog.toString(), mode: FileMode.append);
     }
     if (_logs.length > maxLogNumber) {

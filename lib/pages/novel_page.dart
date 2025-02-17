@@ -399,8 +399,8 @@ class _NovelPageState extends State<NovelPage> {
                           ],
                         )
                             .fixWidth(shouldFillSpace
-                            ? width / 4 - 4 - kFluentButtonPadding
-                            : 64)
+                                ? width / 4 - 4 - kFluentButtonPadding
+                                : 64)
                             .fixHeight(32),
                       ),
                     ),

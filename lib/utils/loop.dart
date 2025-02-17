@@ -5,7 +5,7 @@ class Loop {
 
   static void start() {
     Timer.periodic(const Duration(milliseconds: 100), (timer) {
-      for(var func in _callbacks) {
+      for (var func in _callbacks) {
         func.call();
       }
     });

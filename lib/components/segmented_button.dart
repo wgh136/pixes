@@ -40,9 +40,11 @@ class SegmentedButton<T> extends StatelessWidget {
         onPressed: () => onPressed(e.key),
         builder: (context, states) {
           var textColor = active ? null : ColorScheme.of(context).outline;
-          var backgroundColor = active ? null : WidgetStateProperty.resolveWith((states) {
-            return ButtonThemeData.buttonColor(context, states);
-          }).resolve(states);
+          var backgroundColor = active
+              ? null
+              : WidgetStateProperty.resolveWith((states) {
+                  return ButtonThemeData.buttonColor(context, states);
+                }).resolve(states);
 
           return Container(
             decoration: BoxDecoration(

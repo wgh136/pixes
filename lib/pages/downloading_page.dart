@@ -18,7 +18,7 @@ class DownloadingPage extends StatefulWidget {
 class _DownloadingPageState extends State<DownloadingPage> {
   @override
   void initState() {
-    DownloadManager().registerUiUpdater(() => setState((){}));
+    DownloadManager().registerUiUpdater(() => setState(() {}));
     super.initState();
   }
 
@@ -51,11 +51,11 @@ class _DownloadingPageState extends State<DownloadingPage> {
 
     return SliverTitleBar(
       title: paused
-        ? "Paused".tl
-        :"${"Speed".tl}: ${bytesToText(bytesPerSecond)}/s",
+          ? "Paused".tl
+          : "${"Speed".tl}: ${bytesToText(bytesPerSecond)}/s",
       action: SplitButton(
-        onInvoked: (){
-          if(!paused) {
+        onInvoked: () {
+          if (!paused) {
             DownloadManager().pause();
             setState(() {});
           } else {
@@ -65,31 +65,32 @@ class _DownloadingPageState extends State<DownloadingPage> {
         },
         flyout: MenuFlyout(
           items: [
-            MenuFlyoutItem(text: Text("Cancel All".tl), onPressed: (){
-              var tasks = List.from(DownloadManager().tasks);
-              DownloadManager().tasks.clear();
-              for(var task in tasks) {
-                task.cancel();
-              }
-              setState(() {});
-            })
+            MenuFlyoutItem(
+                text: Text("Cancel All".tl),
+                onPressed: () {
+                  var tasks = List.from(DownloadManager().tasks);
+                  DownloadManager().tasks.clear();
+                  for (var task in tasks) {
+                    task.cancel();
+                  }
+                  setState(() {});
+                })
           ],
         ),
         child: Text(paused ? "Resume".tl : "Pause".tl)
-            .toCenter().fixWidth(56).fixHeight(32),
+            .toCenter()
+            .fixWidth(56)
+            .fixHeight(32),
       ),
     );
   }
 
   Widget buildContent() {
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-          (context, index) {
-            var task = DownloadManager().tasks[index];
-            return buildItem(task);
-          },
-          childCount: DownloadManager().tasks.length
-      ),
+      delegate: SliverChildBuilderDelegate((context, index) {
+        var task = DownloadManager().tasks[index];
+        return buildItem(task);
+      }, childCount: DownloadManager().tasks.length),
     ).sliverPaddingHorizontal(12);
   }
 
@@ -109,7 +110,8 @@ class _DownloadingPageState extends State<DownloadingPage> {
               width: 72,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(4),
-                border: Border.all(color: ColorScheme.of(context).outlineVariant, width: 0.6),
+                border: Border.all(
+                    color: ColorScheme.of(context).outlineVariant, width: 0.6),
               ),
               child: Image(
                 image: CachedImageProvider(task.illust.images.first.medium),
@@ -123,14 +125,25 @@ class _DownloadingPageState extends State<DownloadingPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(task.illust.title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  Text(task.illust.title,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 4),
-                  Text(task.illust.author.name, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                  Text(task.illust.author.name,
+                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
                   const Spacer(),
-                  if(task.error == null)
-                    Text("${task.downloadedImages}/${task.totalImages} ${"Downloaded".tl}", style: const TextStyle(fontSize: 12, color: Colors.grey))
+                  if (task.error == null)
+                    Text(
+                        "${task.downloadedImages}/${task.totalImages} ${"Downloaded".tl}",
+                        style:
+                            const TextStyle(fontSize: 12, color: Colors.grey))
                   else
-                    Text("Error: ${task.error!.replaceAll("\n", " ")}", style: TextStyle(fontSize: 12, color: ColorScheme.of(context).error), maxLines: 2,),
+                    Text(
+                      "Error: ${task.error!.replaceAll("\n", " ")}",
+                      style: TextStyle(
+                          fontSize: 12, color: ColorScheme.of(context).error),
+                      maxLines: 2,
+                    ),
                 ],
               ),
             ),
@@ -138,7 +151,7 @@ class _DownloadingPageState extends State<DownloadingPage> {
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                if(task.error != null)
+                if (task.error != null)
                   Button(
                     child: Text("Retry".tl).fixWidth(46),
                     onPressed: () {
@@ -150,8 +163,11 @@ class _DownloadingPageState extends State<DownloadingPage> {
                 FlyoutTarget(
                   controller: controller[task.illust.id.toString()]!,
                   child: Button(
-                      child: Text("Cancel".tl, style: TextStyle(color: ColorScheme.of(context).error),).fixWidth(46),
-                      onPressed: (){
+                      child: Text(
+                        "Cancel".tl,
+                        style: TextStyle(color: ColorScheme.of(context).error),
+                      ).fixWidth(46),
+                      onPressed: () {
                         controller[task.illust.id.toString()]!.showFlyout(
                           navigatorKey: App.rootNavigatorKey.currentState,
                           builder: (context) {
@@ -161,8 +177,10 @@ class _DownloadingPageState extends State<DownloadingPage> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Are you sure you want to cancel this download?'.tl,
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    'Are you sure you want to cancel this download?'
+                                        .tl,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(height: 12.0),
                                   Button(
@@ -178,8 +196,7 @@ class _DownloadingPageState extends State<DownloadingPage> {
                             );
                           },
                         );
-                      }
-                  ),
+                      }),
                 )
               ],
             ),

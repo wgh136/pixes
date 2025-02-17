@@ -4,7 +4,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:pixes/components/md.dart';
 import 'package:pixes/foundation/app.dart';
 
-void showToast(BuildContext context, {required String message, IconData? icon}) {
+void showToast(BuildContext context,
+    {required String message, IconData? icon}) {
   var newEntry = OverlayEntry(
       builder: (context) => ToastOverlay(message: message, icon: icon));
 
@@ -49,8 +50,7 @@ class ToastOverlay extends StatelessWidget {
                   style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
-                      color: ColorScheme.of(context).onSurface
-                  ),
+                      color: ColorScheme.of(context).onSurface),
                   maxLines: 3,
                 ),
               ],

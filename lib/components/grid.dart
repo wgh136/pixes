@@ -93,10 +93,10 @@ class SliverGridDelegateWithFixedHeight extends SliverGridDelegate {
     int count = 20;
     var itemWidth = width / 20;
 
-    if(minCrossAxisExtent == 0) {
+    if (minCrossAxisExtent == 0) {
       count = 1;
       itemWidth = width;
-      while(itemWidth > maxCrossAxisExtent) {
+      while (itemWidth > maxCrossAxisExtent) {
         count++;
         itemWidth = width / count;
       }

@@ -39,9 +39,10 @@ class _WebviewPageState extends State<WebviewPage> {
   Widget build(BuildContext context) {
     controller ??= WebViewController()
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..setBackgroundColor(FluentTheme.of(context).brightness == Brightness.light
-          ? Colors.white
-          : Colors.black)
+      ..setBackgroundColor(
+          FluentTheme.of(context).brightness == Brightness.light
+              ? Colors.white
+              : Colors.black)
       ..setNavigationDelegate(
         NavigationDelegate(
           onProgress: (int progress) {
@@ -63,7 +64,10 @@ class _WebviewPageState extends State<WebviewPage> {
               const Text("Webview"),
               const Spacer(),
               IconButton(
-                icon: const Icon(MdIcons.open_in_new, size: 20,),
+                icon: const Icon(
+                  MdIcons.open_in_new,
+                  size: 20,
+                ),
                 onPressed: () {
                   launchUrlString(widget.url);
                   context.pop();
@@ -73,7 +77,9 @@ class _WebviewPageState extends State<WebviewPage> {
           ).paddingHorizontal(16),
         ).paddingTop(MediaQuery.of(context).padding.top),
         Expanded(
-          child: WebViewWidget(controller: controller!,),
+          child: WebViewWidget(
+            controller: controller!,
+          ),
         ),
       ],
     );

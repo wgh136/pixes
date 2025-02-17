@@ -26,8 +26,7 @@ class AnimatedImage extends StatefulWidget {
     Map<String, String>? headers,
     int? cacheWidth,
     int? cacheHeight,
-  }
-      ): image = ResizeImage.resizeIfNeeded(cacheWidth, cacheHeight, image),
+  })  : image = ResizeImage.resizeIfNeeded(cacheWidth, cacheHeight, image),
         assert(cacheWidth == null || cacheWidth > 0),
         assert(cacheHeight == null || cacheHeight > 0);
 
@@ -69,7 +68,8 @@ class AnimatedImage extends StatefulWidget {
   State<AnimatedImage> createState() => _AnimatedImageState();
 }
 
-class _AnimatedImageState extends State<AnimatedImage> with WidgetsBindingObserver {
+class _AnimatedImageState extends State<AnimatedImage>
+    with WidgetsBindingObserver {
   ImageStream? _imageStream;
   ImageInfo? _imageInfo;
   ImageChunkEvent? _loadingProgress;
@@ -140,8 +140,8 @@ class _AnimatedImageState extends State<AnimatedImage> with WidgetsBindingObserv
   }
 
   void _updateInvertColors() {
-    _invertColors = MediaQuery.maybeInvertColorsOf(context)
-        ?? SemanticsBinding.instance.accessibilityFeatures.invertColors;
+    _invertColors = MediaQuery.maybeInvertColorsOf(context) ??
+        SemanticsBinding.instance.accessibilityFeatures.invertColors;
   }
 
   void _resolveImage() {
@@ -150,16 +150,18 @@ class _AnimatedImageState extends State<AnimatedImage> with WidgetsBindingObserv
       imageProvider: widget.image,
     );
     final ImageStream newStream =
-    provider.resolve(createLocalImageConfiguration(
+        provider.resolve(createLocalImageConfiguration(
       context,
-      size: widget.width != null && widget.height != null ? Size(widget.width!, widget.height!) : null,
+      size: widget.width != null && widget.height != null
+          ? Size(widget.width!, widget.height!)
+          : null,
     ));
     _updateSourceStream(newStream);
   }
 
   ImageStreamListener? _imageStreamListener;
   ImageStreamListener _getListener({bool recreateListener = false}) {
-    if(_imageStreamListener == null || recreateListener) {
+    if (_imageStreamListener == null || recreateListener) {
       _lastException = null;
       _imageStreamListener = ImageStreamListener(
         _handleImageFrame,
@@ -193,7 +195,8 @@ class _AnimatedImageState extends State<AnimatedImage> with WidgetsBindingObserv
 
   void _replaceImage({required ImageInfo? info}) {
     final ImageInfo? oldImageInfo = _imageInfo;
-    SchedulerBinding.instance.addPostFrameCallback((_) => oldImageInfo?.dispose());
+    SchedulerBinding.instance
+        .addPostFrameCallback((_) => oldImageInfo?.dispose());
     _imageInfo = info;
   }
 
@@ -210,7 +213,9 @@ class _AnimatedImageState extends State<AnimatedImage> with WidgetsBindingObserv
     }
 
     if (!widget.gaplessPlayback) {
-      setState(() { _replaceImage(info: null); });
+      setState(() {
+        _replaceImage(info: null);
+      });
     }
 
     setState(() {
@@ -249,7 +254,9 @@ class _AnimatedImageState extends State<AnimatedImage> with WidgetsBindingObserv
       return;
     }
 
-    if (keepStreamAlive && _completerHandle == null && _imageStream?.completer != null) {
+    if (keepStreamAlive &&
+        _completerHandle == null &&
+        _imageStream?.completer != null) {
       _completerHandle = _imageStream!.completer!.keepAlive();
     }
 
@@ -261,7 +268,7 @@ class _AnimatedImageState extends State<AnimatedImage> with WidgetsBindingObserv
   Widget build(BuildContext context) {
     Widget result;
 
-    if(_imageInfo != null){
+    if (_imageInfo != null) {
       // build image
       result = RawImage(
         // Do not clone the image, because RawImage is a stateless wrapper.
@@ -298,7 +305,7 @@ class _AnimatedImageState extends State<AnimatedImage> with WidgetsBindingObserv
           child: result,
         );
       }
-    } else{
+    } else {
       result = const Center();
     }
 
@@ -314,8 +321,10 @@ class _AnimatedImageState extends State<AnimatedImage> with WidgetsBindingObserv
     super.debugFillProperties(description);
     description.add(DiagnosticsProperty<ImageStream>('stream', _imageStream));
     description.add(DiagnosticsProperty<ImageInfo>('pixels', _imageInfo));
-    description.add(DiagnosticsProperty<ImageChunkEvent>('loadingProgress', _loadingProgress));
+    description.add(DiagnosticsProperty<ImageChunkEvent>(
+        'loadingProgress', _loadingProgress));
     description.add(DiagnosticsProperty<int>('frameNumber', _frameNumber));
-    description.add(DiagnosticsProperty<bool>('wasSynchronouslyLoaded', _wasSynchronouslyLoaded));
+    description.add(DiagnosticsProperty<bool>(
+        'wasSynchronouslyLoaded', _wasSynchronouslyLoaded));
   }
 }

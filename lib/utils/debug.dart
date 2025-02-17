@@ -1,4 +1,2 @@
 /// function used for debug
-void debug() {
-
-}
+void debug() {}

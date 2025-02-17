@@ -176,7 +176,7 @@ class _CommentsPageState extends MultiPageLoadingState<CommentsPage, Comment> {
             } else {
               Network().comment(widget.id, s).then((value) {
                 if (value.error) {
-                  if(context.mounted) {
+                  if (context.mounted) {
                     context.showToast(message: "Network Error");
                     setState(() {
                       isCommenting = false;

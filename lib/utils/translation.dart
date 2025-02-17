@@ -12,7 +12,7 @@ extension Translation on String {
 
   static late final Map<String, Map<String, dynamic>> translation;
 
-  static Future<void> init() async{
+  static Future<void> init() async {
     var data = await rootBundle.loadString("assets/tr.json");
     translation = Map<String, Map<String, dynamic>>.from(jsonDecode(data));
   }

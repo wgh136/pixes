@@ -62,37 +62,40 @@ class DownloadingTask {
   void cancel() {
     _stop = true;
     DownloadManager().tasks.remove(this);
-    for(var path in imagePaths) {
+    for (var path in imagePaths) {
       File(path).deleteIfExists();
     }
   }
 
   List<String> imagePaths = [];
 
-  void _download() async{
-    try{
-      while(_downloadingIndex < illust.images.length) {
-        if(_stop) return;
+  void _download() async {
+    try {
+      while (_downloadingIndex < illust.images.length) {
+        if (_stop) return;
         var url = illust.images[_downloadingIndex].original;
         var ext = url.split('.').last;
-        if(!["jpg", "png", "gif", "webp", "jpeg", "avif"].contains(ext)) {
+        if (!["jpg", "png", "gif", "webp", "jpeg", "avif"].contains(ext)) {
           ext = "jpg";
         }
         var path = _generateFilePath(illust, _downloadingIndex, ext);
-        final time = DateFormat("yyyy-MM-dd'T'HH:mm:ss'+00:00'").format(DateTime.now());
-        final hash = md5.convert(utf8.encode(time + Network.hashSalt)).toString();
-        var res = await dio.get<ResponseBody>(url, options: Options(
-          responseType: ResponseType.stream,
-          headers: {
-            "referer": "https://app-api.pixiv.net/",
-            "user-agent": "PixivAndroidApp/5.0.234 (Android 14; Pixes)",
-            "x-client-time": time,
-            "x-client-hash": hash,
-            "accept-enconding": "gzip",
-          },
-        ));
+        final time =
+            DateFormat("yyyy-MM-dd'T'HH:mm:ss'+00:00'").format(DateTime.now());
+        final hash =
+            md5.convert(utf8.encode(time + Network.hashSalt)).toString();
+        var res = await dio.get<ResponseBody>(url,
+            options: Options(
+              responseType: ResponseType.stream,
+              headers: {
+                "referer": "https://app-api.pixiv.net/",
+                "user-agent": "PixivAndroidApp/5.0.234 (Android 14; Pixes)",
+                "x-client-time": time,
+                "x-client-hash": hash,
+                "accept-enconding": "gzip",
+              },
+            ));
         var file = File(path);
-        if(!file.existsSync()) {
+        if (!file.existsSync()) {
           file.createSync(recursive: true);
         }
         await for (var data in res.data!.stream) {
@@ -104,8 +107,7 @@ class DownloadingTask {
         _retryCount = 0;
       }
       onCompleted?.call(this);
-    }
-    catch(e, s) {
+    } catch (e, s) {
       _handleError(e);
       Log.error("Download", "Download error: $e\n$s");
     }
@@ -113,9 +115,9 @@ class DownloadingTask {
 
   int _retryCount = 0;
 
-  void _handleError(Object error) async{
+  void _handleError(Object error) async {
     _retryCount++;
-    if(_retryCount > 3) {
+    if (_retryCount > 3) {
       _stop = true;
       error = error.toString();
       return;
@@ -131,8 +133,8 @@ class DownloadingTask {
     subPathPatten = subPathPatten.replaceAll(r"${title}", illust.title);
     subPathPatten = subPathPatten.replaceAll(r"${author}", illust.author.name);
     subPathPatten = subPathPatten.replaceAll(r"${index}", index.toString());
-    subPathPatten = subPathPatten.replaceAll(r"${page}",
-        illust.images.length == 1 ? "" : "-p$index");
+    subPathPatten = subPathPatten.replaceAll(
+        r"${page}", illust.images.length == 1 ? "" : "-p$index");
     subPathPatten = subPathPatten.replaceAll(r"${ext}", ext);
     subPathPatten = subPathPatten.replaceAll(r"${AI}", illust.isAi ? "AI" : "");
     List<String> extractTags(String input) {
@@ -140,9 +142,12 @@ class DownloadingTask {
       final matches = regex.allMatches(input);
       return matches.map((match) => match.group(1)!).toList();
     }
+
     var tags = extractTags(subPathPatten);
-    for(var tag in tags) {
-      if (illust.tags.where((e) => e.name == tag || e.translatedName == tag).isNotEmpty) {
+    for (var tag in tags) {
+      if (illust.tags
+          .where((e) => e.name == tag || e.translatedName == tag)
+          .isNotEmpty) {
         subPathPatten = subPathPatten.replaceAll("\${tag($tag)}", tag);
       }
     }
@@ -176,7 +181,7 @@ class DownloadManager {
 
   static DownloadManager? instance;
 
-  DownloadManager._(){
+  DownloadManager._() {
     init();
   }
 
@@ -257,18 +262,20 @@ class DownloadManager {
     var res = _db.select('''
       select * from download;
     ''');
-    return res.map((e) =>
-        DownloadedIllust(
-          illustId: e["illust_id"] as int,
-          title: e["title"] as String,
-          author: e["author"] as String,
-          imageCount: e["imageCount"] as int,
-        )).toList();
+    return res
+        .map((e) => DownloadedIllust(
+              illustId: e["illust_id"] as int,
+              title: e["title"] as String,
+              author: e["author"] as String,
+              imageCount: e["imageCount"] as int,
+            ))
+        .toList();
   }
 
   void addDownloadingTask(Illust illust) {
-    if(illust.downloaded || illust.downloading) return;
-    var task = DownloadingTask(illust, receiveBytesCallback: receiveBytes, onCompleted: (task) {
+    if (illust.downloaded || illust.downloading) return;
+    var task = DownloadingTask(illust, receiveBytesCallback: receiveBytes,
+        onCompleted: (task) {
       saveInfo(illust, task.imagePaths);
       tasks.remove(task);
     });
@@ -288,24 +295,24 @@ class DownloadManager {
 
   void pause() {
     _paused = true;
-    for(var task in tasks) {
+    for (var task in tasks) {
       task.pause();
     }
   }
 
   void run() {
     _loop ??= Timer.periodic(const Duration(seconds: 1), (timer) {
-      if(_paused) return;
+      if (_paused) return;
       _bytesPerSecond = _currentBytes;
       _currentBytes = 0;
       uiUpdateCallback?.call();
-      for(int i=0; i<maxConcurrentTasks; i++) {
+      for (int i = 0; i < maxConcurrentTasks; i++) {
         var task = tasks.elementAtOrNull(i);
-        if(task != null && task._stop && task.error == null) {
+        if (task != null && task._stop && task.error == null) {
           task.start();
         }
       }
-      if(tasks.isEmpty) {
+      if (tasks.isEmpty) {
         timer.cancel();
         _loop = null;
         _currentBytes = 0;
@@ -323,7 +330,7 @@ class DownloadManager {
       select * from images
       where illust_id = ?;
     ''', [illust.illustId]);
-    for(var image in images) {
+    for (var image in images) {
       File(image["path"] as String).deleteIgnoreError();
     }
     _db.execute('''
@@ -340,18 +347,19 @@ class DownloadManager {
     return res.map((e) => e["path"] as String).toList();
   }
 
-  Future<void> batchDownload(Future<Res<List<Illust>>> request, int maxCount) async{
+  Future<void> batchDownload(
+      Future<Res<List<Illust>>> request, int maxCount) async {
     List<Illust> all = [];
     String? nextUrl;
     int retryCount = 0;
-    while(nextUrl != "end" && all.length < maxCount) {
-      if(nextUrl != null) {
+    while (nextUrl != "end" && all.length < maxCount) {
+      if (nextUrl != null) {
         request = Network().getIllustsWithNextUrl(nextUrl);
       }
       var res = await request;
-      if(res.error) {
+      if (res.error) {
         retryCount++;
-        if(retryCount > 3) {
+        if (retryCount > 3) {
           throw res.error;
         }
         await Future.delayed(Duration(seconds: 1 << retryCount));
@@ -361,29 +369,29 @@ class DownloadManager {
       nextUrl = res.subData ?? "end";
     }
     int i = 0;
-    for(var illust in all) {
-      if(i > maxCount)  return;
+    for (var illust in all) {
+      if (i > maxCount) return;
       addDownloadingTask(illust);
       i++;
     }
   }
 
-  Future<void> checkAndClearInvalidItems() async{
+  Future<void> checkAndClearInvalidItems() async {
     var illusts = listAll();
     var shouldDelete = <DownloadedIllust>[];
-    for(var item in illusts) {
+    for (var item in illusts) {
       var paths = getImagePaths(item.illustId);
       var validPaths = <String>[];
-      for(var path in paths) {
-        if(await File(path).exists()) {
+      for (var path in paths) {
+        if (await File(path).exists()) {
           validPaths.add(path);
         }
       }
-      if(validPaths.isEmpty) {
+      if (validPaths.isEmpty) {
         shouldDelete.add(item);
       }
     }
-    for(var item in shouldDelete) {
+    for (var item in shouldDelete) {
       delete(item);
     }
   }

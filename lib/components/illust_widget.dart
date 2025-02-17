@@ -408,9 +408,8 @@ class IllustHistoryWidget extends StatelessWidget {
                     width: 28,
                     height: 20,
                     decoration: BoxDecoration(
-                      color: ColorScheme.of(context)
-                          .errorContainer
-                          .toOpacity(0.8),
+                      color:
+                          ColorScheme.of(context).errorContainer.toOpacity(0.8),
                       borderRadius: BorderRadius.circular(4),
                       border: Border.all(
                           color: ColorScheme.of(context).outlineVariant,

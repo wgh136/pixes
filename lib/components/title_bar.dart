@@ -13,11 +13,12 @@ class TitleBar extends StatelessWidget {
     return SizedBox(
       child: Row(
         children: [
-          Text(title,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+          Text(
+            title,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
           const Spacer(),
-          if(action != null)
-            action!
+          if (action != null) action!
         ],
       ).paddingHorizontal(16).paddingVertical(8),
     );
@@ -31,18 +32,18 @@ class SliverTitleBar extends StatelessWidget {
 
   final Widget? action;
 
-
   @override
   Widget build(BuildContext context) {
     return SliverToBoxAdapter(
       child: SizedBox(
         child: Row(
           children: [
-            Text(title,
-              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),),
+            Text(
+              title,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
             const Spacer(),
-            if(action != null)
-              action!
+            if (action != null) action!
           ],
         ).paddingHorizontal(16).paddingVertical(8),
       ),

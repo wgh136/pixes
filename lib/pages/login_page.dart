@@ -88,7 +88,9 @@ class _LoginPageState extends State<LoginPage> {
                         width: 8,
                       ),
                       Expanded(
-                        child: Text("I understand pixes is a free unofficial application.".tl),
+                        child: Text(
+                            "I understand pixes is a free unofficial application."
+                                .tl),
                       )
                     ],
                   )

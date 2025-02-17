@@ -18,7 +18,7 @@ class BookMarkedArtworkPage extends StatefulWidget {
   State<BookMarkedArtworkPage> createState() => _BookMarkedArtworkPageState();
 }
 
-class _BookMarkedArtworkPageState extends State<BookMarkedArtworkPage>{
+class _BookMarkedArtworkPageState extends State<BookMarkedArtworkPage> {
   String restrict = "public";
 
   @override
@@ -27,7 +27,10 @@ class _BookMarkedArtworkPageState extends State<BookMarkedArtworkPage>{
       children: [
         buildTab(),
         Expanded(
-          child: _OneBookmarkedPage(restrict, key: Key(restrict),),
+          child: _OneBookmarkedPage(
+            restrict,
+            key: Key(restrict),
+          ),
         )
       ],
     );
@@ -38,15 +41,18 @@ class _BookMarkedArtworkPageState extends State<BookMarkedArtworkPage>{
       title: "Bookmarks".tl,
       action: Row(
         children: [
-          BatchDownloadButton(request: () => Network().getBookmarkedIllusts(restrict)),
-          const SizedBox(width: 8,),
+          BatchDownloadButton(
+              request: () => Network().getBookmarkedIllusts(restrict)),
+          const SizedBox(
+            width: 8,
+          ),
           SegmentedButton(
             options: [
               SegmentedButtonOption("public", "Public".tl),
               SegmentedButtonOption("private", "Private".tl),
             ],
             onPressed: (key) {
-              if(key != restrict) {
+              if (key != restrict) {
                 setState(() {
                   restrict = key;
                 });
@@ -69,28 +75,29 @@ class _OneBookmarkedPage extends StatefulWidget {
   State<_OneBookmarkedPage> createState() => _OneBookmarkedPageState();
 }
 
-class _OneBookmarkedPageState extends MultiPageLoadingState<_OneBookmarkedPage, Illust> {
+class _OneBookmarkedPageState
+    extends MultiPageLoadingState<_OneBookmarkedPage, Illust> {
   @override
   Widget buildContent(BuildContext context, final List<Illust> data) {
-    return LayoutBuilder(builder: (context, constrains){
+    return LayoutBuilder(builder: (context, constrains) {
       return MasonryGridView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 8)
-            + EdgeInsets.only(bottom: context.padding.bottom),
+        padding: const EdgeInsets.symmetric(horizontal: 8) +
+            EdgeInsets.only(bottom: context.padding.bottom),
         gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 240,
         ),
         itemCount: data.length,
         itemBuilder: (context, index) {
-          if(index == data.length - 1){
+          if (index == data.length - 1) {
             nextPage();
           }
-          return IllustWidget(data[index], onTap: () {
-            context.to(() => IllustGalleryPage(
-              illusts: data,
-              initialPage: index,
-              nextUrl: nextUrl
-            ));
-          },);
+          return IllustWidget(
+            data[index],
+            onTap: () {
+              context.to(() => IllustGalleryPage(
+                  illusts: data, initialPage: index, nextUrl: nextUrl));
+            },
+          );
         },
       );
     });
@@ -99,16 +106,15 @@ class _OneBookmarkedPageState extends MultiPageLoadingState<_OneBookmarkedPage, 
   String? nextUrl;
 
   @override
-  Future<Res<List<Illust>>> loadData(page) async{
-    if(nextUrl == "end") {
+  Future<Res<List<Illust>>> loadData(page) async {
+    if (nextUrl == "end") {
       return Res.error("No more data");
     }
     var res = await Network().getBookmarkedIllusts(widget.restrict, nextUrl);
-    if(!res.error) {
+    if (!res.error) {
       nextUrl = res.subData;
       nextUrl ??= "end";
     }
     return res;
   }
 }
-

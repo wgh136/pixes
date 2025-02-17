@@ -144,16 +144,14 @@ mixin _AppRouteTransitionMixin<T> on PageRoute<T> {
       child = DrillInPageTransition(
         animation: CurvedAnimation(
           parent: animation,
-          curve: FluentTheme
-              .of(context)
-              .animationCurve,
+          curve: FluentTheme.of(context).animationCurve,
         ),
         child: enableIOSGesture && App.isIOS
             ? IOSBackGestureDetector(
-            gestureWidth: _kBackGestureWidth,
-            enabledCallback: () => _isPopGestureEnabled<T>(this),
-            onStartPopGesture: () => _startPopGesture(this),
-            child: child)
+                gestureWidth: _kBackGestureWidth,
+                enabledCallback: () => _isPopGestureEnabled<T>(this),
+                onStartPopGesture: () => _startPopGesture(this),
+                child: child)
             : child,
       );
     }

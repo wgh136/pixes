@@ -44,7 +44,10 @@ class _RankingPageState extends State<RankingPage> {
         children: [
           buildHeader(),
           Expanded(
-            child: _OneRankingPage(type, key: Key(type),),
+            child: _OneRankingPage(
+              type,
+              key: Key(type),
+            ),
           ),
         ],
       ),
@@ -57,17 +60,21 @@ class _RankingPageState extends State<RankingPage> {
       action: Row(
         children: [
           BatchDownloadButton(request: () => Network().getRanking(type)),
-          const SizedBox(width: 8,),
+          const SizedBox(
+            width: 8,
+          ),
           DropDownButton(
             title: Text(types[type]!.tl),
-            items: types.entries.map((e) => MenuFlyoutItem(
-              text: Text(e.value.tl),
-              onPressed: () {
-                setState(() {
-                  type = e.key;
-                });
-              },
-            )).toList(),
+            items: types.entries
+                .map((e) => MenuFlyoutItem(
+                      text: Text(e.value.tl),
+                      onPressed: () {
+                        setState(() {
+                          type = e.key;
+                        });
+                      },
+                    ))
+                .toList(),
           )
         ],
       ),
@@ -84,28 +91,26 @@ class _OneRankingPage extends StatefulWidget {
   State<_OneRankingPage> createState() => _OneRankingPageState();
 }
 
-class _OneRankingPageState extends MultiPageLoadingState<_OneRankingPage, Illust> {
+class _OneRankingPageState
+    extends MultiPageLoadingState<_OneRankingPage, Illust> {
   @override
   Widget buildContent(BuildContext context, final List<Illust> data) {
     checkIllusts(data);
-    return LayoutBuilder(builder: (context, constrains){
+    return LayoutBuilder(builder: (context, constrains) {
       return MasonryGridView.builder(
-        padding: const EdgeInsets.symmetric(horizontal: 8)
-            + EdgeInsets.only(bottom: context.padding.bottom),
+        padding: const EdgeInsets.symmetric(horizontal: 8) +
+            EdgeInsets.only(bottom: context.padding.bottom),
         gridDelegate: const SliverSimpleGridDelegateWithMaxCrossAxisExtent(
           maxCrossAxisExtent: 240,
         ),
         itemCount: data.length,
         itemBuilder: (context, index) {
-          if(index == data.length - 1){
+          if (index == data.length - 1) {
             nextPage();
           }
           return IllustWidget(data[index], onTap: () {
             context.to(() => IllustGalleryPage(
-                illusts: data,
-                initialPage: index,
-                nextUrl: nextUrl
-            ));
+                illusts: data, initialPage: index, nextUrl: nextUrl));
           });
         },
       );
@@ -115,17 +120,15 @@ class _OneRankingPageState extends MultiPageLoadingState<_OneRankingPage, Illust
   String? nextUrl;
 
   @override
-  Future<Res<List<Illust>>> loadData(page) async{
-    if(nextUrl == "end") {
+  Future<Res<List<Illust>>> loadData(page) async {
+    if (nextUrl == "end") {
       return Res.error("No more data");
     }
     var res = await Network().getRanking(widget.type, nextUrl);
-    if(!res.error) {
+    if (!res.error) {
       nextUrl = res.subData;
       nextUrl ??= "end";
     }
     return res;
   }
 }
-
-

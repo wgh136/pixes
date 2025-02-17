@@ -139,7 +139,8 @@ class MyApp extends StatelessWidget {
                             colorScheme: colorScheme, useMaterial3: true),
                         child: DefaultTextStyle.merge(
                           style: TextStyle(
-                            fontFamily: App.isWindows ? "Microsoft YaHei UI" : null,
+                            fontFamily:
+                                App.isWindows ? "Microsoft YaHei UI" : null,
                           ),
                           child: OverlayWidget(child),
                         ),

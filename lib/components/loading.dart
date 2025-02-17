@@ -2,7 +2,8 @@ import 'package:fluent_ui/fluent_ui.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/res.dart';
 
-abstract class LoadingState<T extends StatefulWidget, S extends Object> extends State<T>{
+abstract class LoadingState<T extends StatefulWidget, S extends Object>
+    extends State<T> {
   bool isLoading = false;
 
   S? data;
@@ -27,7 +28,7 @@ abstract class LoadingState<T extends StatefulWidget, S extends Object> extends 
       error = null;
     });
     loadData().then((value) {
-      if(value.success) {
+      if (value.success) {
         setState(() {
           isLoading = false;
           data = value.data;
@@ -62,7 +63,7 @@ abstract class LoadingState<T extends StatefulWidget, S extends Object> extends 
   void initState() {
     isLoading = true;
     loadData().then((value) {
-      if(value.success) {
+      if (value.success) {
         setState(() {
           isLoading = false;
           data = value.data;
@@ -81,9 +82,9 @@ abstract class LoadingState<T extends StatefulWidget, S extends Object> extends 
   Widget build(BuildContext context) {
     Widget child;
 
-    if(isLoading){
+    if (isLoading) {
       child = buildLoading();
-    } else if (error != null){
+    } else if (error != null) {
       child = buildError();
     } else {
       child = buildContent(context, data!);
@@ -93,7 +94,8 @@ abstract class LoadingState<T extends StatefulWidget, S extends Object> extends 
   }
 }
 
-abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object> extends State<T>{
+abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
+    extends State<T> {
   bool _isFirstLoading = true;
 
   bool _isLoading = false;
@@ -115,21 +117,21 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
   bool get isFirstLoading => _isFirstLoading;
 
   void nextPage() {
-    if(_isLoading) return;
+    if (_isLoading) return;
     _isLoading = true;
     loadData(_page).then((value) {
       _isLoading = false;
-      if(value.success) {
+      if (value.success) {
         _page++;
         setState(() {
           _data!.addAll(value.data);
         });
       } else {
         var message = value.errorMessage ?? "Network Error";
-        if(message == "No more data") {
+        if (message == "No more data") {
           return;
         }
-        if(message.length > 20) {
+        if (message.length > 20) {
           message = "${message.substring(0, 20)}...";
         }
         if (mounted) {
@@ -153,7 +155,7 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
   void firstLoad() {
     loadData(_page).then((value) {
       if (!mounted) return;
-      if(value.success) {
+      if (value.success) {
         _page++;
         setState(() {
           _isFirstLoading = false;
@@ -202,9 +204,9 @@ abstract class MultiPageLoadingState<T extends StatefulWidget, S extends Object>
   Widget build(BuildContext context) {
     Widget child;
 
-    if(_isFirstLoading){
+    if (_isFirstLoading) {
       child = buildLoading(context);
-    } else if (_error != null){
+    } else if (_error != null) {
       child = buildError(context, _error!);
     } else {
       child = buildContent(context, _data!);
