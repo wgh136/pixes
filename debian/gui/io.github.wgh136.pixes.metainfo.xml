@@ -6,7 +6,7 @@
   <developer id="io.github.wgh136">
     <name>wgh136</name>
   </developer>
-  <summary>Unofficial pixiv.net application.</summary>
+  <summary>Unofficial pixiv.net application</summary>
   <summary xml:lang="zh_CN">第三方 Pixiv.net 客户端</summary>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>MIT</project_license>
