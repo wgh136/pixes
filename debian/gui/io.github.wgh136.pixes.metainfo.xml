@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop">
+  <id>io.github.wgh136.pixes</id>
+  <launchable type="desktop-id">io.github.wgh136.pixes.desktop</launchable>
+  <name>Pixes</name>
+  <developer id="io.github.wgh136">
+    <name>wgh136</name>
+  </developer>
+  <summary>Unofficial pixiv.net application.</summary>
+  <summary xml:lang="zh_CN">第三方 Pixiv.net 客户端</summary>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>MIT</project_license>
+  <url type="homepage">https://github.com/wgh136/pixes</url>
+  <url type="bugtracker">https://github.com/wgh136/pixes/issues</url>
+  <description>
+    <p>Pixes is an unofficial, cross-platform Pixiv client compatible with Windows, Android, iOS, macOS, and Linux. This open-source app lets users explore illustrations, manga, fan works, and novels, while offering features like account login, bookmarking, and following artists. Users can download artworks for offline access and utilize content filtering options to block specific works or creators. Seamlessly syncing with Pixiv.net, Pixes prioritizes privacy and customization, delivering a native experience across devices.</p>
+    <p xml:lang='zh_CN'>Pixes 是一款非官方的 Pixiv 跨平台客户端，支持 Windows、Android、iOS、macOS 和 Linux。这款开源应用支持浏览插画、漫画、同人及小说，并提供账号登录、收藏作品、关注画师等功能。用户可下载作品以供离线浏览，并通过内容屏蔽功能过滤特定作品或创作者。Pixes 与 Pixiv.net 数据同步，注重隐私保护和界面定制，提供多平台原生体验。</p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <caption>Main</caption>
+      <image type="source">https://raw.githubusercontent.com/wgh136/pixes/refs/tags/v1.1.1/screenshots/3.png</image>
+    </screenshot>
+  </screenshots>
+  <releases>
+    <release version="1.1.1" date="2025-01-30">
+      <description></description>
+    </release>
+  </releases>
+  <content_rating type="oars-1.1"/>
+  <update_contact>i@pugai.life</update_contact>
+</component>
