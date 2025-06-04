@@ -31,7 +31,7 @@ Run `flutter build ios/windows/macos`
 
 ### Build Linux
 
-Use`python3 debian/build.py` to build deb package
+Use`python3 debian/build.py {ARCH}` to build deb package. Replace {ARCH} with `x64` or `arm64`.
 
 For other linux distributions, you can use `flutter build linux` to build. 
 You must register the `pixiv` scheme in the `.desktop` file, otherwise the login will not work.
