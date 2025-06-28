@@ -134,12 +134,29 @@ class MyApp extends StatelessWidget {
                         throw "widget is null";
                       }
 
+                      String? font;
+                      List<String>? fallback;
+                      if (App.isLinux || App.isWindows) {
+                        font = 'Noto Sans CJK';
+                        fallback = [
+                          'Segoe UI',
+                          'Noto Sans SC',
+                          'Noto Sans TC',
+                          'Noto Sans',
+                          'Microsoft YaHei',
+                          'PingFang SC',
+                          'Arial',
+                          'sans-serif'
+                        ];
+                      }
+
                       Widget widget = MdTheme(
                         data: MdThemeData.from(
                             colorScheme: colorScheme, useMaterial3: true),
                         child: DefaultTextStyle.merge(
                           style: TextStyle(
-                            fontFamily: App.isWindows ? "Microsoft YaHei UI" : null,
+                            fontFamily: font,
+                            fontFamilyFallback: fallback,
                           ),
                           child: OverlayWidget(child),
                         ),
