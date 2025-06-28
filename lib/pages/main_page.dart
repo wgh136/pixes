@@ -225,10 +225,13 @@ class _MainPageState extends State<MainPage>
               body: const SizedBox.shrink(),
             ),
             PaneItemSeparator(),
-            PaneItem(
+            PaneItemAction(
               icon: const Icon(MdIcons.settings_outlined, size: 20),
               title: Text('Settings'.tl),
               body: const SizedBox.shrink(),
+              onTap: () {
+                navigatorKey.currentContext?.to(() => const SettingsPage());
+              },
             ),
           ],
         ),
@@ -261,7 +264,6 @@ class _MainPageState extends State<MainPage>
     () => const NovelBookmarksPage(),
     () => const FollowingNovelsPage(),
     () => const NovelRankingPage(),
-    () => const SettingsPage(),
   ];
 
   void navigate(int index) {
