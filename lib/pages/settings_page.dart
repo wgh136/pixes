@@ -692,6 +692,7 @@ class _SetInitialPageWidgetState extends State<_SetInitialPageWidget> {
     "Ranking",
     "Recommendation",
     "Bookmarks",
+    "Following",
     "Ranking",
   ];
 
