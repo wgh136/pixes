@@ -4,6 +4,7 @@ import 'package:pixes/appdata.dart';
 import 'package:pixes/components/loading.dart';
 import 'package:pixes/components/novel.dart';
 import 'package:pixes/components/page_route.dart';
+import 'package:pixes/components/search_field.dart';
 import 'package:pixes/components/user_preview.dart';
 import 'package:pixes/foundation/app.dart';
 import 'package:pixes/network/network.dart';
@@ -12,6 +13,7 @@ import 'package:pixes/pages/novel_page.dart';
 import 'package:pixes/pages/user_info_page.dart';
 import 'package:pixes/utils/app_links.dart';
 import 'package:pixes/utils/block.dart';
+import 'package:pixes/utils/debounce.dart';
 import 'package:pixes/utils/ext.dart';
 import 'package:pixes/utils/translation.dart';
 
@@ -21,6 +23,15 @@ import '../components/illust_widget.dart';
 import '../components/md.dart';
 import '../foundation/image_provider.dart';
 
+const searchTypes = [
+  "Search artwork",
+  "Search novel",
+  "Search user",
+  "Artwork ID",
+  "Artist ID",
+  "Novel ID"
+];
+
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
@@ -29,20 +40,9 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  String text = "";
-
   int searchType = 0;
 
-  static const searchTypes = [
-    "Search artwork",
-    "Search novel",
-    "Search user",
-    "Artwork ID",
-    "Artist ID",
-    "Novel ID"
-  ];
-
-  void search() {
+  void search(String text) {
     if (text.isURL && handleLink(Uri.parse(text))) {
       return;
     } else if ("https://$text".isURL &&
@@ -71,111 +71,25 @@ class _SearchPageState extends State<SearchPage> {
       padding: const EdgeInsets.only(top: 8),
       content: Column(
         children: [
-          buildSearchBar(),
-          const SizedBox(
-            height: 8,
+          _SearchBar(
+            searchType: searchType,
+            onTypeChanged: (type) {
+              setState(() {
+                searchType = type;
+              });
+            },
+            onSearch: (text) {
+              if (text.isEmpty) {
+                return;
+              }
+              search(text);
+            },
           ),
           const Expanded(
             child: _TrendingTagsView(),
           )
         ],
       ),
-    );
-  }
-
-  final optionController = FlyoutController();
-
-  Widget buildSearchBar() {
-    return ConstrainedBox(
-      constraints: const BoxConstraints(maxWidth: 560),
-      child: SizedBox(
-        height: 42,
-        width: double.infinity,
-        child: LayoutBuilder(
-          builder: (context, constrains) {
-            return SizedBox(
-              height: 42,
-              width: constrains.maxWidth,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: TextBox(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      placeholder:
-                          '${searchTypes[searchType].tl} / ${"Open link".tl}',
-                      onChanged: (s) => text = s,
-                      onSubmitted: (s) => search(),
-                      foregroundDecoration: WidgetStatePropertyAll(
-                          BoxDecoration(
-                              border: Border.all(
-                                  color: ColorScheme.of(context)
-                                      .outlineVariant
-                                      .toOpacity(0.6)),
-                              borderRadius: BorderRadius.circular(4))),
-                      suffix: MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: GestureDetector(
-                          onTap: search,
-                          child: const Icon(
-                            FluentIcons.search,
-                            size: 16,
-                          ).paddingHorizontal(12),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  FlyoutTarget(
-                    controller: optionController,
-                    child: Button(
-                      child: const SizedBox(
-                        height: 42,
-                        child: Center(
-                          child: Icon(FluentIcons.chevron_down),
-                        ),
-                      ),
-                      onPressed: () {
-                        optionController.showFlyout(
-                            placementMode: FlyoutPlacementMode.bottomCenter,
-                            builder: buildSearchOption,
-                            barrierColor: Colors.transparent);
-                      },
-                    ),
-                  ),
-                  const SizedBox(
-                    width: 4,
-                  ),
-                  Button(
-                    child: const SizedBox(
-                      height: 42,
-                      child: Center(
-                        child: Icon(FluentIcons.settings),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.of(context).push(SideBarRoute(SearchSettings(
-                        isNovel: searchType == 1,
-                      )));
-                    },
-                  )
-                ],
-              ),
-            );
-          },
-        ),
-      ).paddingHorizontal(16),
-    );
-  }
-
-  Widget buildSearchOption(BuildContext context) {
-    return MenuFlyout(
-      items: List.generate(
-          searchTypes.length,
-          (index) => MenuFlyoutItem(
-              text: Text(searchTypes[index].tl),
-              onPressed: () => setState(() => searchType = index))),
     );
   }
 }
@@ -801,5 +715,186 @@ class _SearchNovelResultPageState
       nextUrl ??= "end";
     }
     return res;
+  }
+}
+
+class _SearchBar extends StatefulWidget {
+  const _SearchBar({
+    required this.searchType,
+    required this.onTypeChanged,
+    required this.onSearch,
+  });
+
+  final int searchType;
+
+  final void Function(int) onTypeChanged;
+
+  final void Function(String) onSearch;
+
+  @override
+  State<_SearchBar> createState() => _SearchBarState();
+}
+
+class _SearchBarState extends State<_SearchBar> {
+  final optionController = FlyoutController();
+
+  final textController = TextEditingController();
+
+  var autoCompleteItems = <AutoCompleteItem>[];
+
+  var debouncer = Debounce(delay: const Duration(milliseconds: 300));
+
+  var autoCompleteKey = 0;
+
+  var isLoadingAutoCompleteItems = false;
+
+  Widget buildSearchOption(BuildContext context) {
+    return MenuFlyout(
+      items: List.generate(
+        searchTypes.length,
+        (index) => MenuFlyoutItem(
+          text: Text(searchTypes[index].tl),
+          onPressed: () => widget.onTypeChanged(index),
+        ),
+      ),
+    );
+  }
+
+  void onTextChanged(String text) {
+    if (widget.searchType == 3 ||
+        widget.searchType == 4 ||
+        widget.searchType == 5) {
+      return;
+    }
+
+    if (text.isEmpty) {
+      setState(() {
+        autoCompleteItems = [];
+        isLoadingAutoCompleteItems = false;
+      });
+      return;
+    }
+    setState(() {
+      isLoadingAutoCompleteItems = true;
+    });
+    debouncer.call(() async {
+      var key = ++autoCompleteKey;
+
+      var res = await Network().getAutoCompleteTags(text);
+      if (res.error) {
+        return;
+      }
+      var items = res.data.map((e) {
+        return AutoCompleteItem(
+          title: e.name,
+          subtitle: e.translatedName,
+          onTap: () {
+            textController.text = e.name;
+            widget.onSearch(e.name);
+          },
+        );
+      }).toList();
+
+      if (key != autoCompleteKey) {
+        return; // ignore old request
+      }
+
+      setState(() {
+        autoCompleteItems = items;
+        isLoadingAutoCompleteItems = false;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 560),
+      child: SizedBox(
+        height: 42,
+        width: double.infinity,
+        child: LayoutBuilder(
+          builder: (context, constrains) {
+            return SizedBox(
+              height: 42,
+              width: constrains.maxWidth,
+              child: Row(
+                children: [
+                  Expanded(
+                    child: SearchField(
+                      enableAutoComplete: widget.searchType != 3 &&
+                          widget.searchType != 4 &&
+                          widget.searchType != 5,
+                      textEditingController: textController,
+                      autoCompleteNoResultsText: "No results found".tl,
+                      isLoadingAutoCompleteItems: isLoadingAutoCompleteItems,
+                      autoCompleteItems: autoCompleteItems,
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                      placeholder:
+                          '${searchTypes[widget.searchType].tl} / ${"Open link".tl}',
+                      onChanged: onTextChanged,
+                      onSubmitted: widget.onSearch,
+                      foregroundDecoration: WidgetStatePropertyAll(
+                        BoxDecoration(
+                          border: Border.all(
+                            color: ColorScheme.of(context)
+                                .outlineVariant
+                                .toOpacity(0.6),
+                          ),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                      trailing: MouseRegion(
+                        cursor: SystemMouseCursors.click,
+                        child: GestureDetector(
+                          onTap: () => widget.onSearch(textController.text),
+                          child: const Icon(
+                            FluentIcons.search,
+                            size: 16,
+                          ).paddingHorizontal(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  FlyoutTarget(
+                    controller: optionController,
+                    child: Button(
+                      child: const SizedBox(
+                        height: 42,
+                        child: Center(
+                          child: Icon(FluentIcons.chevron_down),
+                        ),
+                      ),
+                      onPressed: () {
+                        optionController.showFlyout(
+                          placementMode: FlyoutPlacementMode.bottomCenter,
+                          builder: buildSearchOption,
+                          barrierColor: Colors.transparent,
+                        );
+                      },
+                    ),
+                  ),
+                  const SizedBox(width: 4),
+                  Button(
+                    child: const SizedBox(
+                      height: 42,
+                      child: Center(
+                        child: Icon(FluentIcons.settings),
+                      ),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).push(SideBarRoute(SearchSettings(
+                        isNovel: widget.searchType == 1,
+                      )));
+                    },
+                  )
+                ],
+              ),
+            );
+          },
+        ),
+      ).paddingHorizontal(16),
+    );
   }
 }

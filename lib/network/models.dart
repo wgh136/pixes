@@ -152,6 +152,10 @@ class Tag {
 
   @override
   int get hashCode => name.hashCode;
+
+  static Tag fromJson(Map<String, dynamic> json) {
+    return Tag(json['name'] ?? "", json['translated_name']);
+  }
 }
 
 class IllustImage {

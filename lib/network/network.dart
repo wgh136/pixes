@@ -583,4 +583,13 @@ class Network {
       return Res.fromErrorRes(res);
     }
   }
+
+  Future<Res<List<Tag>>> getAutoCompleteTags(String keyword) async {
+    var res = await apiGet("/v2/search/autocomplete?merge_plain_keyword_results=true&word=${Uri.encodeComponent(keyword)}");
+    if (res.success) {
+      return Res((res.data["tags"] as List).map((e) => Tag.fromJson(e)).toList());
+    } else {
+      return Res.error(res.errorMessage);
+    }
+  }
 }

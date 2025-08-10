@@ -184,7 +184,8 @@
         "Emphasize artworks from following artists": "强调关注画师的作品",
         "The border of the artworks will be darker": "作品的边框将被加深",
         "Initial Page": "初始页面",
-        "Close the pane to apply the settings": "关闭面板以应用设置"
+        "Close the pane to apply the settings": "关闭面板以应用设置",
+        "No results found": "未找到结果"
     },
     "zh_TW": {
         "Search": "搜索",
@@ -371,6 +372,7 @@
         "Emphasize artworks from following artists": "強調關注畫師的作品",
         "The border of the artworks will be darker": "作品的邊框將被加深",
         "Initial Page": "初始頁面",
-        "Close the pane to apply the settings": "關閉面板以應用設置"
+        "Close the pane to apply the settings": "關閉面板以應用設置",
+        "No results found": "未找到結果"
     }
 }
