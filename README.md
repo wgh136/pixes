@@ -1,6 +1,6 @@
 # pixes
 
-[![flutter](https://img.shields.io/badge/flutter-3.27.0-blue)](https://flutter.dev/) 
+[![flutter](https://img.shields.io/badge/flutter-3.32.5-blue)](https://flutter.dev/) 
 [![License](https://img.shields.io/github/license/wgh136/pixes)](https://github.com/wgh136/pixes/blob/master/LICENSE)
 [![Download](https://img.shields.io/github/v/release/wgh136/pixes)](https://github.com/wgh136/pixes)
 [![stars](https://img.shields.io/github/stars/wgh136/pixes)](https://github.com/wgh136/pixes/stargazers)
