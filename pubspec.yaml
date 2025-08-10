@@ -60,10 +60,7 @@ dependencies:
   webview_flutter: ^4.13.0
   flutter_acrylic: 1.0.0+2
   device_info_plus: ^11.5.0
-  image_gallery_saver:
-    git:
-      url: https://github.com/wgh136/image_gallery_saver
-      ref: master
+  image_gallery_saver_plus: ^4.0.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

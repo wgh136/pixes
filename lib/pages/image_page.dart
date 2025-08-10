@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
-import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:image_gallery_saver_plus/image_gallery_saver_plus.dart';
 import 'package:photo_view/photo_view_gallery.dart';
 import 'package:pixes/components/md.dart';
 import 'package:pixes/components/message.dart';
@@ -118,10 +118,11 @@ class _ImagePageState extends State<ImagePage> with WindowListener {
                           if (!fileName.contains('.')) {
                             fileName += getExtensionName();
                           }
-                          await ImageGallerySaver.saveImage(
-                              await file.readAsBytes(),
-                              quality: 100,
-                              name: fileName);
+                          await ImageGallerySaverPlus.saveImage(
+                            await file.readAsBytes(),
+                            quality: 100,
+                            name: fileName,
+                          );
                           if (context.mounted) {
                             showToast(context, message: "Saved".tl);
                           }

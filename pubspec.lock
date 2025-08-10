@@ -325,15 +325,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.2"
-  image_gallery_saver:
+  image_gallery_saver_plus:
     dependency: "direct main"
     description:
-      path: "."
-      ref: master
-      resolved-ref: "38a38c45d3ed229cbc1d827eb2b5aaad1a4519cd"
-      url: "https://github.com/wgh136/image_gallery_saver"
-    source: git
-    version: "2.0.0"
+      name: image_gallery_saver_plus
+      sha256: "199b9e24f8d85e98f11e3d35571ab68ae50626ad40e2bb85c84383f69a6950ad"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.0.1"
   intl:
     dependency: "direct main"
     description:
