@@ -2,6 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/gestures.dart';
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:flutter/material.dart' show PredictiveBackPageTransitionsBuilder;
 import 'package:pixes/foundation/app.dart';
 
 const double _kBackGestureWidth = 20.0;
@@ -141,21 +142,31 @@ mixin _AppRouteTransitionMixin<T> on PageRoute<T> {
             : child,
       );
     } else {
-      child = DrillInPageTransition(
-        animation: CurvedAnimation(
-          parent: animation,
-          curve: FluentTheme
-              .of(context)
-              .animationCurve,
-        ),
-        child: enableIOSGesture && App.isIOS
-            ? IOSBackGestureDetector(
-            gestureWidth: _kBackGestureWidth,
-            enabledCallback: () => _isPopGestureEnabled<T>(this),
-            onStartPopGesture: () => _startPopGesture(this),
-            child: child)
-            : child,
-      );
+      if (App.isAndroid) {
+        child = const PredictiveBackPageTransitionsBuilder().buildTransitions(
+          this, 
+          context, 
+          animation, 
+          secondaryAnimation, 
+          child,
+        );
+      } else {
+        child = DrillInPageTransition(
+          animation: CurvedAnimation(
+            parent: animation,
+            curve: FluentTheme
+                .of(context)
+                .animationCurve,
+          ),
+          child: enableIOSGesture && App.isIOS
+              ? IOSBackGestureDetector(
+              gestureWidth: _kBackGestureWidth,
+              enabledCallback: () => _isPopGestureEnabled<T>(this),
+              onStartPopGesture: () => _startPopGesture(this),
+              child: child)
+              : child,
+        );
+      }
     }
 
     return child;

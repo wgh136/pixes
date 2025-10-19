@@ -20,7 +20,7 @@ version: 1.2.0+120
 
 environment:
   sdk: '>=3.3.4 <4.0.0'
-  flutter: 3.32.5
+  flutter: 3.35.6
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -36,7 +36,7 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   window_manager: ^0.4.3
-  fluent_ui: ^4.12.0
+  fluent_ui: ^4.13.0
   dynamic_color: ^1.7.0
   dio: ^5.8.0
   crypto: ^3.0.6
